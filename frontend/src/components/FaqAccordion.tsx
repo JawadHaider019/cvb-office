@@ -128,10 +128,6 @@ export const FaqAccordion: React.FC = () => {
               <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body">
                 Hier findest Du verlässliche Antworten auf die wichtigsten Fragen rund um die Einführung, Verbundtarife, die digitale Vorab-Einweisung und die rechtssichere Digitalisierung Deiner Vermietung.
               </p>
-              <div className="mt-3 flex items-center gap-2 text-xs font-mono text-[#889028] font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#889028] animate-pulse" />
-                <span>Persönlicher Verbands-Support inklusive</span>
-              </div>
             </div>
           </div>
         </ScrollReveal>
