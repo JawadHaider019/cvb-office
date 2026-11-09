@@ -98,7 +98,7 @@ export const FaqAccordion: React.FC = () => {
   };
 
   return (
-    <section id="faq" className="relative py-24 lg:py-32 bg-[#F4F2E6] text-[#384808] border-b border-[#A09048]/25 overflow-hidden">
+    <section id="faq" className="relative py-10 lg:py-16 bg-[#fff] text-[#384808] border-b border-[#A09048]/25 overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/2 right-1/4 w-[600px] h-[600px] bg-[#A09048]/10 rounded-full blur-[150px] pointer-events-none" />
 
@@ -147,19 +147,17 @@ export const FaqAccordion: React.FC = () => {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-all cursor-pointer group ${
-                      isActive
-                        ? 'bg-[#384808] text-white shadow-md'
-                        : 'text-[#384808] hover:bg-[#F4F2E6] hover:text-[#2D3A06]'
-                    }`}
+                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-all cursor-pointer group ${isActive
+                      ? 'bg-[#384808] text-white shadow-md'
+                      : 'text-[#384808] hover:bg-[#F4F2E6] hover:text-[#2D3A06]'
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
-                          isActive
-                            ? 'bg-[#A09048] text-white'
-                            : 'bg-[#F4F2E6] text-[#889028] group-hover:bg-white'
-                        }`}
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${isActive
+                          ? 'bg-[#A09048] text-white'
+                          : 'bg-[#F4F2E6] text-[#889028] group-hover:bg-white'
+                          }`}
                       >
                         <Icon size={16} />
                       </div>
@@ -169,11 +167,10 @@ export const FaqAccordion: React.FC = () => {
                     </div>
 
                     <span
-                      className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full transition-colors ${
-                        isActive
-                          ? 'bg-white/20 text-white'
-                          : 'bg-stone-100 text-[#585828] group-hover:bg-white'
-                      }`}
+                      className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full transition-colors ${isActive
+                        ? 'bg-white/20 text-white'
+                        : 'bg-stone-100 text-[#585828] group-hover:bg-white'
+                        }`}
                     >
                       {count}
                     </span>
@@ -238,11 +235,10 @@ export const FaqAccordion: React.FC = () => {
                       return (
                         <div
                           key={faq.id}
-                          className={`bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden ${
-                            isOpen
-                              ? 'border-[#384808] shadow-[0_8px_25px_rgba(56,72,8,0.08)]'
-                              : 'border-[#A09048]/25 hover:border-[#889028] shadow-xs'
-                          }`}
+                          className={`bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden ${isOpen
+                            ? 'border-[#384808] shadow-[0_8px_25px_rgba(56,72,8,0.08)]'
+                            : 'border-[#A09048]/25 hover:border-[#889028] shadow-xs'
+                            }`}
                         >
                           <button
                             type="button"
@@ -256,11 +252,10 @@ export const FaqAccordion: React.FC = () => {
 
                             {/* Circular Plus/Minus Toggle Icon Button */}
                             <div
-                              className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${
-                                isOpen
-                                  ? 'bg-[#384808] text-white rotate-45 shadow-sm'
-                                  : 'bg-[#F4F2E6] text-[#889028] group-hover:bg-[#A09048] group-hover:text-white'
-                              }`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${isOpen
+                                ? 'bg-[#384808] text-white rotate-45 shadow-sm'
+                                : 'bg-[#F4F2E6] text-[#889028] group-hover:bg-[#A09048] group-hover:text-white'
+                                }`}
                             >
                               <Plus size={16} strokeWidth={2.5} />
                             </div>
