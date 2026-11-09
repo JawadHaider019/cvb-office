@@ -71,19 +71,9 @@ export const AboutCvb: React.FC = () => {
               </h2>
 
               {/* Explanatory Paragraph: Short, crisp, full info */}
-              <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed mb-5 font-body">
+              <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed mb-6 font-body">
                 Der CVB stärkt unabhängige Vermieter mit Praxiswissen, Spezialversicherungen und über 1.000 betreuten Fahrzeugen deutschlandweit.
               </p>
-
-              {/* Founder Quote Card: Punchy and clean */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/35 mb-5 shadow-xs">
-                <p className="font-sans italic text-xs sm:text-sm text-[#384808] mb-2.5 leading-relaxed font-medium">
-                  „Beste Werkzeuge für unabhängige Vermieter – einfach, fair und auf Augenhöhe.“
-                </p>
-                <div className="text-xs font-bold tracking-wider uppercase text-[#889028] font-mono">
-                  — Detlef Scheer, Gründer & Vorstand CVB
-                </div>
-              </div>
             </div>
 
             {/* Bottom Row of Pill Tags (Matching Reference Bottom Left Pills) */}
