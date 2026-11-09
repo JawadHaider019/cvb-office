@@ -58,3 +58,4 @@ export const TrustBar: React.FC = () => {
     </section>
   );
 };
+

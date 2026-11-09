@@ -302,6 +302,28 @@ app.get('/api/requests/export', (req: Request, res: Response) => {
 // ---------------------------------------------------------------------------
 // 5. Admin Content & Settings Updates with Version History (Section 8.2 S1)
 // ---------------------------------------------------------------------------
+app.get('/api/content', (req: Request, res: Response) => {
+  const db = getDb();
+  res.json({
+    content: db.content,
+    priceSettings: db.priceSettings,
+    generalSettings: db.generalSettings,
+    features: db.features,
+    steps: db.steps,
+    faqs: db.faqs,
+  });
+});
+
+app.get('/api/settings', (req: Request, res: Response) => {
+  const db = getDb();
+  res.json(db.generalSettings);
+});
+
+app.get('/api/prices', (req: Request, res: Response) => {
+  const db = getDb();
+  res.json(db.priceSettings);
+});
+
 app.put('/api/content', (req: Request, res: Response) => {
   const { content, priceSettings, generalSettings, features, steps, faqs, user } = req.body;
   const db = getDb();
