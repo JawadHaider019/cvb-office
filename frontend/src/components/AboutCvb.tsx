@@ -63,26 +63,25 @@ export const AboutCvb: React.FC = () => {
           <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
             <div>
               {/* Highlighted Headline with Accent Box */}
-              <h2 className="font-spartan text-3xl sm:text-4xl lg:text-[44px] font-black uppercase text-[#384808] leading-[1.04] tracking-tight mb-6">
+              <h2 className="font-spartan text-3xl sm:text-4xl lg:text-[42px] font-black uppercase text-[#384808] leading-[1.04] tracking-tight mb-5">
                 <span className="block text-[#384808]">MIT WEITSICHT GEGRÜNDET.</span>
                 <span className="inline-block bg-[#A09048] text-white px-3 py-1 rounded-xl mt-1.5 shadow-sm">
                   FÜR VERMIETER GEBAUT.
                 </span>
               </h2>
 
-              {/* Explanatory Paragraph */}
-              <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed mb-6 font-body">
-                {content.aboutText ||
-                  'Der Caravan-Vermieter-Bund unterstützt Wohnmobil-Vermieter mit Wissen, Versicherungen und einem starken Netzwerk. Heute betreuen wir mehr als 1.000 Fahrzeuge in ganz Deutschland.'}
+              {/* Explanatory Paragraph: Short, crisp, full info */}
+              <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed mb-5 font-body">
+                Der CVB stärkt unabhängige Vermieter mit Praxiswissen, Spezialversicherungen und über 1.000 betreuten Fahrzeugen deutschlandweit.
               </p>
 
-              {/* Founder Quote Card */}
-              <div className="p-5 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/35 mb-6 shadow-xs">
-                <p className="font-sans italic text-xs sm:text-sm text-[#384808] mb-3 leading-relaxed">
-                  „Unser Ziel ist es, unabhängigen Wohnmobil- und Caravan-Vermietern die besten Werkzeuge an die Hand zu geben – einfach, fair und ohne komplizierte Hürden.“
+              {/* Founder Quote Card: Punchy and clean */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/35 mb-5 shadow-xs">
+                <p className="font-sans italic text-xs sm:text-sm text-[#384808] mb-2.5 leading-relaxed font-medium">
+                  „Beste Werkzeuge für unabhängige Vermieter – einfach, fair und auf Augenhöhe.“
                 </p>
                 <div className="text-xs font-bold tracking-wider uppercase text-[#889028] font-mono">
-                  — {content.aboutFounder || 'Detlef Scheer (Gründer & Geschäftsführer)'} (Gründer CVB)
+                  — Detlef Scheer, Gründer & Vorstand CVB
                 </div>
               </div>
             </div>
