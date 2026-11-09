@@ -49,24 +49,21 @@ export const AboutCvb: React.FC = () => {
               <span>ÜBER DEN BUND</span>
             </div>
 
-            {/* Right Breadcrumb Tag */}
-            <div className="hidden sm:flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-[#889028] uppercase">
-              <span>↳ CVB-OFFICE // VERBUND-PORTAL</span>
-            </div>
+
           </div>
         </ScrollReveal>
 
         {/* Master Bento Grid (Exact structural match to uploaded Reference Design) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
-          
+
           {/* LEFT SIDE (5 Columns): Headline, Narrative, Quote & Feature Pills */}
           <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
             <div>
-              {/* Highlighted Headline with Accent Box */}
-              <h2 className="font-spartan text-3xl sm:text-4xl lg:text-[42px] font-black uppercase text-[#384808] leading-[1.04] tracking-tight mb-5">
+              {/* Top Heading: Matching All Other Sections in Strict 2 Lines */}
+              <h2 className="font-spartan text-4xl sm:text-5xl lg:text-6xl xl:text-[44px] font-black uppercase text-[#384808] leading-[1.04] tracking-tight mb-5">
                 <span className="block text-[#384808]">MIT WEITSICHT GEGRÜNDET.</span>
-                <span className="inline-block bg-[#A09048] text-white px-3 py-1 rounded-xl mt-1.5 shadow-sm">
-                  FÜR VERMIETER GEBAUT.
+                <span className="block text-[#889028]">
+                  FÜR VERMIETER GEBAUT<span className="text-[#A09048]">.</span>
                 </span>
               </h2>
 
@@ -95,10 +92,10 @@ export const AboutCvb: React.FC = () => {
 
           {/* RIGHT SIDE (7 Columns): 2 Top Bento Cards + 1 Bottom Wide Banner Card (Compact, unified gap) */}
           <div className="lg:col-span-7 flex flex-col gap-4 sm:gap-5">
-            
+
             {/* TOP ROW: 2 Cards Side-by-Side (Dark Navy/Olive Card + Warm Gold Card) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-              
+
               {/* Card 1: Verbandssitz (Matching "ADMISSIONS OFFICE" Card) */}
               <motion.div
                 whileHover={{ y: -3 }}
