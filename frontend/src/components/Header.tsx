@@ -65,7 +65,7 @@ export const Header: React.FC = () => {
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12 flex items-center justify-between gap-6">
-          {/* Logo Brand: Architectural Monogram & Clean Typographic Signature */}
+          {/* Logo Brand: Actual Official CVB-Office Logo from Document */}
           <a
             href="#top"
             onClick={(e) => {
@@ -75,9 +75,11 @@ export const Header: React.FC = () => {
             className="flex items-center gap-3.5 group select-none shrink-0"
             aria-label="CVB-Office Startseite"
           >
-            <div className="w-10 h-10 bg-[#384808] text-white flex items-center justify-center border border-[#A09048] shadow-xs group-hover:bg-[#283405] transition-colors">
-              <CvbOfficeIcon size={24} />
-            </div>
+            <img
+              src="/images/cvb_office_logo.png"
+              alt="CVB-Office Logo"
+              className="w-10 sm:w-11 h-10 sm:h-11 object-contain drop-shadow-xs group-hover:scale-105 transition-transform shrink-0"
+            />
             <div className="flex flex-col">
               <span className="font-spartan text-xl sm:text-2xl font-black text-[#384808] tracking-tight leading-none">
                 CVB-OFFICE<span className="text-[#A09048]">.</span>
