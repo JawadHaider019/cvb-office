@@ -74,6 +74,8 @@ app.post('/api/requests', async (req: Request, res: Response) => {
     honeypot,
     formOpenedAt,
     priceConsentText,
+    contact_name,
+    phone,
   } = req.body;
 
   // 1. Honeypot check (Section 6.1)
@@ -162,6 +164,13 @@ app.post('/api/requests', async (req: Request, res: Response) => {
   });
   const defaultPriceText = `Ich bestätige, dass CVB-Office ${formattedMonthly} € netto pro Fahrzeug und Monat kostet (${formattedYearly} € netto pro Fahrzeug und Jahr) und dass dieser Betrag zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet wird.`;
 
+  const contactDetails = [
+    contact_name ? `Ansprechpartner: ${contact_name}` : '',
+    phone ? `Telefon: ${phone}` : '',
+  ]
+    .filter(Boolean)
+    .join(' | ');
+
   const newRequest: SignUpRequest = {
     id: `req-${Date.now()}`,
     created_at: nowFormatted,
@@ -175,7 +184,7 @@ app.post('/api/requests', async (req: Request, res: Response) => {
     privacy_consent: true,
     privacy_consent_at: nowFormatted,
     status: 'neu',
-    notes: '',
+    notes: contactDetails || '',
     email_sent: false,
   };
 

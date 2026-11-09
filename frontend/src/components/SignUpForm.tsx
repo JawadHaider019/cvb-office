@@ -12,6 +12,8 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
 
   const [email, setEmail] = useState('');
   const [vehicles, setVehicles] = useState<number | ''>(selectedVehicleCount || 1);
+  const [contactName, setContactName] = useState('');
+  const [phone, setPhone] = useState('');
   const [priceConsent, setPriceConsent] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [honeypot, setHoneypot] = useState('');
@@ -100,7 +102,9 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
         priceConsent,
         privacyConsent,
         honeypot,
-        formOpenedAt.current
+        formOpenedAt.current,
+        contactName.trim() || undefined,
+        phone.trim() || undefined
       );
 
       if (res.success) {
@@ -268,6 +272,8 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                         setIsSuccess(false);
                         setEmail('');
                         setVehicles(1);
+                        setContactName('');
+                        setPhone('');
                         setPriceConsent(false);
                         setPrivacyConsent(false);
                         formOpenedAt.current = Date.now();
@@ -278,7 +284,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                     </button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} noValidate className="space-y-6">
+                  <form onSubmit={handleSubmit} noValidate className="space-y-5">
                     {/* Honeypot */}
                     <div className="hidden" aria-hidden="true">
                       <label htmlFor="company_nickname">Bitte leer lassen</label>
@@ -291,6 +297,22 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                         tabIndex={-1}
                         autoComplete="off"
                       />
+                    </div>
+
+                    {/* German CRO Order Summary Pill (Transparenz vor Eingabe) */}
+                    <div className="p-4 bg-[#F4F2E6] border border-[#A09048]/35 rounded-2xl">
+                      <div className="flex items-center justify-between text-xs font-mono mb-1">
+                        <span className="text-[#585828] uppercase font-bold">Gewählte Flotte:</span>
+                        <span className="text-[#384808] font-black">{vCountNumber} {vCountNumber === 1 ? 'Fahrzeug' : 'Fahrzeuge'}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="text-[#585828] uppercase font-bold">Verbundtarif:</span>
+                        <span className="text-[#889028] font-black text-sm">{currentTotalMonthly} € netto / Monat</span>
+                      </div>
+                      <div className="mt-2 pt-2 border-t border-[#A09048]/20 flex items-center gap-1.5 text-[11px] text-[#384808] font-medium">
+                        <ShieldCheck size={13} className="text-[#889028] shrink-0" />
+                        <span>14 Tage unverbindliche Testphase · Keine Zahlung heute</span>
+                      </div>
                     </div>
 
                     {errorMessage && (
@@ -307,9 +329,9 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                     <div>
                       <label
                         htmlFor="signup-email"
-                        className="block text-[11px] font-bold uppercase tracking-wider text-[#384808] mb-2"
+                        className="block text-[11px] font-bold uppercase tracking-wider text-[#384808] mb-1.5"
                       >
-                        E-MAIL-ADRESSE <span className="text-red-600">*</span>
+                        GESCHÄFTLICHE E-MAIL-ADRESSE <span className="text-red-600">*</span>
                       </label>
                       <input
                         id="signup-email"
@@ -319,42 +341,75 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="name@deine-vermietung.de"
-                        className="w-full px-4 py-3.5 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/30 text-[#384808] placeholder-stone-400 text-sm focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/20 transition-all"
+                        className="w-full px-4 py-3 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/30 text-[#384808] placeholder-stone-400 text-sm focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/20 transition-all"
                         disabled={isSubmitting}
                       />
                     </div>
 
-                    {/* Vehicles Field & Live Price Sync */}
+                    {/* Vehicles Field */}
                     <div>
                       <label
                         htmlFor="signup-vehicles"
-                        className="block text-[11px] font-bold uppercase tracking-wider text-[#384808] mb-2"
+                        className="block text-[11px] font-bold uppercase tracking-wider text-[#384808] mb-1.5"
                       >
                         ANZAHL FAHRZEUGE <span className="text-red-600">*</span>
                       </label>
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                      <input
+                        id="signup-vehicles"
+                        type="number"
+                        inputMode="numeric"
+                        min="1"
+                        max="999"
+                        required
+                        value={vehicles}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setVehicles(val === '' ? '' : parseInt(val, 10));
+                        }}
+                        placeholder="z. B. 4"
+                        className="w-full px-4 py-3 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/30 text-[#384808] text-sm focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/20 transition-all font-mono font-bold"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+
+                    {/* Optional Contact Fields (Mittelstands-Präferenz: Telefon & Name) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div>
+                        <label
+                          htmlFor="signup-name"
+                          className="block text-[11px] font-bold uppercase tracking-wider text-[#585828] mb-1"
+                        >
+                          ANSPRECHPARTNER <span className="text-stone-400 font-normal lowercase">(optional)</span>
+                        </label>
                         <input
-                          id="signup-vehicles"
-                          type="number"
-                          inputMode="numeric"
-                          min="1"
-                          max="999"
-                          required
-                          value={vehicles}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setVehicles(val === '' ? '' : parseInt(val, 10));
-                          }}
-                          placeholder="z. B. 4"
-                          className="w-full sm:w-36 px-4 py-3.5 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/30 text-[#384808] text-sm focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/20 transition-all font-mono font-bold"
+                          id="signup-name"
+                          type="text"
+                          maxLength={100}
+                          value={contactName}
+                          onChange={(e) => setContactName(e.target.value)}
+                          placeholder="z. B. Max Mustermann"
+                          className="w-full px-4 py-2.5 bg-[#F4F2E6] rounded-xl border border-[#A09048]/30 text-[#384808] placeholder-stone-400 text-xs focus:outline-none focus:border-[#384808] transition-all"
                           disabled={isSubmitting}
                         />
+                      </div>
 
-                        {/* Live Calculation Pill */}
-                        <div className="flex-1 px-4 py-3 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/30 text-xs text-[#585828] font-mono flex items-center justify-between">
-                          <span>Verbundtarif:</span>
-                          <strong className="text-[#384808] font-bold">{currentTotalMonthly} € / Mo.</strong>
-                        </div>
+                      <div>
+                        <label
+                          htmlFor="signup-phone"
+                          className="block text-[11px] font-bold uppercase tracking-wider text-[#585828] mb-1"
+                        >
+                          TELEFON FÜR RÜCKFRAGEN <span className="text-stone-400 font-normal lowercase">(optional)</span>
+                        </label>
+                        <input
+                          id="signup-phone"
+                          type="tel"
+                          maxLength={50}
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="z. B. 0170 1234567"
+                          className="w-full px-4 py-2.5 bg-[#F4F2E6] rounded-xl border border-[#A09048]/30 text-[#384808] placeholder-stone-400 text-xs focus:outline-none focus:border-[#384808] transition-all"
+                          disabled={isSubmitting}
+                        />
                       </div>
                     </div>
 
@@ -409,7 +464,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full tech-cta-primary justify-center cursor-pointer disabled:opacity-60"
+                        className="w-full tech-cta-primary justify-center cursor-pointer disabled:opacity-60 text-sm"
                       >
                         {isSubmitting ? (
                           <>
@@ -418,15 +473,16 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                           </>
                         ) : (
                           <>
-                            <span>CVB-Office jetzt anfragen</span>
+                            <span>14 Tage kostenlos testen & anfragen</span>
                             <div className="tech-ci">
                               <ArrowRight size={14} />
                             </div>
                           </>
                         )}
                       </button>
-                      <div className="text-[11px] text-center text-[#585828] font-mono mt-3">
-                        Unverbindliche Anfrage · Detlef Scheer meldet sich persönlich bei Dir
+                      <div className="text-[11px] text-center text-[#585828] mt-3 space-y-1">
+                        <div>🔒 100 % unverbindlich · Keine automatische Verlängerung</div>
+                        <div className="text-[#889028]">Detlef Scheer prüft Deine Verbandsmitgliedschaft und sendet Dir die Zugangsdaten.</div>
                       </div>
                     </div>
                   </form>

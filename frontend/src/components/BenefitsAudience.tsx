@@ -96,6 +96,72 @@ export const BenefitsAudience: React.FC = () => {
           </StaggerContainer>
         </div>
 
+        {/* Part 6.5: Praxis-Stimmen / Social Proof (German B2B Trust) */}
+        <div className="mb-28">
+          <ScrollReveal>
+            <div className="tech-tag mb-4 bg-[#384808] border-[#A09048]/30 text-white">
+              <span className="tech-tagn bg-[#A09048] text-white">★</span>
+              <span className="font-spartan font-bold text-xs uppercase tracking-wider text-white">
+                STIMMEN AUS DER VERMIETPRAXIS
+              </span>
+            </div>
+
+            <h2 className="font-spartan text-3xl sm:text-4xl lg:text-5xl font-black uppercase text-white leading-[1.02] tracking-tight mb-12 max-w-3xl">
+              WAS VERMIETER AN{' '}
+              <span className="text-[#A09048]">
+                CVB-OFFICE SCHÄTZEN.
+              </span>
+            </h2>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-[#242E05]/90 border border-[#A09048]/30 rounded-[28px] p-7 flex flex-col justify-between shadow-xl">
+              <p className="text-sm text-[#F4F2E6] italic leading-relaxed mb-6 font-sans">
+                „Die Vorab-Einweisung per Video spart uns samstags bei jeder Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren – das nimmt enorm viel Hektik aus dem Betrieb.“
+              </p>
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+                <div>
+                  <span className="font-bold text-white block">Familienbetrieb (6 Fahrzeuge)</span>
+                  <span className="text-[#C5CF77] text-[11px]">Region Bayern</span>
+                </div>
+                <span className="text-[10px] font-mono text-[#A09048] bg-[#384808] px-2.5 py-1 rounded-full font-bold">
+                  50% ZEITERSPARNIS
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-[#242E05]/90 border border-[#A09048]/30 rounded-[28px] p-7 flex flex-col justify-between shadow-xl">
+              <p className="text-sm text-[#F4F2E6] italic leading-relaxed mb-6 font-sans">
+                „Früher haben wir tausende Euro an Vermittlungsportale abgedrückt. Mit dem 1-Zeilen-Kalender auf unserer eigenen Website buchen die Kunden direkt bei uns. 0 % Provision – das rechnet sich ab der ersten Buchung.“
+              </p>
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+                <div>
+                  <span className="font-bold text-white block">Wohnmobilvermietung (14 Mobile)</span>
+                  <span className="text-[#C5CF77] text-[11px]">Region NRW</span>
+                </div>
+                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-full font-bold">
+                  0% PROVISION
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-[#242E05]/90 border border-[#A09048]/30 rounded-[28px] p-7 flex flex-col justify-between shadow-xl">
+              <p className="text-sm text-[#F4F2E6] italic leading-relaxed mb-6 font-sans">
+                „Als Einsteiger war mir die Rechtssicherheit am wichtigsten. Die geprüften Verbands-Mietverträge und die digitale Unterschrift auf dem Tablet geben uns und den Mietern absolute Sicherheit.“
+              </p>
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+                <div>
+                  <span className="font-bold text-white block">Camper-Station (3 Vans)</span>
+                  <span className="text-[#C5CF77] text-[11px]">Region Norddeutschland</span>
+                </div>
+                <span className="text-[10px] font-mono text-[#A09048] bg-[#384808] px-2.5 py-1 rounded-full font-bold">
+                  RECHTSSICHER
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Part 7: Audience */}
         <div>
           <ScrollReveal>

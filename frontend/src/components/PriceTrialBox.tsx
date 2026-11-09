@@ -117,7 +117,7 @@ export const PriceTrialBox: React.FC = () => {
                     onClick={scrollToForm}
                     className="inline-flex items-center gap-3 h-12 px-6 rounded-full bg-white text-[#384808] hover:bg-[#F4F2E6] font-spartan font-bold text-sm tracking-tight transition-all cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-0.5 justify-center"
                   >
-                    <span>CVB-Office buchen</span>
+                    <span>CVB-Office unverbindlich anfragen</span>
                     <div className="w-7 h-7 rounded-full bg-[#384808] text-white flex items-center justify-center">
                       <ArrowRight size={13} />
                     </div>
@@ -159,6 +159,33 @@ export const PriceTrialBox: React.FC = () => {
                       {calcVehicles} {calcVehicles === 1 ? 'Fahrzeug' : 'Fahrzeuge'}
                     </span>
                   </div>
+
+                  {/* 1-Click German Fleet Presets (High CRO impact) */}
+                  <div className="grid grid-cols-4 gap-2 mb-3">
+                    {[
+                      { count: 2, label: '2 Fzg.', sub: 'Start' },
+                      { count: 5, label: '5 Fzg.', sub: 'Beliebt' },
+                      { count: 10, label: '10 Fzg.', sub: 'Mittel' },
+                      { count: 20, label: '20+ Fzg.', sub: 'Groß' },
+                    ].map((preset) => (
+                      <button
+                        key={preset.count}
+                        type="button"
+                        onClick={() => setCalcVehicles(preset.count)}
+                        className={`py-1.5 px-2 rounded-xl text-center border transition-all cursor-pointer ${
+                          calcVehicles === preset.count
+                            ? 'bg-[#384808] text-white border-[#384808] shadow-sm'
+                            : 'bg-stone-50 hover:bg-[#F4F2E6] text-[#384808] border-stone-200'
+                        }`}
+                      >
+                        <div className="font-spartan font-bold text-xs leading-none">{preset.label}</div>
+                        <div className={`text-[9px] mt-0.5 ${calcVehicles === preset.count ? 'text-[#A09048]' : 'text-stone-400'}`}>
+                          {preset.sub}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
                   <input
                     type="range"
                     min="1"

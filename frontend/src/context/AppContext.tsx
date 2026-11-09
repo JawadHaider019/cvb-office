@@ -52,7 +52,9 @@ interface AppContextType {
     priceConsent: boolean,
     privacyConsent: boolean,
     honeypotValue?: string,
-    formOpenedAt?: number
+    formOpenedAt?: number,
+    contactName?: string,
+    phone?: string
   ) => Promise<{ success: boolean; error?: string }>;
   updateRequestStatus: (id: string, status: RequestStatus) => void;
   updateRequestNote: (id: string, notes: string) => void;
@@ -341,7 +343,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     priceConsent: boolean,
     privacyConsent: boolean,
     honeypotValue?: string,
-    formOpenedAt?: number
+    formOpenedAt?: number,
+    contactName?: string,
+    phone?: string
   ): Promise<{ success: boolean; error?: string }> => {
     // 1. Honeypot check (spam robots fill hidden inputs)
     if (honeypotValue && honeypotValue.trim() !== '') {
@@ -413,6 +417,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const nowFormatted = now.toISOString().replace('T', ' ').substring(0, 16);
 
+    const contactDetails = [
+      contactName ? `Ansprechpartner: ${contactName}` : '',
+      phone ? `Telefon: ${phone}` : '',
+    ]
+      .filter(Boolean)
+      .join(' | ');
+
     const newRequest: SignUpRequest = {
       id: `req-${Date.now()}`,
       created_at: nowFormatted,
@@ -426,7 +437,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       privacy_consent: true,
       privacy_consent_at: nowFormatted,
       status: 'neu',
-      notes: '',
+      notes: contactDetails || '',
       email_sent: true,
     };
 
@@ -443,6 +454,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           honeypot: honeypotValue,
           formOpenedAt,
           priceConsentText: currentPriceText,
+          contact_name: contactName,
+          phone,
         }),
       });
 

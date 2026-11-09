@@ -70,8 +70,14 @@ export const AboutCvb: React.FC = () => {
                 <p className="font-sans italic text-sm sm:text-base text-[#384808] mb-3 leading-relaxed">
                   „Unser Ziel ist es, unabhängigen Wohnmobil- und Caravan-Vermietern die besten Werkzeuge an die Hand zu geben – einfach, fair und ohne komplizierte Hürden.“
                 </p>
-                <div className="text-xs font-bold tracking-wider uppercase text-[#889028] font-mono">
-                  — {content.aboutFounder}
+                <div className="text-xs font-bold tracking-wider uppercase text-[#889028] font-mono mb-3">
+                  — {content.aboutFounder} (Gründer CVB)
+                </div>
+                <div className="pt-3 border-t border-[#A09048]/20 flex items-center gap-2 text-xs text-[#585828]">
+                  <span>Persönliche Verbandsberatung:</span>
+                  <a href={`mailto:${generalSettings.contactEmail}`} className="font-bold text-[#384808] hover:underline">
+                    {generalSettings.contactEmail}
+                  </a>
                 </div>
               </div>
 

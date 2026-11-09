@@ -89,7 +89,7 @@ export const FloatingConversionBar: React.FC = () => {
               onClick={scrollToForm}
               className="group inline-flex items-center gap-2 px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-wider text-[#384808] bg-white hover:bg-[#F4F2E6] active:scale-[0.98] transition-all cursor-pointer shadow-md"
             >
-              <span>Jetzt buchen</span>
+              <span>Jetzt anfragen</span>
               <div className="w-5 h-5 rounded-full bg-[#384808] text-white flex items-center justify-center group-hover:rotate-[-45deg] transition-transform">
                 <ArrowRight size={11} />
               </div>
