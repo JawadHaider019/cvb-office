@@ -58,7 +58,7 @@ export const Hero: React.FC = () => {
       id="top"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative overflow-hidden bg-[#FFFFFF] text-[#384808] pt-4 sm:pt-6 pb-12 sm:pb-16 select-none"
+      className="relative min-h-[77vh] lg:min-h-[88vh] flex flex-col justify-between overflow-hidden bg-[#FFFFFF] text-[#384808] pt-6 select-none"
       style={{ perspective: '1200px' }}
     >
       {/* 1. ATMOSPHERIC AMBIENT GLOWS */}
@@ -83,13 +83,13 @@ export const Hero: React.FC = () => {
       </motion.div>
 
       {/* 3. HERO CONTENT */}
-      <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 sm:px-10 lg:px-12 flex flex-col gap-8 sm:gap-10">
+      <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 sm:px-10 lg:px-12 flex-1 flex flex-col justify-between py-6 lg:py-8">
         {/* Top Status Pill - Frosted Glass */}
         <motion.div
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex items-center gap-3"
+          className="flex items-center gap-3 pt-2"
         >
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-xl border border-white/80 shadow-[0_4px_20px_rgba(56,72,8,0.06),inset_0_1px_1px_rgba(255,255,255,0.9)] text-xs font-bold text-[#384808]">
             <span className="w-2 h-2 rounded-full bg-[#889028] animate-pulse" />
@@ -100,23 +100,23 @@ export const Hero: React.FC = () => {
         {/* Editorial Content (Left side, unhindered, spacious) */}
         <motion.div
           style={{ x: contentX, y: contentY }}
-          className="max-w-2xl lg:max-w-3xl will-change-transform"
+          className="max-w-4xl lg:max-w-5xl my-auto py-4 lg:py-6 will-change-transform"
         >
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="font-spartan font-black uppercase text-5xl sm:text-6xl lg:text-[76px] leading-[0.92] tracking-[-0.025em] mb-4 sm:mb-5 text-[#384808]"
+            className="font-spartan font-black uppercase text-6xl sm:text-7xl lg:text-8xl leading-[0.92] tracking-[-0.025em] mb-6 text-[#384808]"
           >
             <span className="block text-[#384808]">
               CVB-OFFICE<span className="text-[#A09048]">.</span>
             </span>
-            <span className="block text-3xl sm:text-4xl lg:text-[46px] font-bold tracking-tight mt-2 text-[#384808]">
-              <span className="relative inline-block text-[#384808]">
+            <span className="block text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mt-2 text-[#384808]">
+              <span className="relative inline-block text-[#A09048]">
                 DEIN DIGITALES
                 {/* Gold Hand-Drawn Swoosh Underline (#A09048) */}
                 <svg
-                  className="absolute left-0 -bottom-2 w-full h-3.5 overflow-visible pointer-events-none"
+                  className="absolute left-0 -bottom-3 w-full h-3.5 overflow-visible pointer-events-none"
                   viewBox="0 0 400 24"
                   preserveAspectRatio="none"
                   aria-hidden="true"
@@ -124,13 +124,13 @@ export const Hero: React.FC = () => {
                   <path
                     d="M6 17C90 5 250 3 394 12"
                     fill="none"
-                    stroke="#A09048"
+                    stroke="#384808"
                     strokeWidth="7"
                     strokeLinecap="round"
                   />
                 </svg>
               </span>{' '}
-              <span className="text-[#889028]">VERMIET-OFFICE</span>
+              <span className="text-[#384808]">VERMIET-OFFICE</span>
             </span>
           </motion.h1>
 
@@ -138,7 +138,7 @@ export const Hero: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-base sm:text-lg text-[#585828] font-normal leading-relaxed mb-6 sm:mb-7 max-w-xl font-body"
+            className="text-base sm:text-lg text-[#585828] font-normal leading-relaxed mb-8 max-w-xl font-body"
           >
             {content.heroText}
           </motion.p>
@@ -172,7 +172,7 @@ export const Hero: React.FC = () => {
           </motion.div>
 
           {/* Mobile visible image banner */}
-          <div className="md:hidden mt-6 mb-2 w-full h-56 rounded-2xl overflow-hidden border border-[#A09048]/35 shadow-md">
+          <div className="md:hidden mt-8 mb-2 w-full h-56 rounded-2xl overflow-hidden border border-[#A09048]/35 shadow-md">
             <img
               src={content.heroImage || IMAGES.heroMotorhomeAlps}
               alt={content.heroImageAlt || "Modernes Reisemobil vor moderner Vermiet-Station"}
