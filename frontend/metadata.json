@@ -1,0 +1,8 @@
+{
+  "name": "CVB-Office Landing Page",
+  "description": "Offizielle Landing Page für CVB-Office – Das digitale Vermiet-Office des Caravan-Vermieter-Bund (CVB) mit Buchungsanfrage und Admin-Bereich.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
