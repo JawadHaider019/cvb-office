@@ -83,7 +83,7 @@ export const Hero: React.FC = () => {
       </motion.div>
 
       {/* 3. HERO CONTENT */}
-      <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 sm:px-10 lg:px-12 flex-1 flex flex-col justify-between py-8 lg:py-12">
+      <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 sm:px-10 lg:px-12 flex-1 flex flex-col justify-between py-6 lg:py-8">
         {/* Top Status Pill - Frosted Glass */}
         <motion.div
           initial={{ opacity: 0, y: -15 }}
@@ -100,7 +100,7 @@ export const Hero: React.FC = () => {
         {/* Editorial Content (Left side, unhindered, spacious) */}
         <motion.div
           style={{ x: contentX, y: contentY }}
-          className="max-w-2xl lg:max-w-3xl my-auto py-6 lg:py-10 will-change-transform"
+          className="max-w-2xl lg:max-w-3xl my-auto py-4 lg:py-6 will-change-transform"
         >
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
@@ -187,7 +187,7 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 will-change-transform z-10 pt-4"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 will-change-transform z-10 pt-2"
         >
           {/* Tile 1 */}
           <div className="p-5 rounded-2xl bg-white/45 backdrop-blur-2xl border border-white/75 border-t-white/95 hover:bg-white/65 hover:border-[#A09048]/60 transition-all duration-300 shadow-[0_8px_32px_0_rgba(56,72,8,0.06),inset_0_1px_2px_0_rgba(255,255,255,0.9)] hover:shadow-[0_12px_36px_0_rgba(56,72,8,0.12)] hover:-translate-y-0.5 group">
