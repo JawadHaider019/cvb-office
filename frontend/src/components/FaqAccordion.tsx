@@ -103,22 +103,36 @@ export const FaqAccordion: React.FC = () => {
       <div className="absolute top-1/2 right-1/4 w-[600px] h-[600px] bg-[#A09048]/10 rounded-full blur-[150px] pointer-events-none" />
 
       <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14">
-        {/* Section Header */}
+        {/* Section Header: Split Left (Headline) & Right (Editorial Paragraph) */}
         <ScrollReveal>
-          <div className="mb-14">
-            <div className="tech-tag mb-4">
-              <span className="tech-tagn">✦</span>
-              <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                HÄUFIG GESTELLTE FRAGEN
-              </span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end mb-16 pb-8 border-b border-[#A09048]/20">
+            {/* Left Column: Tag & Main Title */}
+            <div className="lg:col-span-7 xl:col-span-8">
+              <div className="tech-tag mb-4">
+                <span className="tech-tagn">✦</span>
+                <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
+                  HÄUFIG GESTELLTE FRAGEN
+                </span>
+              </div>
+
+              <h2 className="font-spartan text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-[#384808] leading-[1.02] tracking-tight">
+                ALLES, WAS DU ZU CVB-OFFICE WISSEN{' '}
+                <span className="text-[#889028]">
+                  MUSST<span className="text-[#A09048]">.</span>
+                </span>
+              </h2>
             </div>
 
-            <h2 className="font-spartan text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-[#384808] leading-[1.02] tracking-tight max-w-3xl">
-              ALLES, WAS DU ZU CVB-OFFICE WISSEN{' '}
-              <span className="text-[#889028]">
-                MUSST<span className="text-[#A09048]">.</span>
-              </span>
-            </h2>
+            {/* Right Column: Editorial Paragraph */}
+            <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-end">
+              <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body">
+                Hier findest Du verlässliche Antworten auf die wichtigsten Fragen rund um die Einführung, Verbundtarife, die digitale Vorab-Einweisung und die rechtssichere Digitalisierung Deiner Vermietung.
+              </p>
+              <div className="mt-3 flex items-center gap-2 text-xs font-mono text-[#889028] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#889028] animate-pulse" />
+                <span>Persönlicher Verbands-Support inklusive</span>
+              </div>
+            </div>
           </div>
         </ScrollReveal>
 
