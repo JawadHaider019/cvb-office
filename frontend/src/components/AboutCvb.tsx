@@ -104,37 +104,37 @@ export const AboutCvb: React.FC = () => {
             </div>
           </div>
 
-          {/* RIGHT SIDE (7 Columns): 2 Top Bento Cards + 1 Bottom Wide Banner Card */}
-          <div className="lg:col-span-7 flex flex-col justify-between gap-6">
+          {/* RIGHT SIDE (7 Columns): 2 Top Bento Cards + 1 Bottom Wide Banner Card (Compact, unified gap) */}
+          <div className="lg:col-span-7 flex flex-col gap-4 sm:gap-5">
             
             {/* TOP ROW: 2 Cards Side-by-Side (Dark Navy/Olive Card + Warm Gold Card) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               
               {/* Card 1: Verbandssitz (Matching "ADMISSIONS OFFICE" Card) */}
               <motion.div
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.25 }}
-                className="relative bg-[#242E05] text-white rounded-[28px] p-7 flex flex-col justify-between overflow-hidden shadow-xl border border-[#A09048]/35 group min-h-[200px]"
+                whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
+                className="relative bg-[#242E05] text-white rounded-[26px] p-6 sm:p-7 flex flex-col justify-between overflow-hidden shadow-lg border border-[#A09048]/35 group min-h-[170px]"
               >
                 {/* Background ambient lighting */}
                 <div className="absolute top-0 right-0 w-28 h-28 bg-[#A09048]/15 rounded-full blur-2xl pointer-events-none" />
 
                 <div>
-                  <div className="flex items-center gap-2.5 mb-4">
-                    <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-[#A09048]">
-                      <MapPin size={16} />
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center text-[#A09048]">
+                      <MapPin size={15} />
                     </div>
                     <span className="text-[10px] font-mono font-bold tracking-widest text-[#F4F2E6]/75 uppercase">
                       VERBANDSSITZ & LEITUNG
                     </span>
                   </div>
 
-                  <h3 className="font-spartan font-black text-xl sm:text-2xl text-white uppercase tracking-tight leading-snug">
+                  <h3 className="font-spartan font-black text-lg sm:text-xl text-white uppercase tracking-tight leading-snug">
                     Caravan-Vermieter-Bund (CVB)
                   </h3>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-[#F4F2E6]/80 font-mono mt-4 pt-3 border-t border-white/10">
+                <div className="flex items-center justify-between text-xs text-[#F4F2E6]/80 font-mono mt-3 pt-2.5 border-t border-white/10">
                   <span>Detlef Scheer · Deutschland</span>
                   <span className="w-2.5 h-2.5 rounded-full bg-[#A09048] animate-pulse" />
                 </div>
@@ -142,9 +142,9 @@ export const AboutCvb: React.FC = () => {
 
               {/* Card 2: E-Mail & Beratung (Matching Yellow "WRITE TO US" Card) */}
               <motion.div
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.25 }}
-                className="relative bg-[#A09048] text-[#242E05] rounded-[28px] p-7 flex flex-col justify-between overflow-hidden shadow-xl border border-[#889028]/35 group min-h-[200px]"
+                whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
+                className="relative bg-[#A09048] text-[#242E05] rounded-[26px] p-6 sm:p-7 flex flex-col justify-between overflow-hidden shadow-lg border border-[#889028]/35 group min-h-[170px]"
               >
                 {/* Watermark @ Graphic */}
                 <div className="absolute -top-6 -right-6 text-black/10 font-spartan font-black text-9xl pointer-events-none select-none">
@@ -152,9 +152,9 @@ export const AboutCvb: React.FC = () => {
                 </div>
 
                 <div>
-                  <div className="flex items-center gap-2.5 mb-4">
-                    <div className="w-8 h-8 rounded-xl bg-[#242E05] text-white flex items-center justify-center">
-                      <Mail size={16} />
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#242E05] text-white flex items-center justify-center">
+                      <Mail size={15} />
                     </div>
                     <span className="text-[10px] font-mono font-black tracking-widest text-[#242E05]/85 uppercase">
                       PERSÖNLICHE BERATUNG
@@ -163,28 +163,28 @@ export const AboutCvb: React.FC = () => {
 
                   <a
                     href={`mailto:${generalSettings.contactEmail}`}
-                    className="font-spartan font-black text-base sm:text-lg text-[#242E05] hover:underline break-all block leading-tight mb-2"
+                    className="font-spartan font-black text-sm sm:text-base text-[#242E05] hover:underline break-all block leading-tight mb-2"
                   >
                     {generalSettings.contactEmail}
                   </a>
                 </div>
 
                 {/* 2 Action Buttons (Exact Match to "Send an e-mail →" and "Copy") */}
-                <div className="flex items-center gap-2.5 mt-4 pt-3 border-t border-[#242E05]/15">
+                <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-[#242E05]/15">
                   <a
                     href={`mailto:${generalSettings.contactEmail}`}
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#242E05] text-white font-spartan font-bold text-xs uppercase tracking-wider hover:bg-[#384808] transition-colors shadow-sm"
+                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#242E05] text-white font-spartan font-bold text-xs uppercase tracking-wider hover:bg-[#384808] transition-colors shadow-xs"
                   >
                     <span>E-Mail senden</span>
-                    <ArrowRight size={12} />
+                    <ArrowRight size={11} />
                   </a>
 
                   <button
                     type="button"
                     onClick={handleCopyEmail}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-white/80 hover:bg-white text-[#242E05] font-spartan font-bold text-xs uppercase tracking-wider transition-colors border border-[#242E05]/20 cursor-pointer shadow-xs"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-white/85 hover:bg-white text-[#242E05] font-spartan font-bold text-xs uppercase tracking-wider transition-colors border border-[#242E05]/20 cursor-pointer shadow-2xs"
                   >
-                    {copied ? <Check size={13} className="text-emerald-700" /> : <Copy size={13} />}
+                    {copied ? <Check size={12} className="text-emerald-700" /> : <Copy size={12} />}
                     <span>{copied ? 'Kopiert' : 'Kopieren'}</span>
                   </button>
                 </div>
@@ -192,11 +192,11 @@ export const AboutCvb: React.FC = () => {
 
             </div>
 
-            {/* BOTTOM ROW: Wide Banner Card (Matching Purple "Applicant Support" Card) */}
+            {/* BOTTOM ROW: Wide Banner Card (Matching Purple "Applicant Support" Card with compact gap) */}
             <motion.div
               whileHover={{ y: -3 }}
-              transition={{ duration: 0.25 }}
-              className="relative bg-[#384808] text-white rounded-[28px] p-7 sm:p-8 overflow-hidden shadow-2xl border border-[#A09048]/40"
+              transition={{ duration: 0.2 }}
+              className="relative bg-[#384808] text-white rounded-[26px] p-6 sm:p-7 overflow-hidden shadow-xl border border-[#A09048]/40"
             >
               {/* Subtle background glow */}
               <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-[#A09048]/15 rounded-full blur-3xl pointer-events-none" />
