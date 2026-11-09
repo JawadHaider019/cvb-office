@@ -33,61 +33,73 @@ export const AboutCvb: React.FC = () => {
   };
 
   return (
-    <section id="studio" className="relative py-20 lg:py-28 bg-[#FFFFFF] text-[#384808] border-b border-[#A09048]/25 overflow-hidden">
+    <section id="studio" className="relative py-10 lg:py-16 bg-[#f2f2e8] text-[#384808] border-b border-[#A09048]/25 overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/3 left-0 w-[550px] h-[550px] bg-[#F4F2E6] rounded-full blur-[140px] pointer-events-none" />
 
       <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14">
-        {/* Top Header Row (Matching Reference Header: Pill badge on left, breadcrumb on right) */}
+        {/* Section Header: Matching All Other Top Headings (PriceTrialBox, Faq, ProblemSolution) */}
         <ScrollReveal>
-          <div className="flex items-center justify-between pb-8 mb-10 border-b border-[#A09048]/20">
-            {/* Left Pill Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#242E05] text-white text-xs font-spartan font-bold tracking-wider uppercase shadow-xs">
-              <span className="w-5 h-5 rounded-full bg-[#A09048] text-[#242E05] flex items-center justify-center font-black text-[10px]">
-                ✦
+          <div className="mb-12 lg:mb-16">
+            <div className="tech-tag mb-4">
+              <span className="tech-tagn">✦</span>
+              <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
+                ÜBER DEN BUND
               </span>
-              <span>ÜBER DEN BUND</span>
             </div>
 
 
           </div>
         </ScrollReveal>
 
-        {/* Master Bento Grid (Exact structural match to uploaded Reference Design) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+        {/* Master Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-stretch">
 
-          {/* LEFT SIDE (5 Columns): Headline, Narrative, Quote & Feature Pills */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
-            <div>
-              {/* Top Heading: Matching All Other Sections in Strict 2 Lines */}
-              <h2 className="font-spartan text-4xl sm:text-5xl lg:text-6xl xl:text-[44px] font-black uppercase text-[#384808] leading-[1.04] tracking-tight mb-5">
-                <span className="block text-[#384808]">MIT WEITSICHT GEGRÜNDET.</span>
-                <span className="block text-[#889028]">
-                  FÜR VERMIETER GEBAUT<span className="text-[#A09048]">.</span>
-                </span>
-              </h2>
+          {/* LEFT SIDE (5 Columns): Narrative, Feature Pills & Action Button */}
+          <div className="lg:col-span-5 flex flex-col justify-between  space-y-2">
 
-              {/* Explanatory Paragraph: Short, crisp, full info */}
-              <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed mb-6 font-body">
-                Der CVB stärkt unabhängige Vermieter mit Praxiswissen, Spezialversicherungen und über 1.000 betreuten Fahrzeugen deutschlandweit.
-              </p>
-            </div>
+            <h2 className="font-spartan text-3xl sm:text-4xl lg:text-5xl font-black uppercase text-[#384808] leading-[1.02] tracking-tight ">
+              MIT WEITSICHT GEGRÜNDET. {" "}
+              <span className="text-[#889028]">
+                FÜR VERMIETER GEBAUT<span className="text-[#A09048]">.</span>
+              </span>
+            </h2>
+            {/* Explanatory Paragraph */}
+            <p className="text-base sm:text-lg text-[#585828] font-normal leading-relaxed  font-body">
+              Der Caravan-Vermieter-Bund (CVB) stärkt unabhängige Vermieter mit Praxiswissen, Spezialversicherungen und einem starken Netzwerk von über 1.000 betreuten Fahrzeugen in ganz Deutschland.
+            </p>
 
-            {/* Bottom Row of Pill Tags (Matching Reference Bottom Left Pills) */}
-            <div className="flex flex-wrap items-center gap-2 pt-2">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F4F2E6] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
+            {/* Feature Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#fff] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
                 <Truck size={14} className="text-[#889028]" />
                 <span>1.000+ Fahrzeuge</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F4F2E6] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#fff] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
                 <Scale size={14} className="text-[#889028]" />
                 <span>BGB-Musterverträge</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F4F2E6] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#fff] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
                 <Users size={14} className="text-[#889028]" />
                 <span>Starkes Netzwerk</span>
               </div>
+
             </div>
+
+            <div >
+              <a
+                href={generalSettings.cvbWebsiteLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center mb-4 gap-3 px-6 py-3.5 rounded-full bg-[#242E05] hover:bg-[#384808] text-white font-spartan font-extrabold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 group"
+              >
+                <span>{content.aboutLinkText || 'Mehr über den CVB erfahren'}</span>
+                <span className="w-6 h-6 rounded-full bg-[#A09048] text-[#242E05] flex items-center justify-center font-black group-hover:rotate-45 transition-transform duration-300 shadow-sm">
+                  <ArrowUpRight size={13} strokeWidth={3} />
+                </span>
+              </a>
+            </div>
+
           </div>
 
           {/* RIGHT SIDE (7 Columns): 2 Top Bento Cards + 1 Bottom Wide Banner Card (Compact, unified gap) */}
@@ -239,6 +251,6 @@ export const AboutCvb: React.FC = () => {
 
         </div>
       </div>
-    </section>
+    </section >
   );
 };
