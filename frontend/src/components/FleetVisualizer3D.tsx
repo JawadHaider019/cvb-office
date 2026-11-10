@@ -111,16 +111,16 @@ export const FleetVisualizer3D: React.FC = () => {
                       <div className="w-12 h-12 rounded-2xl bg-[#384808] text-[#A09048] group-hover:bg-[#A09048] group-hover:text-white transition-colors flex items-center justify-center shrink-0 border border-white/10 shadow-sm">
                         <Icon size={22} />
                       </div>
-                      <span className="text-[10px] font-spartan font-extrabold tracking-widest uppercase text-[#C5CF77] px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
+                      <span className="text-[10px] font-spartan font-extrabold tracking-widest uppercase text-[#F4F2E6] px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
                         {spot.tag}
                       </span>
                     </div>
 
-                    <div className="text-[11px] font-mono text-[#C5CF77] mb-2">
+                    <div className="text-[11px] font-mono text-[#A09048] mb-2">
                       {spot.subtitle}
                     </div>
 
-                    <h4 className="font-spartan font-bold text-xl text-white mb-3 group-hover:text-[#C5CF77] transition-colors">
+                    <h4 className="font-spartan font-bold text-xl text-white mb-3 group-hover:text-[#F4F2E6] transition-colors">
                       {spot.title}
                     </h4>
 
@@ -130,7 +130,7 @@ export const FleetVisualizer3D: React.FC = () => {
                   </div>
 
                   <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-spartan font-bold text-[#A09048]">
-                    <span className="flex items-center gap-1.5 text-[#C5CF77]">
+                    <span className="flex items-center gap-1.5 text-[#F4F2E6]">
                       <CheckCircle2 size={14} className="text-[#A09048]" />
                       <span>Inklusive in CVB-Office</span>
                     </span>

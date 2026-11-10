@@ -4,10 +4,10 @@
  */
 
 import React, { useState } from 'react';
+import { MotionConfig } from 'motion/react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
-import { TrustBar } from './components/TrustBar';
 import { ProblemSolution } from './components/ProblemSolution';
 import { Features } from './components/Features';
 import { BuildingBlocks } from './components/BuildingBlocks';
@@ -57,9 +57,6 @@ const MainLayout: React.FC = () => {
       <main className="flex-1">
         {/* Part 1: Hero */}
         <Hero />
-
-        {/* German Trust & Compliance Bar (Hosting DE, DSGVO, Rechtssicherheit) */}
-        <TrustBar />
 
         {/* Part 2: Problem and Solution */}
         <ProblemSolution />
@@ -115,8 +112,10 @@ const MainLayout: React.FC = () => {
 
 export default function App() {
   return (
-    <AppProvider>
-      <MainLayout />
-    </AppProvider>
+    <MotionConfig reducedMotion="user">
+      <AppProvider>
+        <MainLayout />
+      </AppProvider>
+    </MotionConfig>
   );
 }

@@ -15,8 +15,8 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   children,
   delay = 0,
   direction = 'up',
-  distance = 32,
-  duration = 0.75,
+  distance = 24,
+  duration = 0.6,
   className = '',
   once = true,
 }) => {
@@ -45,7 +45,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
     <motion.div
       initial={initial}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once, margin: '-60px' }}
+      viewport={{ once, margin: '-40px' }}
       transition={{
         duration,
         delay,

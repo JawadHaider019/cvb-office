@@ -98,14 +98,14 @@ export const FaqAccordion: React.FC = () => {
   };
 
   return (
-    <section id="faq" className="relative py-10 lg:py-16 bg-[#fff] text-[#384808] border-b border-[#A09048]/25 overflow-hidden">
+    <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-[#fff] text-[#384808] border-b border-[#A09048]/25 overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/2 right-1/4 w-[600px] h-[600px] bg-[#A09048]/10 rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14">
+      <div className="relative max-w-[1400px] mx-auto px-4 sm:px-10 lg:px-14">
         {/* Section Header: Split Left (Headline) & Right (Editorial Paragraph) */}
         <ScrollReveal>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end mb-16 pb-8 border-b border-[#A09048]/20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-end mb-10 sm:mb-16 pb-6 sm:pb-8 border-b border-[#A09048]/20">
             {/* Left Column: Tag & Main Title */}
             <div className="lg:col-span-7 xl:col-span-8">
               <div className="tech-tag mb-4">
@@ -115,7 +115,7 @@ export const FaqAccordion: React.FC = () => {
                 </span>
               </div>
 
-              <h2 className="font-spartan text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-[#384808] leading-[1.02] tracking-tight">
+              <h2 className="font-spartan text-[28px] sm:text-5xl lg:text-6xl font-black uppercase text-[#384808] leading-[1.05] sm:leading-[1.02] tracking-tight">
                 ALLES, WAS DU ZU CVB-OFFICE WISSEN{' '}
                 <span className="text-[#889028]">
                   MUSST<span className="text-[#A09048]">.</span>
@@ -132,12 +132,18 @@ export const FaqAccordion: React.FC = () => {
           </div>
         </ScrollReveal>
 
-        {/* 2-Column Master Layout (Matching the user screenshot) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        {/* 2-Column Master Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-start">
           {/* LEFT COLUMN: Filter Sidebar & "Still have a question?" Bento Card */}
-          <div className="lg:col-span-4 space-y-5 lg:sticky lg:top-28">
-            {/* Category Navigation Pills */}
-            <div className="bg-white/80 backdrop-blur-md p-2 rounded-[28px] border border-[#A09048]/25 shadow-xs space-y-1.5">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-4 space-y-5 lg:sticky lg:top-28"
+          >
+            {/* Category Navigation Pills (Horizontal scroll pills on mobile/tablet, vertical stack on desktop) */}
+            <div className="bg-white/80 backdrop-blur-md p-1.5 sm:p-2 rounded-2xl lg:rounded-[28px] border border-[#A09048]/25 shadow-xs flex lg:flex-col overflow-x-auto lg:overflow-visible gap-1.5 lg:gap-0 lg:space-y-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {categories.map((cat) => {
                 const Icon = cat.icon;
                 const isActive = activeCategory === cat.id;
@@ -147,27 +153,27 @@ export const FaqAccordion: React.FC = () => {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-all cursor-pointer group ${isActive
+                    className={`shrink-0 lg:shrink lg:w-full flex items-center justify-between gap-2.5 lg:gap-0 px-3.5 py-2.5 lg:px-4 lg:py-3.5 rounded-xl lg:rounded-2xl text-left transition-all cursor-pointer group ${isActive
                       ? 'bg-[#384808] text-white shadow-md'
                       : 'text-[#384808] hover:bg-[#F4F2E6] hover:text-[#2D3A06]'
                       }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 lg:gap-3">
                       <div
-                        className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${isActive
+                        className={`w-7 h-7 lg:w-8 lg:h-8 rounded-lg lg:rounded-xl flex items-center justify-center transition-colors shrink-0 ${isActive
                           ? 'bg-[#A09048] text-white'
                           : 'bg-[#F4F2E6] text-[#889028] group-hover:bg-white'
                           }`}
                       >
-                        <Icon size={16} />
+                        <Icon size={15} className="lg:w-4 lg:h-4" />
                       </div>
-                      <span className="font-spartan font-bold text-sm tracking-tight">
+                      <span className="font-spartan font-bold text-xs lg:text-sm tracking-tight whitespace-nowrap lg:whitespace-normal">
                         {cat.name}
                       </span>
                     </div>
 
                     <span
-                      className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full transition-colors ${isActive
+                      className={`text-[11px] lg:text-xs font-mono font-bold px-2 py-0.5 rounded-full transition-colors shrink-0 ${isActive
                         ? 'bg-white/20 text-white'
                         : 'bg-stone-100 text-[#585828] group-hover:bg-white'
                         }`}
@@ -179,8 +185,8 @@ export const FaqAccordion: React.FC = () => {
               })}
             </div>
 
-            {/* "Still have a question?" Dark Bento Card (Exact match to screenshot bottom card) */}
-            <div className="relative rounded-[28px] p-7 bg-[#242E05] text-white border border-[#A09048]/35 shadow-xl overflow-hidden">
+            {/* "Still have a question?" Dark Bento Card (Desktop Sidebar) */}
+            <div className="hidden lg:block relative rounded-[28px] p-7 bg-[#242E05] text-white border border-[#A09048]/35 shadow-xl overflow-hidden">
               {/* Subtle ambient corner glow */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#A09048]/20 rounded-full blur-2xl pointer-events-none" />
 
@@ -192,7 +198,7 @@ export const FaqAccordion: React.FC = () => {
                   Unser Verbandsteam hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.
                 </p>
 
-                <div className="text-xs font-mono text-[#C5CF77] font-bold mb-6 break-all">
+                <div className="text-xs font-mono text-[#F4F2E6] font-bold mb-6 break-all">
                   {generalSettings.contactEmail}
                 </div>
 
@@ -205,24 +211,31 @@ export const FaqAccordion: React.FC = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* RIGHT COLUMN: Accordion Grouped by Category */}
-          <div className="lg:col-span-8 space-y-10">
-            {displayCategories.map((cat) => {
+          <div className="lg:col-span-8 space-y-8 sm:space-y-10">
+            {displayCategories.map((cat, catIdx) => {
               const catFaqs = categorizedFaqs.filter((f) => f.categoryId === cat.id);
               if (catFaqs.length === 0) return null;
 
               const CategoryIcon = cat.icon;
 
               return (
-                <div key={cat.id} className="space-y-4">
+                <motion.div
+                  key={cat.id}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.45, delay: catIdx * 0.05 }}
+                  className="space-y-3.5 sm:space-y-4"
+                >
                   {/* Category Header with Gold/Yellow Rounded Icon Badge */}
-                  <div className="flex items-center gap-3 pt-2 pb-1">
-                    <div className="w-9 h-9 rounded-xl bg-[#A09048] text-white flex items-center justify-center shadow-sm">
-                      <CategoryIcon size={18} />
+                  <div className="flex items-center gap-3 pt-1 sm:pt-2 pb-1">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#A09048] text-white flex items-center justify-center shadow-sm shrink-0">
+                      <CategoryIcon size={17} className="sm:w-[18px] sm:h-[18px]" />
                     </div>
-                    <h3 className="font-spartan font-black text-xl sm:text-2xl text-[#384808] uppercase tracking-tight">
+                    <h3 className="font-spartan font-black text-lg sm:text-2xl text-[#384808] uppercase tracking-tight">
                       {cat.name}
                     </h3>
                   </div>
@@ -233,9 +246,11 @@ export const FaqAccordion: React.FC = () => {
                       const isOpen = !!openIds[faq.id];
 
                       return (
-                        <div
+                        <motion.div
                           key={faq.id}
-                          className={`bg-white rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden ${isOpen
+                          whileHover={{ y: -2 }}
+                          transition={{ duration: 0.18 }}
+                          className={`bg-white rounded-2xl sm:rounded-3xl border transition-colors duration-300 overflow-hidden ${isOpen
                             ? 'border-[#384808] shadow-[0_8px_25px_rgba(56,72,8,0.08)]'
                             : 'border-[#A09048]/25 hover:border-[#889028] shadow-xs'
                             }`}
@@ -244,9 +259,9 @@ export const FaqAccordion: React.FC = () => {
                             type="button"
                             onClick={() => toggle(faq.id)}
                             aria-expanded={isOpen}
-                            className="w-full px-6 sm:px-8 py-5 sm:py-5.5 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none group select-none"
+                            className="w-full px-4 sm:px-8 py-4 sm:py-5.5 text-left flex items-center justify-between gap-3 sm:gap-4 cursor-pointer focus:outline-none group select-none"
                           >
-                            <span className="font-spartan text-base sm:text-lg font-bold text-[#384808] group-hover:text-[#889028] transition-colors leading-snug">
+                            <span className="font-spartan text-sm sm:text-lg font-bold text-[#384808] group-hover:text-[#889028] transition-colors leading-snug">
                               {faq.question}
                             </span>
 
@@ -270,19 +285,42 @@ export const FaqAccordion: React.FC = () => {
                                 transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                                 className="overflow-hidden"
                               >
-                                <div className="px-6 sm:px-8 pb-6 pt-1 text-sm text-[#585828] leading-relaxed border-t border-[#A09048]/15 font-body">
+                                <div className="px-4 sm:px-8 pb-5 sm:pb-6 pt-1 text-xs sm:text-sm text-[#585828] leading-relaxed border-t border-[#A09048]/15 font-body">
                                   <p>{faq.answer}</p>
                                 </div>
                               </motion.div>
                             )}
                           </AnimatePresence>
-                        </div>
+                        </motion.div>
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
+
+            {/* "Still have a question?" Dark Bento Card (Mobile & Tablet placement below FAQs) */}
+            <div className="lg:hidden relative rounded-[24px] p-6 bg-[#242E05] text-white border border-[#A09048]/35 shadow-xl overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#A09048]/20 rounded-full blur-2xl pointer-events-none" />
+              <div className="relative z-10">
+                <h3 className="font-spartan font-black text-lg text-white uppercase tracking-tight mb-2">
+                  Noch Fragen offen?
+                </h3>
+                <p className="text-xs text-[#F4F2E6]/85 leading-relaxed mb-4 font-sans">
+                  Unser Verbandsteam hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.
+                </p>
+                <div className="text-xs font-mono text-[#F4F2E6] font-bold mb-5 break-all">
+                  {generalSettings.contactEmail}
+                </div>
+                <button
+                  onClick={scrollToForm}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-white text-[#384808] hover:bg-[#F4F2E6] font-spartan font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-md group"
+                >
+                  <span>Team kontaktieren</span>
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform text-[#889028]" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -158,7 +158,7 @@ const defaultDatabase: DatabaseSchema = {
       'Klare Abläufe, weniger Rückfragen, ein professioneller Auftritt',
     ],
     blockATitle: 'Digitale Vorab-Einweisung',
-    blockAText: 'Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug. Bis zu 50 % Zeitersparnis bei der Übergabe vor Ort.',
+    blockAText: 'Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug.',
     blockBTitle: 'Dein Vermiet-Office',
     blockBText: 'Anfragen, Buchungen, Verträge, Zahlungen und Übergaben an einem Ort, immer aktuell und übersichtlich. Inklusive Live-Verfügbarkeit, Saisonpreisen und digitaler Vertragserstellung als PDF.',
     aboutText: 'Der Caravan-Vermieter-Bund unterstützt Wohnmobil-Vermieter mit Wissen, Versicherungen und einem starken Netzwerk. Heute betreuen wir mehr als 1.000 Fahrzeuge in ganz Deutschland.',

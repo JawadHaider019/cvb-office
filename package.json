@@ -1,5 +1,5 @@
 {
-  "name": "cvb-office-root",
+  "name": "cvb-office",
   "private": true,
   "workspaces": [
     "frontend",
@@ -14,4 +14,3 @@
     "lint": "npm --prefix frontend run lint"
   }
 }
-

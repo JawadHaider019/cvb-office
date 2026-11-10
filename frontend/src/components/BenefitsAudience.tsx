@@ -1,9 +1,11 @@
 import React from 'react';
+import { useApp } from '../context/AppContext';
 import { defaultBenefits, defaultAudience } from '../data/defaultContent';
 import {
   Clock,
   Zap,
   Eye,
+  TrendingUp,
   ShieldCheck,
   Layers,
   Sparkles,
@@ -11,10 +13,10 @@ import {
   Compass,
   Laptop,
   MapPin,
+  ArrowRight,
   LucideIcon,
-  CheckCircle2,
 } from 'lucide-react';
-import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';
+import { ScrollReveal } from './ScrollReveal';
 import { motion } from 'motion/react';
 
 const benefitIcons: Record<string, LucideIcon> = {
@@ -26,6 +28,33 @@ const benefitIcons: Record<string, LucideIcon> = {
   Sparkles,
 };
 
+const testimonials = [
+  {
+    num: '01',
+    icon: Clock,
+    title: 'Familienbetrieb (6 Fahrzeuge)',
+    region: 'Bayern · 50 % Zeitersparnis',
+    quote:
+      '„Die Video-Einweisung vorab spart uns samstags pro Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren.“',
+  },
+  {
+    num: '02',
+    icon: TrendingUp,
+    title: 'Wohnmobilvermietung (14 Mobile)',
+    region: 'NRW · 0 % Provision',
+    quote:
+      '„Mit dem 1-Zeilen-Kalender auf unserer Website buchen Kunden direkt bei uns statt über teure Vermittlungsportale. 0 % Provision ab Tag eins.“',
+  },
+  {
+    num: '03',
+    icon: ShieldCheck,
+    title: 'Camper-Station (3 Vans)',
+    region: 'Norddeutschland · Rechtssicher',
+    quote:
+      '„Die geprüften Verbands-Mietverträge und die digitale Unterschrift auf dem Tablet geben uns und unseren Mietern volle Rechtssicherheit.“',
+  },
+];
+
 const audienceIcons: Record<string, LucideIcon> = {
   Caravan,
   Compass,
@@ -34,187 +63,248 @@ const audienceIcons: Record<string, LucideIcon> = {
 };
 
 export const BenefitsAudience: React.FC = () => {
+  const { generalSettings } = useApp();
+
+  const scrollToForm = () => {
+    const el = document.getElementById('buchen');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section className="relative py-24 lg:py-32 bg-[#2D3A06] text-white border-b border-[#A09048]/25 overflow-hidden">
-      {/* Decorative background glows */}
-      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-[#889028]/15 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-0 w-[500px] h-[500px] bg-[#A09048]/15 rounded-full blur-[140px] pointer-events-none" />
+    <>
+      {/* BAND 1 (Guide Image 1): White Background — Split Left Headline + Numbered 1-6 Benefit Track Right */}
+      <section className="relative py-14 sm:py-20 lg:py-28 bg-white text-[#242E05] border-b border-[#A09048]/20 overflow-hidden">
+        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-10 lg:px-14">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 items-center">
+            {/* Left Column (5 Cols) */}
+            <div className="lg:col-span-5 space-y-6">
+              <ScrollReveal>
+                <div className="tech-tag mb-4">
+                  <span className="tech-tagn">✦</span>
+                  <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
+                    VORTEILE FÜR VERMIETER
+                  </span>
+                </div>
 
-      <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14">
-        {/* Part 6: Benefits */}
-        <div className="mb-28">
-          <ScrollReveal>
-            <div className="tech-tag mb-4 bg-[#384808] border-[#A09048]/30 text-white">
-              <span className="tech-tagn bg-[#A09048] text-white">✦</span>
-              <span className="font-spartan font-bold text-xs uppercase tracking-wider text-white">
-                VORTEILE FÜR VERMIETER
-              </span>
+                <h2 className="font-spartan text-[26px] sm:text-5xl lg:text-[50px] font-black uppercase text-[#242E05] leading-[1.05] sm:leading-[1.03] tracking-tight mb-4 sm:mb-5">
+                  WARUM SICH CVB-OFFICE FÜR DEINEN BETRIEB{' '}
+                  <span className="text-[#889028]">
+                    AUSZAHLT<span className="text-[#A09048]">.</span>
+                  </span>
+                </h2>
+
+                <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed mb-6 sm:mb-7 max-w-md font-body">
+                  Automatisierte Abläufe, volle Kostenkontrolle und digitale Rechtssicherheit – entwickelt für den Vermietalltag ohne IT-Ballast.
+                </p>
+
+                <button
+                  type="button"
+                  onClick={scrollToForm}
+                  className="inline-flex items-center justify-center gap-3 w-full sm:w-auto h-12 px-6 rounded-full bg-[#242E05] hover:bg-[#384808] text-white font-spartan font-black text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg hover:-translate-y-0.5 cursor-pointer"
+                >
+                  <span>Jetzt starten</span>
+                  <ArrowRight size={15} />
+                </button>
+              </ScrollReveal>
             </div>
 
-            <h2 className="font-spartan text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-white leading-[1.02] tracking-tight mb-16 max-w-3xl">
-              WARUM SICH CVB-OFFICE FÜR DEINEN BETRIEB{' '}
-              <span className="text-[#A09048]">
-                AUSZAHLT.
-              </span>
-            </h2>
-          </ScrollReveal>
+            {/* Right Column (7 Cols): Vertical Numbered Step List matching Reference Image 1 */}
+            <div className="lg:col-span-7 relative">
+              {/* Vertical Connecting Line */}
+              <div
+                aria-hidden="true"
+                className="hidden sm:block absolute left-5 top-6 bottom-6 w-[2px] bg-gradient-to-b from-[#384808]/25 via-[#889028]/45 to-[#384808]"
+              />
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {defaultBenefits.map((b, idx) => {
-              const Icon = benefitIcons[b.icon] || Sparkles;
-              return (
-                <StaggerItem key={idx}>
-                  <motion.div
-                    whileHover={{ y: -8 }}
-                    transition={{ duration: 0.25 }}
-                    className="relative bg-[#242E05] backdrop-blur-md rounded-[28px] p-8 border border-[#A09048]/25 hover:border-[#A09048] transition-all flex flex-col justify-between h-full group shadow-xl hover:shadow-[0_16px_40px_rgba(160,144,72,0.18)]"
-                  >
-                    <div>
-                      <div className="w-12 h-12 rounded-2xl bg-[#384808] border border-[#A09048]/40 flex items-center justify-center text-[#A09048] mb-6 group-hover:bg-[#A09048] group-hover:text-white transition-all shadow-md group-hover:scale-105">
-                        <Icon size={22} />
+              <div className="space-y-3 sm:space-y-3.5">
+                {defaultBenefits.map((b, idx) => {
+                  const isLast = idx === defaultBenefits.length - 1;
+                  const Icon = benefitIcons[b.icon] || Sparkles;
+                  return (
+                    <ScrollReveal key={idx} delay={idx * 0.05}>
+                      <div className="flex items-center gap-3 sm:gap-5">
+                        {/* Number Circle */}
+                        <div
+                          className={`relative z-10 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-spartan font-black text-xs sm:text-sm shrink-0 shadow-sm ${
+                            isLast
+                              ? 'bg-[#889028] text-white ring-4 ring-[#889028]/25'
+                              : idx < 3
+                                ? 'bg-[#384808] text-white'
+                                : 'bg-[#889028] text-white'
+                          }`}
+                        >
+                          {idx + 1}
+                        </div>
+
+                        {/* Pill Row Card */}
+                        <motion.div
+                          whileHover={{ x: 4 }}
+                          transition={{ duration: 0.18 }}
+                          className={`flex-1 rounded-2xl px-4 py-3.5 sm:px-5 sm:py-4 flex items-center justify-between gap-3 sm:gap-4 transition-colors ${
+                            isLast
+                              ? 'bg-[#242E05] text-white shadow-xl'
+                              : 'bg-[#F9F8F3] border border-[#A09048]/25 text-[#242E05] shadow-xs hover:shadow-md hover:border-[#A09048]/45'
+                          }`}
+                        >
+                          <div className="min-w-0">
+                            <h3
+                              className={`font-spartan font-black text-xs sm:text-base uppercase tracking-tight leading-snug ${
+                                isLast ? 'text-white' : 'text-[#242E05]'
+                              }`}
+                            >
+                              {b.title}
+                            </h3>
+                            <p
+                              className={`text-xs sm:text-[13px] leading-snug mt-0.5 ${
+                                isLast ? 'text-[#F4F2E6]/85' : 'text-[#585828]'
+                              }`}
+                            >
+                              {b.text}
+                            </p>
+                          </div>
+
+                          <div
+                            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                              isLast
+                                ? 'bg-[#889028] text-white'
+                                : 'bg-white text-[#384808] border border-[#A09048]/25 shadow-2xs'
+                            }`}
+                            aria-hidden="true"
+                          >
+                            <Icon size={17} strokeWidth={2.2} className="sm:w-[18px] sm:h-[18px]" />
+                          </div>
+                        </motion.div>
                       </div>
-
-                      <h3 className="font-spartan text-lg font-black uppercase tracking-wider text-white mb-3 group-hover:text-[#C5CF77] transition-colors">
-                        {b.title}
-                      </h3>
-
-                      <p className="text-sm text-[#F4F2E6]/90 leading-relaxed font-sans font-normal">
-                        {b.text}
-                      </p>
-                    </div>
-
-                    <div className="mt-8 pt-4 border-t border-white/10 text-[11px] font-mono text-[#C5CF77]/80 flex items-center justify-between">
-                      <span>SYSTEM // VORTEIL 0{idx + 1}</span>
-                      <span className="text-[#A09048] opacity-0 group-hover:opacity-100 transition-opacity font-bold">
-                        Aktiviert
-                      </span>
-                    </div>
-                  </motion.div>
-                </StaggerItem>
-              );
-            })}
-          </StaggerContainer>
-        </div>
-
-        {/* Part 6.5: Praxis-Stimmen / Social Proof (German B2B Trust) */}
-        <div className="mb-28">
-          <ScrollReveal>
-            <div className="tech-tag mb-4 bg-[#384808] border-[#A09048]/30 text-white">
-              <span className="tech-tagn bg-[#A09048] text-white">★</span>
-              <span className="font-spartan font-bold text-xs uppercase tracking-wider text-white">
-                STIMMEN AUS DER VERMIETPRAXIS
-              </span>
-            </div>
-
-            <h2 className="font-spartan text-3xl sm:text-4xl lg:text-5xl font-black uppercase text-white leading-[1.02] tracking-tight mb-12 max-w-3xl">
-              WAS VERMIETER AN{' '}
-              <span className="text-[#A09048]">
-                CVB-OFFICE SCHÄTZEN.
-              </span>
-            </h2>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#242E05]/90 border border-[#A09048]/30 rounded-[28px] p-7 flex flex-col justify-between shadow-xl">
-              <p className="text-sm text-[#F4F2E6] italic leading-relaxed mb-6 font-sans">
-                „Die Vorab-Einweisung per Video spart uns samstags bei jeder Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren – das nimmt enorm viel Hektik aus dem Betrieb.“
-              </p>
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-                <div>
-                  <span className="font-bold text-white block">Familienbetrieb (6 Fahrzeuge)</span>
-                  <span className="text-[#C5CF77] text-[11px]">Region Bayern</span>
-                </div>
-                <span className="text-[10px] font-mono text-[#A09048] bg-[#384808] px-2.5 py-1 rounded-full font-bold">
-                  50% ZEITERSPARNIS
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-[#242E05]/90 border border-[#A09048]/30 rounded-[28px] p-7 flex flex-col justify-between shadow-xl">
-              <p className="text-sm text-[#F4F2E6] italic leading-relaxed mb-6 font-sans">
-                „Früher haben wir tausende Euro an Vermittlungsportale abgedrückt. Mit dem 1-Zeilen-Kalender auf unserer eigenen Website buchen die Kunden direkt bei uns. 0 % Provision – das rechnet sich ab der ersten Buchung.“
-              </p>
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-                <div>
-                  <span className="font-bold text-white block">Wohnmobilvermietung (14 Mobile)</span>
-                  <span className="text-[#C5CF77] text-[11px]">Region NRW</span>
-                </div>
-                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-full font-bold">
-                  0% PROVISION
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-[#242E05]/90 border border-[#A09048]/30 rounded-[28px] p-7 flex flex-col justify-between shadow-xl">
-              <p className="text-sm text-[#F4F2E6] italic leading-relaxed mb-6 font-sans">
-                „Als Einsteiger war mir die Rechtssicherheit am wichtigsten. Die geprüften Verbands-Mietverträge und die digitale Unterschrift auf dem Tablet geben uns und den Mietern absolute Sicherheit.“
-              </p>
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-                <div>
-                  <span className="font-bold text-white block">Camper-Station (3 Vans)</span>
-                  <span className="text-[#C5CF77] text-[11px]">Region Norddeutschland</span>
-                </div>
-                <span className="text-[10px] font-mono text-[#A09048] bg-[#384808] px-2.5 py-1 rounded-full font-bold">
-                  RECHTSSICHER
-                </span>
+                    </ScrollReveal>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Part 7: Audience */}
-        <div>
+      {/* BAND 2 (Guide Image 2): Dark Olive-to-Black Gradient — Praxis-Stimmen Cards + Zielgruppen Banner */}
+      <section className="relative py-14 sm:py-20 lg:py-28 bg-gradient-to-b from-[#283505] via-[#131A02] to-[#060801] text-white border-b border-[#A09048]/25 overflow-hidden">
+        {/* Soft centered glow behind cards */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-[#889028]/15 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="relative max-w-[1280px] mx-auto px-4 sm:px-10 lg:px-14">
           <ScrollReveal>
-            <div className="tech-tag mb-4 bg-[#384808] border-[#A09048]/30 text-white">
-              <span className="tech-tagn bg-[#A09048] text-white">✦</span>
-              <span className="font-spartan font-bold text-xs uppercase tracking-wider text-white">
-                ZIELGRUPPEN & FLOTTEN
+            <div className="text-center max-w-2xl mx-auto mb-9 sm:mb-12">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-[0.24em] text-[#A09048] block mb-3">
+                ★ STIMMEN AUS DER VERMIETPRAXIS
               </span>
+              <h2 className="font-spartan text-[26px] sm:text-4xl lg:text-[46px] font-black uppercase text-white tracking-tight leading-[1.06] sm:leading-[1.04]">
+                WAS VERMIETER AN <br className="hidden sm:block" />
+                <span className="text-[#A09048]">CVB-OFFICE SCHÄTZEN.</span>
+              </h2>
             </div>
-
-            <h2 className="font-spartan text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-white leading-[1.02] tracking-tight mb-16 max-w-3xl">
-              FÜR WELCHE VERMIETUNGEN CVB-OFFICE{' '}
-              <span className="text-[#A09048]">
-                KONZIPIERT IST.
-              </span>
-            </h2>
           </ScrollReveal>
 
-          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {defaultAudience.map((aud, idx) => {
-              const Icon = audienceIcons[aud.icon] || Caravan;
+          {/* 3 Clean Dark Cards (Matching Reference Image 2 Top) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 mb-8 sm:mb-10">
+            {testimonials.map((t, idx) => {
+              const Icon = t.icon;
               return (
-                <StaggerItem key={idx}>
-                  <motion.div
-                    whileHover={{ y: -8 }}
-                    transition={{ duration: 0.25 }}
-                    className="relative bg-[#242E05] backdrop-blur-md rounded-[28px] p-8 border border-[#A09048]/25 hover:border-[#889028] transition-all flex flex-col justify-between h-full group shadow-xl"
-                  >
-                    <div>
-                      <div className="w-12 h-12 rounded-2xl bg-[#384808] border border-[#A09048]/40 flex items-center justify-center text-[#C5CF77] mb-6 group-hover:bg-[#889028] group-hover:text-white transition-all shadow-md group-hover:scale-105">
-                        <Icon size={22} />
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  whileHover={{ y: -5 }}
+                  transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.21, 0.47, 0.32, 0.98] }}
+                  className="bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-[#A09048]/40 rounded-[22px] p-5 sm:p-7 flex flex-col justify-between shadow-xl transition-colors"
+                >
+                  <div>
+                    <div className="flex items-start justify-between mb-4 sm:mb-6">
+                      <div className="w-10 h-10 rounded-xl bg-[#889028] text-white flex items-center justify-center shadow-md">
+                        <Icon size={19} />
                       </div>
-
-                      <h3 className="font-spartan text-lg font-black uppercase tracking-wider text-white mb-3 group-hover:text-[#C5CF77] transition-colors">
-                        {aud.title}
-                      </h3>
-
-                      <p className="text-sm text-[#F4F2E6]/90 leading-relaxed font-sans font-normal">
-                        {aud.text}
-                      </p>
+                      <span className="font-spartan font-black text-3xl text-white/15 tracking-tight leading-none select-none">
+                        {t.num}
+                      </span>
                     </div>
 
-                    <div className="mt-8 pt-4 border-t border-white/10 flex items-center gap-2 text-[11px] font-mono uppercase text-[#C5CF77] font-bold">
-                      <CheckCircle2 size={14} className="text-[#A09048]" />
-                      <span>100% KOMPATIBEL</span>
-                    </div>
-                  </motion.div>
-                </StaggerItem>
+                    <h3 className="font-spartan font-bold text-base text-white tracking-tight mb-2 sm:mb-2.5">
+                      {t.title}
+                    </h3>
+
+                    <p className="text-xs sm:text-[13px] text-[#F4F2E6]/75 leading-relaxed font-sans mb-4 sm:mb-5">
+                      {t.quote}
+                    </p>
+                  </div>
+
+                  <div className="text-[11px] font-mono font-semibold text-[#A09048] tracking-wide">
+                    {t.region}
+                  </div>
+                </motion.div>
               );
             })}
-          </StaggerContainer>
+          </div>
+
+          {/* Bottom Centered Gradient Banner (Matching Reference Image 2 Bottom Card) */}
+          <ScrollReveal delay={0.1}>
+            <div className="relative rounded-[24px] sm:rounded-[32px] py-9 px-5 sm:py-16 sm:px-12 bg-gradient-to-br from-[#3D4F09] via-[#51680B] to-[#889028]/75 border border-[#A09048]/40 shadow-2xl overflow-hidden text-center">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_center,rgba(160,144,72,0.22),transparent_62%)] pointer-events-none" />
+
+              <div className="relative z-10 max-w-3xl mx-auto">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-[0.22em] text-[#F4F2E6]/80 block mb-3">
+                  ✦ ZIELGRUPPEN & FLOTTEN
+                </span>
+
+                <h3 className="font-spartan text-[23px] sm:text-4xl lg:text-[46px] font-black uppercase tracking-tight leading-[1.08] sm:leading-[1.06] mb-4">
+                  <span className="text-white block">FÜR JEDE VERMIETUNG GEBAUT.</span>
+                  <span className="text-[#F4F2E6]/90 block mt-1 sm:mt-0">VOM EINZELCAMPER BIS ZUM VERBUND.</span>
+                </h3>
+
+                <p className="text-xs sm:text-sm text-[#F4F2E6]/85 max-w-xl mx-auto leading-relaxed mb-6">
+                  Ob Wohnmobile, Wohnwagen, Anhänger oder Dachzelte – konzipiert für digitale Direktbuchungen und einen oder mehrere Standorte mit klarer Rechtestruktur.
+                </p>
+
+                {/* Minimal Inline Audience Pills (Zero Box Clutter) */}
+                <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-7 sm:mb-8">
+                  {defaultAudience.map((aud, idx) => {
+                    const Icon = audienceIcons[aud.icon] || Caravan;
+                    return (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-[#172002]/40 border border-white/15 text-[11px] font-medium text-[#F4F2E6]/90"
+                      >
+                        <Icon size={13} className="text-[#F4F2E6] shrink-0" />
+                        <span>{aud.title}</span>
+                      </span>
+                    );
+                  })}
+                </div>
+
+                {/* Centered 2 Pill CTAs */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-3.5">
+                  <button
+                    type="button"
+                    onClick={scrollToForm}
+                    className="inline-flex items-center justify-center gap-2.5 w-full sm:w-auto h-12 px-7 rounded-full bg-white hover:bg-[#F4F2E6] text-[#172002] font-spartan font-black text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg hover:-translate-y-0.5 cursor-pointer"
+                  >
+                    <span>Jetzt anfragen</span>
+                    <ArrowRight size={15} />
+                  </button>
+
+                  <a
+                    href={generalSettings.trialLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center w-full sm:w-auto h-12 px-7 rounded-full bg-white/[0.06] hover:bg-white/15 border border-white/25 text-white font-sans font-bold text-xs sm:text-sm transition-all"
+                  >
+                    14 Tage kostenlos testen
+                  </a>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };

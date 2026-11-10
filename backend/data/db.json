@@ -83,7 +83,7 @@
       "Klare Abläufe, weniger Rückfragen, ein professioneller Auftritt"
     ],
     "blockATitle": "Digitale Vorab-Einweisung",
-    "blockAText": "Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug. Bis zu 50 % Zeitersparnis bei der Übergabe vor Ort.",
+    "blockAText": "Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug.",
     "blockBTitle": "Dein Vermiet-Office",
     "blockBText": "Anfragen, Buchungen, Verträge, Zahlungen und Übergaben an einem Ort, immer aktuell und übersichtlich. Inklusive Live-Verfügbarkeit, Saisonpreisen und digitaler Vertragserstellung als PDF.",
     "aboutText": "Der Caravan-Vermieter-Bund unterstützt Wohnmobil-Vermieter mit Wissen, Versicherungen und einem starken Netzwerk. Heute betreuen wir mehr als 1.000 Fahrzeuge in ganz Deutschland.",
@@ -96,7 +96,15 @@
     "trialPromiseLine": "14 Tage kostenlos testen, keine automatische Verlängerung",
     "formHeading": "CVB-Office buchen",
     "formIntro": "Trag Deine E-Mail-Adresse und die Anzahl Deiner Fahrzeuge ein. Wir melden uns bei Dir und richten Deinen Zugang ein.",
-    "successMessage": "Vielen Dank! Deine Anfrage ist bei uns eingegangen. Wir melden uns in Kürze bei Dir und richten Deinen Zugang ein."
+    "successMessage": "Vielen Dank! Deine Anfrage ist bei uns eingegangen. Wir melden uns in Kürze bei Dir und richten Deinen Zugang ein.",
+    "heroImage": "/images/luxury_camper_hero.jpg",
+    "heroImageAlt": "Modernes Reisemobil vor moderner Vermiet-Station",
+    "blockAImage": "/images/hero_motorhome_handover.jpg",
+    "blockAImageAlt": "Schlüsselübergabe Reisemobil",
+    "blockBImage": "/images/camper_digital_cockpit.jpg",
+    "blockBImageAlt": "Digitales Vermiet-Cockpit",
+    "aboutImage": "/images/luxury_cockpit_tablet.jpg",
+    "aboutImageAlt": "Caravan-Vermieter-Bund Netzwerk"
   },
   "priceSettings": {
     "monthlyNet": 8.33,

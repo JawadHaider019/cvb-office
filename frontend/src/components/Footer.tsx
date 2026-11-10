@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { Lock, ShieldCheck, ArrowUpRight, Mail, MapPin, Heart, ArrowRight } from 'lucide-react';
+import { ScrollReveal } from './ScrollReveal';
 
 export const Footer: React.FC<{
   onOpenImpressum: () => void;
@@ -24,22 +25,23 @@ export const Footer: React.FC<{
       <div className="absolute bottom-0 right-10 w-[400px] h-[300px] bg-[#889028]/10 rounded-full blur-[130px] pointer-events-none" />
 
       {/* Main Footer Content Grid */}
-      <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14 pt-16 lg:pt-20 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-white/10">
-          
+      <div className="relative max-w-[1400px] mx-auto px-4 sm:px-10 lg:px-14 pt-12 sm:pt-16 lg:pt-20 pb-10 sm:pb-12">
+        <ScrollReveal>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 pb-10 sm:pb-14 border-b border-white/10">
+
           {/* Column 1 (5 cols): Brand Identity, Mission & Logo */}
-          <div className="lg:col-span-5 space-y-5">
+          <div className="sm:col-span-2 md:col-span-1 lg:col-span-5 space-y-5">
             <div className="flex items-center gap-3.5">
               <img
                 src="/images/cvb_office_logo.png"
                 alt="CVB-Office Logo"
-                className="w-11 h-11 object-contain drop-shadow-md"
+                className="w-11 h-11 object-contain drop-shadow-md rounded-xl"
               />
               <div className="flex flex-col">
                 <span className="font-spartan text-2xl font-black tracking-tight text-white leading-none">
                   CVB-OFFICE<span className="text-[#A09048]">.</span>
                 </span>
-                <span className="text-[10px] font-mono font-bold tracking-[0.24em] text-[#C5CF77] uppercase mt-1">
+                <span className="text-[10px] font-mono font-bold tracking-[0.24em] text-[#A09048] uppercase mt-1">
                   CARAVAN-VERMIETER-BUND
                 </span>
               </div>
@@ -72,7 +74,7 @@ export const Footer: React.FC<{
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection('features')}
+                  onClick={() => scrollToSection('funktionen')}
                   className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
                   Funktionen & Cockpit
@@ -104,7 +106,7 @@ export const Footer: React.FC<{
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection('studio')}
+                  onClick={() => scrollToSection('ueber-cvb')}
                   className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
                   Über den Bund (CVB)
@@ -146,7 +148,7 @@ export const Footer: React.FC<{
                   <ArrowUpRight size={12} className="text-[#A09048]" />
                 </a>
               </li>
-              <li className="pt-2 text-[11px] font-mono text-[#C5CF77]/80 leading-snug">
+              <li className="pt-2 text-[11px] font-mono text-[#F4F2E6]/75 leading-snug">
                 🇩🇪 Serverstandort:<br />
                 <span className="text-white">Frankfurt am Main</span>
               </li>
@@ -158,11 +160,11 @@ export const Footer: React.FC<{
             <h4 className="font-spartan font-black text-xs uppercase tracking-[0.18em] text-[#A09048]">
               KONTAKT & SUPPORT
             </h4>
-            
+
             <div className="space-y-2 text-xs text-[#F4F2E6]/90">
               <div className="font-bold text-white">Caravan-Vermieter-Bund</div>
-              <div className="text-[11px] text-[#C5CF77]">Detlef Scheer (Vorstand)</div>
-              
+              <div className="text-[11px] text-[#F4F2E6]/80">Detlef Scheer (Vorstand)</div>
+
               <a
                 href={`mailto:${generalSettings.contactEmail}`}
                 className="inline-flex items-center gap-1.5 text-xs text-[#A09048] hover:text-white underline font-mono break-all pt-1"
@@ -177,7 +179,7 @@ export const Footer: React.FC<{
                 href={generalSettings.trialLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 w-full px-4 py-2 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-colors shadow-sm"
+                className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto lg:w-full px-4 py-2.5 sm:py-2 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-colors shadow-sm"
               >
                 <span>14 Tage testen</span>
                 <ArrowUpRight size={13} />
@@ -188,7 +190,7 @@ export const Footer: React.FC<{
             <div className="pt-1">
               <button
                 onClick={() => setCurrentView('admin')}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-[#A09048] hover:text-white transition-all cursor-pointer text-[10px] font-mono uppercase text-[#C5CF77]"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-[#A09048] hover:text-white transition-all cursor-pointer text-[10px] font-mono uppercase text-[#F4F2E6]/85"
               >
                 {isAdminLoggedIn ? <ShieldCheck size={12} className="text-[#A09048]" /> : <Lock size={11} />}
                 <span>{isAdminLoggedIn ? 'ADMIN AKTIV' : 'ADMIN BEREICH'}</span>
@@ -196,23 +198,26 @@ export const Footer: React.FC<{
             </div>
           </div>
 
-        </div>
+          </div>
+        </ScrollReveal>
 
         {/* Bottom Bar: Copyright & Compliance */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-[#F4F2E6]/70">
-          <div className="flex items-center gap-2 text-center sm:text-left">
-            <span className="w-2 h-2 rounded-full bg-[#A09048]" />
-            <span>© {new Date().getFullYear()} CARAVAN-VERMIETER-BUND (CVB). ALLE RECHTE VORBEHALTEN.</span>
-          </div>
+        <ScrollReveal delay={0.08}>
+          <div className="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 text-[10.5px] sm:text-[11px] font-mono text-[#F4F2E6]/70">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-center md:text-left">
+              <span className="w-2 h-2 rounded-full bg-[#A09048] shrink-0" />
+              <span>© {new Date().getFullYear()} CARAVAN-VERMIETER-BUND (CVB). ALLE RECHTE VORBEHALTEN.</span>
+            </div>
 
-          <div className="flex items-center gap-4 text-center sm:text-right">
-            <span>100 % DSGVO-KONFORM</span>
-            <span>·</span>
-            <span>HOSTING IN DEUTSCHLAND</span>
-            <span>·</span>
-            <span>0 % PROVISION</span>
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-3 sm:gap-x-4 gap-y-1 text-center md:text-right">
+              <span>100 % DSGVO-KONFORM</span>
+              <span aria-hidden="true">·</span>
+              <span>HOSTING IN DEUTSCHLAND</span>
+              <span aria-hidden="true">·</span>
+              <span>0 % PROVISION</span>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </footer>
   );

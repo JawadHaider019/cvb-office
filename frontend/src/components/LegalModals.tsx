@@ -14,11 +14,11 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#242E05]/80 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#242E05]/80 backdrop-blur-md animate-in fade-in duration-200"
     >
-      <div className="bg-white rounded-[28px] max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-[#A09048]/35 flex flex-col">
+      <div className="bg-white rounded-[22px] sm:rounded-[28px] max-w-2xl w-full max-h-[88vh] sm:max-h-[85vh] overflow-y-auto shadow-2xl border border-[#A09048]/35 flex flex-col">
         {/* Modal Header */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-sm px-6 py-4 border-b border-[#A09048]/20 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white/95 backdrop-blur-sm px-4 sm:px-6 py-3.5 sm:py-4 border-b border-[#A09048]/20 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-[#384808] text-[#A09048] flex items-center justify-center">
               <Shield size={16} />

@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
-import { CheckCircle2, AlertCircle, Loader2, ArrowRight, ShieldCheck, Sparkles, Check, X } from 'lucide-react';
-import { CvbOfficeIcon } from './CvbLogo';
+import { CheckCircle2, AlertCircle, Loader2, ArrowRight, ShieldCheck, Check, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 
 export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
   onOpenPrivacyModal,
 }) => {
-  const { content, priceSettings, generalSettings, submitSignUpRequest, selectedVehicleCount } = useApp();
+  const { content, priceSettings, submitSignUpRequest, selectedVehicleCount } = useApp();
 
   const [email, setEmail] = useState('');
   const [vehicles, setVehicles] = useState<number | ''>(selectedVehicleCount || 1);
@@ -117,7 +116,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
       } else {
         setErrorMessage(
           res.error ||
-            'Das hat leider nicht geklappt. Bitte versuche es später noch einmal oder schreib uns an info@caravan-vermieter-bund.de.'
+          'Das hat leider nicht geklappt. Bitte versuche es später noch einmal oder schreib uns an info@caravan-vermieter-bund.de.'
         );
       }
     } catch {
@@ -141,7 +140,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 340 }}
-            className="fixed top-24 right-4 sm:right-8 z-50 max-w-md w-full bg-[#2D3A06] text-white p-5 border-2 border-[#A09048] shadow-[0_20px_60px_rgba(56,72,8,0.35)] rounded-2xl overflow-hidden"
+            className="fixed top-20 sm:top-24 left-4 right-4 sm:left-auto sm:right-8 z-50 sm:max-w-md w-auto sm:w-full bg-[#2D3A06] text-white p-4 sm:p-5 border-2 border-[#A09048] shadow-[0_20px_60px_rgba(56,72,8,0.35)] rounded-2xl overflow-hidden"
           >
             <div className="flex items-start gap-3.5">
               <div className="w-10 h-10 rounded-xl bg-[#A09048] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-md font-bold">
@@ -159,10 +158,10 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                 </div>
 
                 <p className="text-xs text-[#F4F2E6]/90 leading-relaxed">
-                  Deine Anfrage für <strong className="text-white font-bold">{toastData.vehicleCount} Fahrzeug(e)</strong> ist eingegangen. Eine Bestätigung ist an <span className="underline decoration-[#A09048] font-bold text-[#C5CF77]">{toastData.email}</span> unterwegs.
+                  Deine Anfrage für <strong className="text-white font-bold">{toastData.vehicleCount} Fahrzeug(e)</strong> ist eingegangen. Eine Bestätigung ist an <span className="underline decoration-[#A09048] font-bold text-white">{toastData.email}</span> unterwegs.
                 </p>
 
-                <div className="mt-2 text-[11px] font-mono text-[#C5CF77] flex items-center gap-1.5 font-bold">
+                <div className="mt-2 text-[11px] font-mono text-[#F4F2E6] flex items-center gap-1.5 font-bold">
                   <ShieldCheck size={13} className="shrink-0 text-[#A09048]" />
                   <span>Detlef Scheer prüft Deine Anfrage persönlich.</span>
                 </div>
@@ -189,64 +188,119 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
         )}
       </AnimatePresence>
 
-      <section id="buchen" className="relative py-24 lg:py-32 bg-[#283405] text-white border-b border-[#A09048]/25 overflow-hidden">
-        {/* Glow */}
-        <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[700px] h-[500px] bg-[#889028]/15 rounded-full blur-[160px] pointer-events-none" />
+      <section id="buchen" className="relative py-14 sm:py-20 lg:py-28 bg-gradient-to-b from-[#283505] via-[#172002] to-[#080B01] text-white border-b border-[#A09048]/25 overflow-hidden">
+        {/* Ambient radial lighting matching Footer */}
+        <div className="absolute top-0 left-1/4 w-[650px] h-[450px] bg-[#A09048]/10 rounded-full blur-[160px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[350px] bg-[#889028]/10 rounded-full blur-[150px] pointer-events-none" />
 
-        <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14">
+        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-10 lg:px-14">
           <ScrollReveal>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Zone 1 (Left 4 cols): Editorial Headline & Conversion Points */}
-              <div className="lg:col-span-4 flex flex-col justify-between h-full lg:pr-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 items-stretch">
+              {/* Section 1 (Left 5 cols): Editorial Headline, Trust Stack & Verbund-Portal Info */}
+              <div className="lg:col-span-5 flex flex-col gap-6 sm:gap-7 lg:pr-4">
                 <div>
-                  <div className="tech-tag mb-4 bg-[#384808] border-[#A09048]/30 text-white">
+                  <div className="tech-tag mb-4 sm:mb-5 bg-[#384808] border-[#A09048] text-white">
                     <span className="tech-tagn bg-[#A09048] text-white">✦</span>
-                    <span className="font-spartan font-bold text-xs uppercase tracking-wider text-white">
+                    <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#283505]">
                       JETZT STARTEN
                     </span>
                   </div>
 
-                  <h2 className="font-spartan text-3xl sm:text-5xl lg:text-5xl font-black uppercase text-white leading-[1.04] tracking-tight mb-6">
-                    DEIN DIGITALES<br />
+                  <h2 className="font-spartan text-[30px] sm:text-5xl lg:text-[54px] font-black uppercase text-white leading-[1.04] sm:leading-[1.03] tracking-tight mb-4 sm:mb-5">
+                    DEIN DIGITALES{' '}
                     <span className="text-[#A09048]">
                       OFFICE WARTET.
                     </span>
                   </h2>
 
-                  <p className="text-sm sm:text-base text-[#F4F2E6]/90 font-normal leading-relaxed mb-8">
+                  <p className="text-sm sm:text-lg text-[#F4F2E6]/90 font-normal leading-relaxed mb-6 sm:mb-7 max-w-lg">
                     {content.formIntro}
                   </p>
 
                   {/* Conversion Trust Stack */}
-                  <div className="space-y-3.5 mb-8 text-xs font-semibold text-white">
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
-                        <Check size={12} strokeWidth={3} />
+                  <div className="space-y-3 sm:space-y-3.5 text-sm sm:text-base font-semibold text-white">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
+                        <Check size={14} strokeWidth={3} />
                       </div>
                       <span>14 Tage kostenlose Testphase</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
-                        <Check size={12} strokeWidth={3} />
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
+                        <Check size={14} strokeWidth={3} />
                       </div>
                       <span>Keine Einrichtungsgebühr</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
-                        <Check size={12} strokeWidth={3} />
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
+                        <Check size={14} strokeWidth={3} />
                       </div>
                       <span>Persönliche Betreuung durch den Bund</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-white/10 text-xs text-[#C5CF77]/70 font-mono">
-                  ANFRAGE // VERBUND-KONDITIONEN
-                </div>
+                {/* Integrated Brand & Contact Info Card */}
+                <motion.div
+                  whileHover={{ y: -3 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-white/[0.05] backdrop-blur-md rounded-[22px] sm:rounded-[26px] border border-[#A09048]/30 hover:border-[#A09048]/55 p-5 sm:p-7 shadow-xl space-y-4 sm:space-y-5 transition-colors"
+                >
+                  <div className="flex items-center gap-3.5 pb-4 border-b border-white/10">
+                    <img
+                      src="/images/cvb_office_logo.png"
+                      alt="CVB-Office Logo"
+                      className="w-11 h-11 object-contain drop-shadow-md rounded-xl shrink-0"
+                    />
+                    <div>
+                      <div className="font-spartan text-xl sm:text-2xl font-black tracking-wider text-white uppercase leading-none">
+                        CVB-OFFICE
+                      </div>
+                      <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#A09048] mt-1">
+                        VERBUND-PORTAL
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-[#F4F2E6]/90 leading-relaxed">
+                    <div>
+                      <span className="font-bold text-white/60 block uppercase tracking-wider text-[11px] mb-1">
+                        Organisation
+                      </span>
+                      <span className="font-semibold text-white block">Caravan-Vermieter-Bund (CVB)</span>
+                      <div className="text-[#F4F2E6]/80 mt-0.5">Detlef Scheer (Gründer)</div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <span className="font-bold text-white/60 block uppercase tracking-wider text-[11px] mb-1">
+                          E-Mail
+                        </span>
+                        <a href="mailto:info@cvb-office.de" className="text-[#A09048] hover:underline font-semibold break-all">
+                          info@cvb-office.de
+                        </a>
+                      </div>
+                      <div>
+                        <span className="font-bold text-white/60 block uppercase tracking-wider text-[11px] mb-1">
+                          Offizielle Plattform
+                        </span>
+                        <a href="https://cvb-office.de" target="_blank" rel="noopener noreferrer" className="text-[#A09048] hover:underline font-semibold">
+                          cvb-office.de
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
 
-              {/* Zone 2 (Center 5 cols): Light Tech Destination Form Panel */}
-              <div className="lg:col-span-5 bg-white rounded-[32px] p-8 sm:p-10 text-[#384808] shadow-2xl border border-[#A09048]/30">
+              {/* Section 2 (Right 7 cols): Elevated Light Form Panel */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.55, delay: 0.1 }}
+                className="lg:col-span-7 bg-white rounded-[24px] sm:rounded-[32px] p-5 sm:p-10 text-[#384808] shadow-[0_25px_70px_rgba(0,0,0,0.45)] border border-[#A09048]/35 flex flex-col justify-center"
+              >
                 {isSuccess ? (
                   <motion.div
                     ref={successRef}
@@ -299,18 +353,31 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                       />
                     </div>
 
-                    {/* German CRO Order Summary Pill (Transparenz vor Eingabe) */}
-                    <div className="p-4 bg-[#F4F2E6] border border-[#A09048]/35 rounded-2xl">
-                      <div className="flex items-center justify-between text-xs font-mono mb-1">
-                        <span className="text-[#585828] uppercase font-bold">Gewählte Flotte:</span>
-                        <span className="text-[#384808] font-black">{vCountNumber} {vCountNumber === 1 ? 'Fahrzeug' : 'Fahrzeuge'}</span>
+                    {/* Clean Architectural Order Summary Header */}
+                    <div className="rounded-2xl bg-[#F4F2E6] border border-[#A09048]/35 overflow-hidden">
+                      <div className="grid grid-cols-2 divide-x divide-[#A09048]/25 p-3.5 sm:p-5">
+                        <div className="pr-3 sm:pr-4">
+                          <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#585828] mb-1">
+                            Gewählte Flotte
+                          </div>
+                          <div className="font-spartan text-base sm:text-xl font-black text-[#384808] leading-tight">
+                            {vCountNumber} {vCountNumber === 1 ? 'Fahrzeug' : 'Fahrzeuge'}
+                          </div>
+                        </div>
+
+                        <div className="pl-3 sm:pl-4 text-right">
+                          <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#585828] mb-1">
+                            Verbundtarif
+                          </div>
+                          <div className="font-spartan text-base sm:text-xl font-black text-[#384808] leading-tight">
+                            {currentTotalMonthly} €{' '}
+                            <span className="block sm:inline text-[11px] sm:text-xs font-sans font-semibold text-[#585828]">netto / Mon.</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between text-xs font-mono">
-                        <span className="text-[#585828] uppercase font-bold">Verbundtarif:</span>
-                        <span className="text-[#889028] font-black text-sm">{currentTotalMonthly} € netto / Monat</span>
-                      </div>
-                      <div className="mt-2 pt-2 border-t border-[#A09048]/20 flex items-center gap-1.5 text-[11px] text-[#384808] font-medium">
-                        <ShieldCheck size={13} className="text-[#889028] shrink-0" />
+
+                      <div className="px-3.5 sm:px-5 py-2.5 bg-[#EAE6D3]/70 border-t border-[#A09048]/20 flex items-center justify-center sm:justify-start gap-2 text-[11px] sm:text-xs text-[#384808] font-medium text-center sm:text-left">
+                        <ShieldCheck size={14} className="text-[#889028] shrink-0" />
                         <span>14 Tage unverbindliche Testphase · Keine Zahlung heute</span>
                       </div>
                     </div>
@@ -325,59 +392,62 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                       </div>
                     )}
 
-                    {/* Email Field */}
-                    <div>
-                      <label
-                        htmlFor="signup-email"
-                        className="block text-[11px] font-bold uppercase tracking-wider text-[#384808] mb-1.5"
-                      >
-                        GESCHÄFTLICHE E-MAIL-ADRESSE <span className="text-red-600">*</span>
-                      </label>
-                      <input
-                        id="signup-email"
-                        type="email"
-                        required
-                        maxLength={254}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="name@deine-vermietung.de"
-                        className="w-full px-4 py-3 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/30 text-[#384808] placeholder-stone-400 text-sm focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/20 transition-all"
-                        disabled={isSubmitting}
-                      />
+                    {/* Primary Required Fields */}
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                      <div className="sm:col-span-8">
+                        <label
+                          htmlFor="signup-email"
+                          className="block text-[11px] font-spartan font-bold uppercase tracking-wider text-[#384808] mb-1.5"
+                        >
+                          GESCHÄFTLICHE E-MAIL-ADRESSE <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          id="signup-email"
+                          type="email"
+                          required
+                          maxLength={254}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="name@deine-vermietung.de"
+                          className="w-full h-12 px-4 bg-[#F9F8F3] rounded-2xl border border-[#A09048]/35 text-[#384808] placeholder-stone-400 text-sm focus:bg-white focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/15 transition-all"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+
+                      <div className="sm:col-span-4">
+                        <label
+                          htmlFor="signup-vehicles"
+                          className="block text-[11px] font-spartan font-bold uppercase tracking-wider text-[#384808] mb-1.5"
+                        >
+                          ANZAHL FAHRZEUGE <span className="text-red-600">*</span>
+                        </label>
+                        <div className="relative flex items-center">
+                          <input
+                            id="signup-vehicles"
+                            type="number"
+                            inputMode="numeric"
+                            min="1"
+                            max="999"
+                            required
+                            value={vehicles}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setVehicles(val === '' ? '' : parseInt(val, 10));
+                            }}
+                            placeholder="z. B. 4"
+                            className="w-full h-12 px-4 bg-[#F9F8F3] rounded-2xl border border-[#A09048]/35 text-[#384808] text-sm focus:bg-white focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/15 transition-all font-mono font-bold"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Vehicles Field */}
-                    <div>
-                      <label
-                        htmlFor="signup-vehicles"
-                        className="block text-[11px] font-bold uppercase tracking-wider text-[#384808] mb-1.5"
-                      >
-                        ANZAHL FAHRZEUGE <span className="text-red-600">*</span>
-                      </label>
-                      <input
-                        id="signup-vehicles"
-                        type="number"
-                        inputMode="numeric"
-                        min="1"
-                        max="999"
-                        required
-                        value={vehicles}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setVehicles(val === '' ? '' : parseInt(val, 10));
-                        }}
-                        placeholder="z. B. 4"
-                        className="w-full px-4 py-3 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/30 text-[#384808] text-sm focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/20 transition-all font-mono font-bold"
-                        disabled={isSubmitting}
-                      />
-                    </div>
-
-                    {/* Optional Contact Fields (Mittelstands-Präferenz: Telefon & Name) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    {/* Optional Contact Fields (Identical Input Geometry for Clean Alignment) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label
                           htmlFor="signup-name"
-                          className="block text-[11px] font-bold uppercase tracking-wider text-[#585828] mb-1"
+                          className="block text-[11px] font-spartan font-bold uppercase tracking-wider text-[#585828] mb-1.5"
                         >
                           ANSPRECHPARTNER <span className="text-stone-400 font-normal lowercase">(optional)</span>
                         </label>
@@ -388,7 +458,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                           value={contactName}
                           onChange={(e) => setContactName(e.target.value)}
                           placeholder="z. B. Max Mustermann"
-                          className="w-full px-4 py-2.5 bg-[#F4F2E6] rounded-xl border border-[#A09048]/30 text-[#384808] placeholder-stone-400 text-xs focus:outline-none focus:border-[#384808] transition-all"
+                          className="w-full h-12 px-4 bg-[#F9F8F3] rounded-2xl border border-[#A09048]/35 text-[#384808] placeholder-stone-400 text-sm focus:bg-white focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/15 transition-all"
                           disabled={isSubmitting}
                         />
                       </div>
@@ -396,7 +466,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                       <div>
                         <label
                           htmlFor="signup-phone"
-                          className="block text-[11px] font-bold uppercase tracking-wider text-[#585828] mb-1"
+                          className="block text-[11px] font-spartan font-bold uppercase tracking-wider text-[#585828] mb-1.5"
                         >
                           TELEFON FÜR RÜCKFRAGEN <span className="text-stone-400 font-normal lowercase">(optional)</span>
                         </label>
@@ -407,138 +477,83 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="z. B. 0170 1234567"
-                          className="w-full px-4 py-2.5 bg-[#F4F2E6] rounded-xl border border-[#A09048]/30 text-[#384808] placeholder-stone-400 text-xs focus:outline-none focus:border-[#384808] transition-all"
+                          className="w-full h-12 px-4 bg-[#F9F8F3] rounded-2xl border border-[#A09048]/35 text-[#384808] placeholder-stone-400 text-sm focus:bg-white focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/15 transition-all"
                           disabled={isSubmitting}
                         />
                       </div>
                     </div>
 
-                    {/* Checkbox: Price confirmation */}
-                    <div className="pt-2">
+                    {/* Grouped Consent Checkboxes */}
+                    <div className="rounded-2xl bg-[#F9F8F3] border border-[#A09048]/25 p-4 space-y-3">
                       <label className="flex items-start gap-3 cursor-pointer select-none group">
                         <input
                           type="checkbox"
                           required
                           checked={priceConsent}
                           onChange={(e) => setPriceConsent(e.target.checked)}
-                          className="mt-1 w-4 h-4 rounded-md border-stone-300 text-[#384808] accent-[#384808] cursor-pointer shrink-0"
+                          className="mt-0.5 w-4 h-4 rounded border-stone-300 text-[#384808] accent-[#384808] cursor-pointer shrink-0"
                           disabled={isSubmitting}
                         />
                         <span className="text-xs text-[#585828] group-hover:text-[#384808] leading-relaxed">
                           {priceConsentLabel} <span className="text-red-600 font-bold">*</span>
                         </span>
                       </label>
+
+                      <div className="border-t border-[#A09048]/15 pt-3">
+                        <label className="flex items-start gap-3 cursor-pointer select-none group">
+                          <input
+                            type="checkbox"
+                            required
+                            checked={privacyConsent}
+                            onChange={(e) => setPrivacyConsent(e.target.checked)}
+                            className="mt-0.5 w-4 h-4 rounded border-stone-300 text-[#384808] accent-[#384808] cursor-pointer shrink-0"
+                            disabled={isSubmitting}
+                          />
+                          <span className="text-xs text-[#585828] group-hover:text-[#384808] leading-relaxed">
+                            Ich habe die{' '}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                onOpenPrivacyModal();
+                              }}
+                              className="text-[#384808] font-bold underline hover:text-[#889028]"
+                            >
+                              Datenschutzerklärung
+                            </button>{' '}
+                            gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
+                            gespeichert werden. <span className="text-red-600 font-bold">*</span>
+                          </span>
+                        </label>
+                      </div>
                     </div>
 
-                    {/* Checkbox: Privacy consent */}
-                    <div>
-                      <label className="flex items-start gap-3 cursor-pointer select-none group">
-                        <input
-                          type="checkbox"
-                          required
-                          checked={privacyConsent}
-                          onChange={(e) => setPrivacyConsent(e.target.checked)}
-                          className="mt-1 w-4 h-4 rounded-md border-stone-300 text-[#384808] accent-[#384808] cursor-pointer shrink-0"
-                          disabled={isSubmitting}
-                        />
-                        <span className="text-xs text-[#585828] group-hover:text-[#384808] leading-relaxed">
-                          Ich habe die{' '}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              onOpenPrivacyModal();
-                            }}
-                            className="text-[#889028] font-bold underline hover:text-[#384808]"
-                          >
-                            Datenschutzerklärung
-                          </button>{' '}
-                          gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
-                          gespeichert werden. <span className="text-red-600 font-bold">*</span>
-                        </span>
-                      </label>
-                    </div>
-
-                    {/* Submit CTA */}
-                    <div className="pt-2">
+                    {/* Balanced Submit CTA */}
+                    <div className="pt-1">
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full tech-cta-primary justify-center cursor-pointer disabled:opacity-60 text-sm"
+                        className="w-full min-h-[54px] sm:h-14 py-1.5 sm:py-0 px-2 pl-4 sm:pl-6 rounded-full bg-[#384808] hover:bg-[#242E05] text-white font-spartan font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-between gap-2 shadow-[0_12px_28px_-6px_rgba(56,72,8,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-60 group"
                       >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 size={16} className="animate-spin text-white" />
-                            <span>Wird übermittelt...</span>
-                          </>
-                        ) : (
-                          <>
+                        <span className="w-10 hidden sm:block" aria-hidden="true" />
+                        <span className="flex items-center justify-center gap-2 mx-auto sm:mx-0 text-center">
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 size={16} className="animate-spin text-white" />
+                              <span>Wird übermittelt...</span>
+                            </>
+                          ) : (
                             <span>14 Tage kostenlos testen & anfragen</span>
-                            <div className="tech-ci">
-                              <ArrowRight size={14} />
-                            </div>
-                          </>
-                        )}
+                          )}
+                        </span>
+                        <span className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#A09048] group-hover:bg-[#889028] text-white flex items-center justify-center shrink-0 transition-all group-hover:-rotate-45 shadow-sm">
+                          <ArrowRight size={16} />
+                        </span>
                       </button>
-                      <div className="text-[11px] text-center text-[#585828] mt-3 space-y-1">
-                        <div>🔒 100 % unverbindlich · Keine automatische Verlängerung</div>
-                        <div className="text-[#889028]">Detlef Scheer prüft Deine Verbandsmitgliedschaft und sendet Dir die Zugangsdaten.</div>
-                      </div>
                     </div>
                   </form>
                 )}
-              </div>
-
-              {/* Zone 3 (Right 3 cols): Brand & Contact Info Bento */}
-              <div className="lg:col-span-3 bg-[#242E05] backdrop-blur-md rounded-[32px] border border-[#A09048]/30 p-8 flex flex-col justify-between h-full shadow-lg">
-                <div>
-                  <div className="mb-6">
-                    <CvbOfficeIcon size={48} />
-                    <div className="font-spartan text-xl font-black tracking-wider text-white uppercase mt-3">
-                      CVB-OFFICE
-                    </div>
-                    <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#A09048]">
-                      VERBUND-PORTAL
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 text-xs text-[#F4F2E6]/90 leading-relaxed mb-8">
-                    <div>
-                      <span className="font-bold text-white block uppercase tracking-wider text-[10px] mb-1">
-                        Organisation
-                      </span>
-                      Caravan-Vermieter-Bund (CVB)<br />
-                      Detlef Scheer (Gründer)
-                    </div>
-
-                    <div>
-                      <span className="font-bold text-white block uppercase tracking-wider text-[10px] mb-1">
-                        E-Mail
-                      </span>
-                      <a href={`mailto:${generalSettings.contactEmail}`} className="text-[#A09048] hover:underline">
-                        {generalSettings.contactEmail}
-                      </a>
-                    </div>
-
-                    <div>
-                      <span className="font-bold text-white block uppercase tracking-wider text-[10px] mb-1">
-                        Offizielle Plattform
-                      </span>
-                      <a href={generalSettings.cvbWebsiteLink} target="_blank" rel="noopener noreferrer" className="text-[#A09048] hover:underline">
-                        caravan-vermieter-bund.de
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-6 border-t border-white/10 text-[10px] font-bold tracking-widest text-[#C5CF77]/70 uppercase flex items-center gap-3">
-                  <span>DSGVO</span>
-                  <span>·</span>
-                  <span>SSL 256-BIT</span>
-                  <span>·</span>
-                  <span>DEUTSCHLAND</span>
-                </div>
-              </div>
+              </motion.div>
             </div>
           </ScrollReveal>
         </div>

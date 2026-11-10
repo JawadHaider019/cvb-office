@@ -225,7 +225,7 @@ export const AdminPanel: React.FC = () => {
               <span className="font-bold text-sm sm:text-base leading-none block">
                 CVB-Office Verwaltung
               </span>
-              <span className="text-[11px] text-[#C5CF77]">Eingeloggt als Detlef Scheer</span>
+              <span className="text-[11px] text-[#F4F2E6]/85">Eingeloggt als Detlef Scheer</span>
             </div>
           </div>
 
@@ -253,7 +253,7 @@ export const AdminPanel: React.FC = () => {
       {/* Floating Save Toast */}
       {saveSuccessMsg && (
         <div className="fixed top-16 right-6 z-50 bg-[#384808] text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 animate-in slide-in-from-top duration-200 text-sm font-bold border border-[#A09048]">
-          <CheckCircle size={18} className="text-[#C5CF77]" />
+          <CheckCircle size={18} className="text-[#A09048]" />
           <span>{saveSuccessMsg}</span>
         </div>
       )}

@@ -157,7 +157,7 @@ export const CvbWideLogo: React.FC<{ className?: string; light?: boolean }> = ({
         </span>
         <span
           className={`font-bold text-xs uppercase tracking-wider ${
-            light ? 'text-[#C5CF77]' : 'text-[#889028]'
+            light ? 'text-[#F4F2E6]/80' : 'text-[#889028]'
           }`}
           style={{ letterSpacing: '0.14em' }}
         >

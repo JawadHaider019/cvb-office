@@ -20,7 +20,7 @@ export const defaultSiteContent: SiteContent = {
     'Klare Abläufe, weniger Rückfragen, ein professioneller Auftritt',
   ],
   blockATitle: 'Digitale Vorab-Einweisung',
-  blockAText: 'Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug. Bis zu 50 % Zeitersparnis bei der Übergabe vor Ort.',
+  blockAText: 'Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug.',
   blockAImage: '/images/hero_motorhome_handover.jpg',
   blockAImageAlt: 'Schlüsselübergabe Reisemobil',
   blockBTitle: 'Dein Vermiet-Office',

@@ -1,11 +1,34 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Server, ShieldCheck, Scale, Award, Check } from 'lucide-react';
 import { IMAGES } from '../assets/images';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 
+const heroTrustItems = [
+  {
+    icon: Server,
+    title: 'Serverstandort Deutschland',
+    subtitle: 'Hosting in Frankfurt am Main · Höchste Ausfallsicherheit',
+  },
+  {
+    icon: ShieldCheck,
+    title: '100 % DSGVO-konform',
+    subtitle: 'Keine Datenweitergabe · Verschlüsselte Übertragung',
+  },
+  {
+    icon: Scale,
+    title: 'Rechtssichere BGB-Muster',
+    subtitle: 'Speziell für Reisemobil- & Caravan-Vermietung',
+  },
+  {
+    icon: Award,
+    title: 'Offizieller CVB-Verbandsstandard',
+    subtitle: 'Entwickelt von Vermietern für Vermieter',
+  },
+];
+
 export const Hero: React.FC = () => {
-  const { content, generalSettings, priceSettings } = useApp();
+  const { content, generalSettings } = useApp();
 
   // Mouse-move 3D Parallax Values (Normalized -0.5 to 0.5)
   const mouseX = useMotionValue(0);
@@ -24,11 +47,10 @@ export const Hero: React.FC = () => {
   const contentX = useTransform(smoothX, [-0.5, 0.5], [-6, 6]);
   const contentY = useTransform(smoothY, [-0.5, 0.5], [-4, 4]);
 
-  // Layer 3: Stat Tiles
-  const statsX = useTransform(smoothX, [-0.5, 0.5], [-4, 4]);
-  const statsY = useTransform(smoothY, [-0.5, 0.5], [-3, 3]);
-
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
+      return;
+    }
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
@@ -48,24 +70,18 @@ export const Hero: React.FC = () => {
     }
   };
 
-  const formattedMonthly = priceSettings.monthlyNet.toLocaleString('de-DE', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
   return (
     <section
       id="top"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-[77vh] lg:min-h-[88vh] flex flex-col justify-between overflow-hidden bg-[#FFFFFF] text-[#384808] pt-6 select-none"
+      className="relative min-h-[77vh] lg:min-h-[88vh] flex flex-col justify-between overflow-hidden bg-[#FFFFFF] text-[#384808] pt-3 sm:pt-6 select-none"
       style={{ perspective: '1200px' }}
     >
-      {/* 1. ATMOSPHERIC AMBIENT GLOWS */}
-      <div className="absolute top-0 right-1/4 w-[650px] h-[650px] rounded-full bg-[#F4F2E6]/60 blur-[100px] pointer-events-none z-0" />
+      {/* 1. ATMOSPHERIC AMBIENT GLOW (Left edge only, keeping right camper image crisp) */}
       <div className="absolute top-1/3 -left-20 w-[450px] h-[450px] rounded-full bg-[#A09048]/10 blur-[110px] pointer-events-none z-0" />
 
-      {/* 2. PROMINENT LUXURY HERO BACKGROUND PHOTO (Fully Visible, High-Res) */}
+      {/* 2. PROMINENT LUXURY HERO BACKGROUND PHOTO (Always in Background across Mobile & Desktop) */}
       <motion.div
         style={{ x: bgX, y: bgY, scale: 1.04 }}
         className="absolute inset-0 w-full h-full pointer-events-none will-change-transform z-0 overflow-hidden"
@@ -73,50 +89,48 @@ export const Hero: React.FC = () => {
         <img
           src={content.heroImage || IMAGES.heroMotorhomeAlps}
           alt={content.heroImageAlt || "Modernes Reisemobil vor moderner Vermiet-Station"}
-          className="w-full h-full object-cover object-[85%_center] lg:object-[80%_center]"
+          className="w-full h-full object-cover object-[68%_center] md:object-[80%_center] lg:object-[75%_center]"
           loading="eager"
           referrerPolicy="no-referrer"
         />
-        {/* Soft directional gradient: ensures text on left is 100% legible while camper on right is crystal-clear */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 via-30% to-white/20 lg:to-transparent pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-transparent to-transparent pointer-events-none" />
+        {/* Readable fade for mobile/tablet text while keeping desktop right-side photo crystal-clear */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/80 via-60% to-white/25 md:bg-gradient-to-r md:from-white md:via-white/88 md:via-55% md:to-white/35 lg:via-white/85 lg:via-45% lg:to-white/15 xl:via-white/80 xl:via-30% xl:to-transparent pointer-events-none" />
       </motion.div>
 
       {/* 3. HERO CONTENT */}
-      <div className="relative z-10 max-w-[1360px] w-full mx-auto px-6 sm:px-10 lg:px-12 flex-1 flex flex-col justify-between py-6 lg:py-8">
+      <div className="relative z-10 max-w-[1360px] w-full mx-auto px-4 sm:px-10 lg:px-12 flex-1 flex flex-col justify-between py-5 sm:py-6 lg:py-8">
         {/* Top Status Pill - Frosted Glass */}
-        <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-3 pt-2"
-        >
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-xl border border-white/80 shadow-[0_4px_20px_rgba(56,72,8,0.06),inset_0_1px_1px_rgba(255,255,255,0.9)] text-xs font-bold text-[#384808]">
-            <span className="w-2 h-2 rounded-full bg-[#889028] animate-pulse" />
-            <span>Offizielles Verbands-Office · {content.trustLine}</span>
-          </div>
-        </motion.div>
+
 
         {/* Editorial Content (Left side, unhindered, spacious) */}
         <motion.div
           style={{ x: contentX, y: contentY }}
-          className="max-w-4xl lg:max-w-5xl my-auto py-4 lg:py-6 will-change-transform"
+          className="max-w-4xl lg:max-w-5xl my-auto py-2 sm:py-4 lg:py-6 will-change-transform"
         >
+          <motion.div
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 sm:py-3 mb-4 rounded-full bg-white/75 md:bg-white/60 backdrop-blur-xl border border-[#A09048]/25 md:border-white/80 shadow-[0_4px_20px_rgba(56,72,8,0.06),inset_0_1px_1px_rgba(255,255,255,0.9)] text-[11px] sm:text-xs font-bold text-[#384808] max-w-full"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#889028] animate-pulse shrink-0" />
+            <span className="leading-snug">Offizielles Verbands-Office · {content.trustLine}</span>
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="font-spartan font-black uppercase text-6xl sm:text-7xl lg:text-8xl leading-[0.92] tracking-[-0.025em] mb-6 text-[#384808]"
+            className="font-spartan font-black uppercase text-[42px] sm:text-6xl lg:text-7xl xl:text-8xl leading-[0.94] sm:leading-[0.92] tracking-[-0.025em] mb-5 sm:mb-6 text-[#384808]"
           >
             <span className="block text-[#384808]">
               CVB-OFFICE<span className="text-[#A09048]">.</span>
             </span>
-            <span className="block text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mt-2 text-[#384808]">
+            <span className="block text-[26px] sm:text-4xl lg:text-[44px] xl:text-6xl font-bold tracking-tight mt-2 text-[#384808] leading-[1.08] sm:leading-[1.02]">
               <span className="relative inline-block text-[#A09048]">
                 DEIN DIGITALES
                 {/* Gold Hand-Drawn Swoosh Underline (#A09048) */}
                 <svg
-                  className="absolute left-0 -bottom-3 w-full h-3.5 overflow-visible pointer-events-none"
+                  className="absolute left-0 -bottom-2 sm:-bottom-3 w-full h-2.5 sm:h-3.5 overflow-visible pointer-events-none"
                   viewBox="0 0 400 24"
                   preserveAspectRatio="none"
                   aria-hidden="true"
@@ -130,29 +144,57 @@ export const Hero: React.FC = () => {
                   />
                 </svg>
               </span>{' '}
-              <span className="text-[#384808]">VERMIET-OFFICE</span>
+              <span className="text-[#384808] block sm:inline mt-2.5 sm:mt-0">VERMIET-OFFICE</span>
             </span>
           </motion.h1>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-base sm:text-lg text-[#585828] font-normal leading-relaxed mb-8 max-w-xl font-body"
+            className="mb-4 max-w-2xl"
           >
-            {content.heroText}
-          </motion.p>
+            <p className="text-sm sm:text-lg text-[#585828] font-normal leading-relaxed font-body">
+              {content.heroText}{' '}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.38 }}
+            className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-xs sm:text-sm font-semibold text-[#384808] mb-6 sm:mb-8"
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-[#384808] text-white flex items-center justify-center shrink-0">
+                <Check size={10} strokeWidth={3} />
+              </span>
+              <span>Website-Buchungswidget</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-[#384808] text-white flex items-center justify-center shrink-0">
+                <Check size={10} strokeWidth={3} />
+              </span>
+              <span>Digitale Verträge als PDF</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-[#384808] text-white flex items-center justify-center shrink-0">
+                <Check size={10} strokeWidth={3} />
+              </span>
+              <span>Vorab-Einweisung per QR & Video</span>
+            </span>
+          </motion.div>
 
           {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.45 }}
-            className="flex flex-wrap items-center gap-4"
+            className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4"
           >
             <button
               onClick={() => scrollToSection('buchen')}
-              className="tech-cta-primary group animate-cta-pulse text-base"
+              className="tech-cta-primary group animate-cta-pulse text-sm sm:text-base w-full sm:w-auto justify-between sm:justify-start"
             >
               <span>CVB-Office anfragen</span>
               <span className="tech-ci shadow-md">
@@ -164,102 +206,61 @@ export const Hero: React.FC = () => {
               href={generalSettings.trialLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="tech-cta-ghost group"
+              className="tech-cta-ghost group w-full sm:w-auto justify-center"
             >
               <span>14 Tage kostenlos testen</span>
               <ArrowUpRight size={15} className="text-[#889028] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
           </motion.div>
-
-          {/* Mobile visible image banner */}
-          <div className="md:hidden mt-8 mb-2 w-full h-56 rounded-2xl overflow-hidden border border-[#A09048]/35 shadow-md">
-            <img
-              src={content.heroImage || IMAGES.heroMotorhomeAlps}
-              alt={content.heroImageAlt || "Modernes Reisemobil vor moderner Vermiet-Station"}
-              className="w-full h-full object-cover object-center"
-            />
-          </div>
-        </motion.div>
-
-        {/* 4. BOTTOM STAT TILES - ULTRA-GLASSY FROSTED LIQUID LOOK */}
-        <motion.div
-          style={{ x: statsX, y: statsY }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 will-change-transform z-10 pt-2"
-        >
-          {/* Tile 1 */}
-          <div className="p-5 rounded-2xl bg-white/45 backdrop-blur-2xl border border-white/75 border-t-white/95 hover:bg-white/65 hover:border-[#A09048]/60 transition-all duration-300 shadow-[0_8px_32px_0_rgba(56,72,8,0.06),inset_0_1px_2px_0_rgba(255,255,255,0.9)] hover:shadow-[0_12px_36px_0_rgba(56,72,8,0.12)] hover:-translate-y-0.5 group">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-[#889028]">
-                VERBUND
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#889028] animate-pulse" />
-            </div>
-            <span className="font-spartan text-3xl sm:text-4xl font-black text-[#384808] block leading-none mb-1 group-hover:text-[#2D3A06] transition-colors">
-              1.000+
-            </span>
-            <span className="text-xs font-bold text-[#585828] uppercase tracking-wider block">
-              Fahrzeuge im Bund
-            </span>
-          </div>
-
-          {/* Tile 2 */}
-          <div className="p-5 rounded-2xl bg-white/45 backdrop-blur-2xl border border-white/75 border-t-white/95 hover:bg-white/65 hover:border-[#A09048]/60 transition-all duration-300 shadow-[0_8px_32px_0_rgba(56,72,8,0.06),inset_0_1px_2px_0_rgba(255,255,255,0.9)] hover:shadow-[0_12px_36px_0_rgba(56,72,8,0.12)] hover:-translate-y-0.5 group">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-[#A09048]">
-                MITGLIEDER-TARIF
-              </span>
-              <span className="text-[9px] font-bold text-[#A09048] bg-[#A09048]/15 px-2 py-0.5 rounded-full">
-                NETTO
-              </span>
-            </div>
-            <span className="font-spartan text-3xl sm:text-4xl font-black text-[#889028] block leading-none mb-1 group-hover:text-[#70781D] transition-colors">
-              ab {formattedMonthly} €
-            </span>
-            <span className="text-xs font-bold text-[#585828] uppercase tracking-wider block">
-              Netto / Fahrzeug / Monat
-            </span>
-          </div>
-
-          {/* Tile 3 */}
-          <div className="p-5 rounded-2xl bg-white/45 backdrop-blur-2xl border border-white/75 border-t-white/95 hover:bg-white/65 hover:border-[#A09048]/60 transition-all duration-300 shadow-[0_8px_32px_0_rgba(56,72,8,0.06),inset_0_1px_2px_0_rgba(255,255,255,0.9)] hover:shadow-[0_12px_36px_0_rgba(56,72,8,0.12)] hover:-translate-y-0.5 group">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-[#384808]">
-                EFFIZIENZ
-              </span>
-              <span className="text-[9px] font-bold text-[#384808] bg-[#384808]/10 px-2 py-0.5 rounded-full">
-                QR & VIDEO
-              </span>
-            </div>
-            <span className="font-spartan text-3xl sm:text-4xl font-black text-[#384808] block leading-none mb-1 group-hover:text-[#2D3A06] transition-colors">
-              bis 50 %
-            </span>
-            <span className="text-xs font-bold text-[#585828] uppercase tracking-wider block">
-              Zeitersparnis bei Übergabe
-            </span>
-          </div>
-
-          {/* Tile 4 */}
-          <div className="p-5 rounded-2xl bg-white/45 backdrop-blur-2xl border border-white/75 border-t-white/95 hover:bg-white/65 hover:border-[#A09048]/60 transition-all duration-300 shadow-[0_8px_32px_0_rgba(56,72,8,0.06),inset_0_1px_2px_0_rgba(255,255,255,0.9)] hover:shadow-[0_12px_36px_0_rgba(56,72,8,0.12)] hover:-translate-y-0.5 group">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-emerald-800">
-                SICHERHEIT
-              </span>
-              <span className="text-[9px] font-bold text-emerald-800 bg-emerald-700/10 px-2 py-0.5 rounded-full">
-                GERMANY
-              </span>
-            </div>
-            <span className="font-spartan text-3xl sm:text-4xl font-black text-[#384808] block leading-none mb-1 group-hover:text-[#2D3A06] transition-colors">
-              100 %
-            </span>
-            <span className="text-xs font-bold text-[#585828] uppercase tracking-wider block">
-              DSGVO in Deutschland
-            </span>
-          </div>
         </motion.div>
       </div>
+
+      {/* 4. BOTTOM SLIDING TRUST MARQUEE INSIDE HERO */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.5 }}
+        aria-label="Sicherheits- und Vertrauensstandards"
+        className="relative z-10 w-full bg-gradient-to-r from-[#283505]/95 via-[#1B2403]/95 to-[#0D1201]/95 backdrop-blur-md text-white border-t border-[#A09048]/35 py-4 sm:py-8 overflow-hidden"
+      >
+        <div className="animate-marquee items-center hover:[animation-play-state:paused]">
+          {[0, 1].map((dupIdx) => (
+            <div
+              key={dupIdx}
+              aria-hidden={dupIdx === 1}
+              className="flex items-center gap-6 sm:gap-12 pr-6 sm:pr-12 shrink-0"
+            >
+              {heroTrustItems.map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <React.Fragment key={`${dupIdx}-${idx}`}>
+                    <div className="flex items-center gap-3 sm:gap-4 shrink-0 group">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#384808] border border-[#A09048]/40 flex items-center justify-center shrink-0 text-[#F4F2E6] group-hover:bg-[#889028] group-hover:text-white transition-colors shadow-sm">
+                        <Icon size={20} strokeWidth={2.2} className="sm:w-[22px] sm:h-[22px]" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-spartan font-black text-xs sm:text-base uppercase tracking-wider text-white whitespace-nowrap">
+                          {item.title}
+                        </span>
+                        <span className="text-[11px] sm:text-xs text-[#F4F2E6]/80 mt-0.5 whitespace-nowrap">
+                          {item.subtitle}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span
+                      aria-hidden="true"
+                      className="text-[#A09048] text-sm sm:text-lg select-none shrink-0"
+                    >
+                      ✦
+                    </span>
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 };

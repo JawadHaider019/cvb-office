@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { QrCode, Video, Clock, Sparkles } from 'lucide-react';
+import { QrCode, Video, Sparkles, LayoutDashboard, FileCheck2, MapPin } from 'lucide-react';
 import { IMAGES } from '../assets/images';
 import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';
 import { motion } from 'motion/react';
@@ -9,141 +9,142 @@ export const BuildingBlocks: React.FC = () => {
   const { content } = useApp();
 
   return (
-    <section className="py-20 lg:py-32 bg-[#F4F2E6] text-[#384808] border-b border-[#A09048]/25 relative overflow-hidden">
-      <div className="max-w-[1360px] mx-auto px-6 sm:px-10 lg:px-12 relative z-10">
-        {/* Section Header */}
+    <section className="py-14 sm:py-20 lg:py-28 bg-[#F4F2E6] text-[#384808] border-b border-[#A09048]/25 relative overflow-hidden">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-10 lg:px-14 relative z-10">
+        {/* Section Header: Split Left (Headline) & Right (Editorial Paragraph) */}
         <ScrollReveal>
-          <div className="tech-tag mb-4">
-            <span className="tech-tagn">✦</span>
-            <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-              DIE ZWEI BAUSTEINE
-            </span>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-end mb-10 sm:mb-14 pb-6 sm:pb-8 border-b border-[#A09048]/20">
+            <div className="lg:col-span-7 xl:col-span-8">
+              <div className="tech-tag mb-4">
+                <span className="tech-tagn">✦</span>
+                <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
+                  DIE ZWEI BAUSTEINE
+                </span>
+              </div>
 
-          <h2 className="font-spartan font-black text-4xl sm:text-5xl lg:text-[56px] leading-[0.98] uppercase tracking-tight text-[#384808] mb-16 max-w-3xl">
-            Digitale Vorab-Einweisung & zentrales Vermiet-Cockpit<span className="text-[#A09048]">.</span>
-          </h2>
+              <h2 className="font-spartan font-black text-[23px] sm:text-5xl lg:text-[54px] leading-[1.06] sm:leading-[1.02] uppercase tracking-tight text-[#384808]">
+                Digitale Vorab-Einweisung &{' '}
+                <span className="text-[#889028]">
+                  zentrales Vermiet-Cockpit<span className="text-[#A09048]">.</span>
+                </span>
+              </h2>
+            </div>
+
+            <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-end">
+              <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body">
+                Zwei perfekt abgestimmte Werkzeuge: Deine Mieter bereiten sich selbstständig auf das Fahrzeug vor – und Du steuerst Anfragen, Verträge und Übergaben zentral.
+              </p>
+            </div>
+          </div>
         </ScrollReveal>
 
-        <div className="space-y-12">
-          {/* Block A (White Bento Card) */}
-          <ScrollReveal delay={0.1} distance={40}>
-            <div className="bg-white p-8 sm:p-14 lg:p-16 shadow-[0_20px_50px_-20px_rgba(56,72,8,0.12)] border border-[#A09048]/35 rounded-[32px] text-[#384808]">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="space-y-6 sm:space-y-8 lg:space-y-10">
+          {/* Block A (Elevated White Bento Card) */}
+          <ScrollReveal delay={0.08} distance={30}>
+            <div className="bg-white p-5 sm:p-11 lg:p-14 shadow-[0_20px_50px_-20px_rgba(56,72,8,0.12)] border border-[#A09048]/30 rounded-[24px] sm:rounded-[32px] text-[#384808]">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 sm:gap-10 lg:gap-12 items-center">
+                {/* Left Column (7 Cols): Content + 3 Verified Features */}
                 <div className="lg:col-span-7 flex flex-col items-start">
-                  <div className="tech-tag mb-3">
+                  <div className="tech-tag mb-4">
                     <span className="tech-tagn">A</span>
                     <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
                       FÜR DEINE MIETER
                     </span>
                   </div>
 
-                  <h3 className="font-spartan font-black text-3xl sm:text-4xl text-[#384808] mb-4">
+                  <h3 className="font-spartan font-black text-2xl sm:text-4xl text-[#242E05] uppercase tracking-tight mb-3 sm:mb-3.5">
                     {content.blockATitle}
                   </h3>
 
-                  <p className="text-base text-[#585828] font-normal leading-relaxed mb-8 font-body">
+                  <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed mb-5 sm:mb-7 font-body max-w-2xl">
                     {content.blockAText}
                   </p>
 
-                  <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full">
+                  <StaggerContainer className="space-y-3 sm:space-y-3.5 w-full">
                     <StaggerItem>
-                      <div className="p-4 bg-[#F4F2E6] border border-[#A09048]/25 rounded-2xl flex items-start gap-3 hover:border-[#889028] transition-colors">
-                        <Video size={18} className="text-[#889028] shrink-0 mt-0.5" />
-                        <div>
-                          <div className="text-xs font-spartan font-bold uppercase tracking-wider text-[#384808]">Video-Module</div>
-                          <div className="text-xs text-[#585828] mt-0.5">Vorab auf dem Smartphone ansehen.</div>
+                      <div className="p-3.5 sm:p-5 bg-[#F9F8F3] border border-[#A09048]/25 rounded-2xl flex items-center justify-between gap-3 sm:gap-4 hover:border-[#889028] transition-colors group">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#384808] text-white flex items-center justify-center shrink-0">
+                            <Video size={18} />
+                          </div>
+                          <div>
+                            <div className="text-xs sm:text-sm font-spartan font-black uppercase tracking-wider text-[#242E05]">
+                              Kurze Videos auf dem Smartphone
+                            </div>
+                            <div className="text-xs sm:text-[13px] text-[#585828] mt-0.5 leading-snug">
+                              Deine Mieter sehen sich die wichtigsten Funktionen bereits vor der Übergabe an.
+                            </div>
+                          </div>
                         </div>
+                        <span className="hidden sm:block font-spartan font-black text-2xl text-[#384808]/12 group-hover:text-[#A09048]/45 transition-colors select-none shrink-0">
+                          01
+                        </span>
                       </div>
                     </StaggerItem>
 
                     <StaggerItem>
-                      <div className="p-4 bg-[#F4F2E6] border border-[#A09048]/25 rounded-2xl flex items-start gap-3 hover:border-[#889028] transition-colors">
-                        <QrCode size={18} className="text-[#889028] shrink-0 mt-0.5" />
-                        <div>
-                          <div className="text-xs font-spartan font-bold uppercase tracking-wider text-[#384808]">QR-Codes im Camper</div>
-                          <div className="text-xs text-[#585828] mt-0.5">Sofortige Hilfe im Fahrzeug.</div>
+                      <div className="p-3.5 sm:p-5 bg-[#F9F8F3] border border-[#A09048]/25 rounded-2xl flex items-center justify-between gap-3 sm:gap-4 hover:border-[#889028] transition-colors group">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#384808] text-white flex items-center justify-center shrink-0">
+                            <QrCode size={18} />
+                          </div>
+                          <div>
+                            <div className="text-xs sm:text-sm font-spartan font-black uppercase tracking-wider text-[#242E05]">
+                              QR-Codes im Fahrzeug
+                            </div>
+                            <div className="text-xs sm:text-[13px] text-[#585828] mt-0.5 leading-snug">
+                              Direkt im Camper scannen und unterwegs sofort die passende Anleitung finden.
+                            </div>
+                          </div>
                         </div>
+                        <span className="hidden sm:block font-spartan font-black text-2xl text-[#384808]/12 group-hover:text-[#A09048]/45 transition-colors select-none shrink-0">
+                          02
+                        </span>
                       </div>
                     </StaggerItem>
 
                     <StaggerItem>
-                      <div className="p-4 bg-[#F4F2E6] border border-[#A09048]/25 rounded-2xl flex items-start gap-3 hover:border-[#889028] transition-colors">
-                        <Clock size={18} className="text-[#889028] shrink-0 mt-0.5" />
-                        <div>
-                          <div className="text-xs font-spartan font-bold uppercase tracking-wider text-[#384808]">50% Zeitersparnis</div>
-                          <div className="text-xs text-[#585828] mt-0.5">Keine langen Erklärungen im Regen.</div>
+                      <div className="p-3.5 sm:p-5 bg-[#F9F8F3] border border-[#A09048]/25 rounded-2xl flex items-center justify-between gap-3 sm:gap-4 hover:border-[#889028] transition-colors group">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#384808] text-white flex items-center justify-center shrink-0">
+                            <Sparkles size={18} />
+                          </div>
+                          <div>
+                            <div className="text-xs sm:text-sm font-spartan font-black uppercase tracking-wider text-[#242E05]">
+                              Digitaler KI-Assistent
+                            </div>
+                            <div className="text-xs sm:text-[13px] text-[#585828] mt-0.5 leading-snug">
+                              Beantwortet Mieterfragen rund um das gemietete Fahrzeug jederzeit direkt.
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </StaggerItem>
-
-                    <StaggerItem>
-                      <div className="p-4 bg-[#F4F2E6] border border-[#A09048]/25 rounded-2xl flex items-start gap-3 hover:border-[#889028] transition-colors">
-                        <Sparkles size={18} className="text-[#889028] shrink-0 mt-0.5" />
-                        <div>
-                          <div className="text-xs font-spartan font-bold uppercase tracking-wider text-[#384808]">Digitaler Assistent</div>
-                          <div className="text-xs text-[#585828] mt-0.5">Beantwortet Fragen 24/7.</div>
-                        </div>
+                        <span className="hidden sm:block font-spartan font-black text-2xl text-[#384808]/12 group-hover:text-[#A09048]/45 transition-colors select-none shrink-0">
+                          03
+                        </span>
                       </div>
                     </StaggerItem>
                   </StaggerContainer>
                 </div>
 
+                {/* Right Column (5 Cols): Clean Framed Motorhome Photo */}
                 <div className="lg:col-span-5">
                   <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.4 }}
-                    className="relative rounded-2xl bg-white shadow-xl border border-[#A09048]/35 overflow-hidden p-5 flex flex-col justify-between"
+                    whileHover={{ y: -4 }}
+                    transition={{ duration: 0.25 }}
+                    className="relative rounded-[20px] sm:rounded-[26px] overflow-hidden border border-[#A09048]/30 shadow-xl bg-[#F4F2E6] aspect-[4/3] lg:aspect-[4/4.2] group"
                   >
-                    {/* Simulated Mobile Smartphone / App Screen for Mieter */}
-                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#A09048]/20">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse" />
-                        <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#384808]">
-                          Mieter-Web-App (ohne Download)
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono text-[#889028] bg-[#F4F2E6] px-2 py-0.5 rounded-full font-bold">
-                        QR-Aktiv
+                    <img
+                      src={content.blockAImage || IMAGES.heroMotorhomeHandover}
+                      alt={content.blockAImageAlt || 'Schlüsselübergabe Reisemobil'}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1C2603]/70 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-4 sm:bottom-5 left-4 sm:left-5 right-4 sm:right-5 flex items-center justify-between gap-3">
+                      <span className="px-3 sm:px-3.5 py-1.5 rounded-full bg-white/95 text-[#242E05] font-spartan font-bold text-[10px] sm:text-xs uppercase tracking-wider shadow-md">
+                        Vorab per Smartphone & QR-Code
                       </span>
-                    </div>
-
-                    {/* Video Pre-Briefing Card */}
-                    <div className="relative rounded-xl overflow-hidden mb-3 bg-[#384808] aspect-video flex items-center justify-center border border-[#A09048]/30 group">
-                      <img
-                        src={content.blockAImage || IMAGES.heroMotorhomeHandover}
-                        alt={content.blockAImageAlt || "Schlüsselübergabe Reisemobil"}
-                        className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-[#A09048]/90 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                          <Video size={20} className="ml-0.5" />
-                        </div>
-                      </div>
-                      <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-white text-xs font-medium">
-                        <span>Truma Combi: Heizung & Warmwasser</span>
-                        <span className="font-mono text-[10px] bg-black/60 px-2 py-0.5 rounded">03:45 Min.</span>
-                      </div>
-                    </div>
-
-                    {/* Pre-check status badges */}
-                    <div className="space-y-2 bg-[#F4F2E6] p-3 rounded-xl border border-[#A09048]/20 text-xs">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#384808] font-semibold flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-                          Vorab-Einweisung abgeschlossen
-                        </span>
-                        <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                          100 % erledigt
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-[11px] text-[#585828]">
-                        <span>Mieter: Thomas & Sabine M.</span>
-                        <span className="font-mono">Reisebeginn: Heute</span>
-                      </div>
                     </div>
                   </motion.div>
                 </div>
@@ -151,74 +152,99 @@ export const BuildingBlocks: React.FC = () => {
             </div>
           </ScrollReveal>
 
-          {/* Block B (Dark Olive Green #384808 Container with Gold Accents) */}
-          <ScrollReveal delay={0.15} distance={40}>
-            <div className="rounded-[32px] p-8 sm:p-14 lg:p-16 bg-[#384808] text-white border border-[#A09048] shadow-2xl relative overflow-hidden">
-              <div className="tech-tag mb-3 bg-[#2D3A06] border-white/20">
-                <span className="tech-tagn bg-[#A09048] text-white">B</span>
-                <span className="font-spartan font-bold text-xs uppercase tracking-wider text-white">
-                  FÜR DICH ALS VERMIETER
-                </span>
-              </div>
+          {/* Block B (Olive-to-Black Architectural Bento Card with Split Layout) */}
+          <ScrollReveal delay={0.12} distance={30}>
+            <div className="rounded-[24px] sm:rounded-[32px] p-5 sm:p-11 lg:p-14 bg-gradient-to-br from-[#283505] via-[#1C2603] to-[#0D1201] text-white border border-[#A09048]/40 shadow-[0_25px_70px_rgba(24,32,4,0.28)] relative overflow-hidden">
+              {/* Subtle ambient glow */}
+              <div className="absolute -top-24 -right-24 w-[420px] h-[420px] bg-[#A09048]/12 rounded-full blur-[120px] pointer-events-none" />
 
-              <h3 className="font-spartan font-black text-3xl sm:text-4xl text-white mb-4">
-                {content.blockBTitle}
-              </h3>
-
-              <p className="text-base text-[#F4F2E6] font-normal leading-relaxed mb-8 max-w-2xl font-body">
-                {content.blockBText}
-              </p>
-
-              <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <StaggerItem>
-                  <div className="p-6 bg-white/10 border border-white/15 rounded-2xl hover:bg-white/15 transition-colors">
-                    <div className="text-xs font-spartan font-bold uppercase tracking-wider text-[#A09048] mb-2">
-                      Zentrales Cockpit
-                    </div>
-                    <p className="text-xs text-[#F4F2E6]/90 leading-relaxed">
-                      Alle Termine, Verträge und Fahrzeugstatus in Echtzeit auf einen Blick.
-                    </p>
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-7 sm:gap-10 lg:gap-12 items-center">
+                {/* Left Column (5 Cols): Narrative */}
+                <div className="lg:col-span-5">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-[#A09048]/35 mb-4">
+                    <span className="w-5 h-5 rounded-full bg-[#889028] text-white font-spartan font-black text-[11px] flex items-center justify-center">
+                      B
+                    </span>
+                    <span className="font-spartan font-bold text-xs uppercase tracking-wider text-white">
+                      FÜR DICH ALS VERMIETER
+                    </span>
                   </div>
-                </StaggerItem>
 
-                <StaggerItem>
-                  <div className="p-6 bg-white/10 border border-white/15 rounded-2xl hover:bg-white/10 transition-colors">
-                    <div className="text-xs font-spartan font-bold uppercase tracking-wider text-[#A09048] mb-2">
-                      Digitale Verträge
-                    </div>
-                    <p className="text-xs text-[#F4F2E6]/90 leading-relaxed">
-                      Rechtssichere Mietverträge, Protokolle und Rechnungen sekundenschnell als PDF.
-                    </p>
-                  </div>
-                </StaggerItem>
+                  <h3 className="font-spartan font-black text-2xl sm:text-4xl text-white uppercase tracking-tight mb-3 sm:mb-4">
+                    {content.blockBTitle}
+                  </h3>
 
-                <StaggerItem>
-                  <div className="p-6 bg-white/10 border border-white/15 rounded-2xl hover:bg-white/10 transition-colors">
-                    <div className="text-xs font-spartan font-bold uppercase tracking-wider text-[#A09048] mb-2">
-                      Standorte & Verbünde
-                    </div>
-                    <p className="text-xs text-[#F4F2E6]/90 leading-relaxed">
-                      Mehrere Übergabestationen oder Partnerflotten mit klarer Trennung verwalten.
-                    </p>
-                  </div>
-                </StaggerItem>
-              </StaggerContainer>
-
-              {/* Realistic German Vermieter-Cockpit Live Snapshot Bar */}
-              <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-black/25 border border-white/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs font-mono">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 font-bold text-[11px]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    LIVE-COCKPIT
-                  </span>
-                  <span className="text-[#F4F2E6]">Fahrzeug #04: Sunlight Cliff 600</span>
-                  <span className="text-white/40">|</span>
-                  <span className="text-[#A09048]">Übergabe: 15:30 Uhr</span>
+                  <p className="text-sm sm:text-base text-[#F4F2E6]/85 font-normal leading-relaxed font-body">
+                    {content.blockBText}
+                  </p>
                 </div>
-                <div className="flex items-center gap-3 text-[11px] text-[#F4F2E6]/80 self-end md:self-auto">
-                  <span className="text-emerald-300 font-bold">✓ PDF-Vertrag digital signiert</span>
-                  <span className="text-white/40">·</span>
-                  <span className="text-stone-300">Kaution 1.500 € autorisiert</span>
+
+                {/* Right Column (7 Cols): 3 Clean Architectural Feature Rows */}
+                <div className="lg:col-span-7">
+                  <StaggerContainer className="space-y-3 sm:space-y-3.5">
+                    <StaggerItem>
+                      <div className="p-4 sm:p-6 bg-white/[0.04] border border-white/10 hover:border-[#A09048]/50 rounded-2xl transition-colors flex items-center justify-between gap-3 sm:gap-4 group">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#889028] text-white flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[#A09048] group-hover:text-white transition-colors">
+                            <LayoutDashboard size={20} />
+                          </div>
+                          <div>
+                            <div className="text-xs sm:text-base font-spartan font-black uppercase tracking-wider text-white mb-1">
+                              Zentrales Cockpit
+                            </div>
+                            <p className="text-xs sm:text-[13px] text-[#F4F2E6]/80 leading-relaxed">
+                              Alle Termine, Verträge und Fahrzeugstatus in Echtzeit auf einen Blick.
+                            </p>
+                          </div>
+                        </div>
+                        <span className="hidden sm:block font-spartan font-black text-3xl text-white/15 group-hover:text-[#A09048]/45 transition-colors select-none shrink-0">
+                          01
+                        </span>
+                      </div>
+                    </StaggerItem>
+
+                    <StaggerItem>
+                      <div className="p-4 sm:p-6 bg-white/[0.04] border border-white/10 hover:border-[#A09048]/50 rounded-2xl transition-colors flex items-center justify-between gap-3 sm:gap-4 group">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#889028] text-white flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[#A09048] group-hover:text-white transition-colors">
+                            <FileCheck2 size={20} />
+                          </div>
+                          <div>
+                            <div className="text-xs sm:text-base font-spartan font-black uppercase tracking-wider text-white mb-1">
+                              Digitale Verträge
+                            </div>
+                            <p className="text-xs sm:text-[13px] text-[#F4F2E6]/80 leading-relaxed">
+                              Rechtssichere Mietverträge, Protokolle und Rechnungen sekundenschnell als PDF.
+                            </p>
+                          </div>
+                        </div>
+                        <span className="hidden sm:block font-spartan font-black text-3xl text-white/15 group-hover:text-[#A09048]/45 transition-colors select-none shrink-0">
+                          02
+                        </span>
+                      </div>
+                    </StaggerItem>
+
+                    <StaggerItem>
+                      <div className="p-4 sm:p-6 bg-white/[0.04] border border-white/10 hover:border-[#A09048]/50 rounded-2xl transition-colors flex items-center justify-between gap-3 sm:gap-4 group">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#889028] text-white flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[#A09048] group-hover:text-white transition-colors">
+                            <MapPin size={20} />
+                          </div>
+                          <div>
+                            <div className="text-xs sm:text-base font-spartan font-black uppercase tracking-wider text-white mb-1">
+                              Standorte & Verbünde
+                            </div>
+                            <p className="text-xs sm:text-[13px] text-[#F4F2E6]/80 leading-relaxed">
+                              Mehrere Übergabestationen oder Partnerflotten mit klarer Trennung verwalten.
+                            </p>
+                          </div>
+                        </div>
+                        <span className="hidden sm:block font-spartan font-black text-3xl text-white/15 group-hover:text-[#A09048]/45 transition-colors select-none shrink-0">
+                          03
+                        </span>
+                      </div>
+                    </StaggerItem>
+                  </StaggerContainer>
                 </div>
               </div>
             </div>

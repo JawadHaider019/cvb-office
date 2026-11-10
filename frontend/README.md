@@ -1,20 +1,19 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# CVB-Office Frontend
 
-# Run and deploy your AI Studio app
+Offizielle Web-Oberfläche für **CVB-Office** des Caravan-Vermieter-Bund (CVB) auf Basis von React, TypeScript, Vite und Tailwind CSS.
 
-This contains everything you need to run your app locally.
+## Entwicklung & Build
 
-View your app in AI Studio: https://ai.studio/apps/0cdcbad0-2099-406a-94dc-cf59499d00d1
+```bash
+# Abhängigkeiten installieren
+npm install
 
-## Run Locally
+# Entwicklungsserver starten (Port 3000)
+npm run dev
 
-**Prerequisites:**  Node.js
+# Typprüfung (TypeScript)
+npm run lint
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+# Produktions-Build erzeugen (Ausgabe in dist/)
+npm run build
+```
