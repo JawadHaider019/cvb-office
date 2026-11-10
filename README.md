@@ -207,3 +207,5 @@ npm --prefix backend run build
 
 Der Ordner `frontend/dist/` kann auf jedem Webserver (Apache, Nginx, Hostinger, All-Inkl, Vercel, Netlify) abgelegt werden. Bei Verwendung von HTML5 PushState-Routing muss eine Umleitungsregel auf `index.html` konfiguriert sein.
 
+#   c v b - o f f i c e  
+ 
