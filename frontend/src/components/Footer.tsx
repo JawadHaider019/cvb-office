@@ -1,13 +1,13 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Lock, ShieldCheck, ArrowUpRight, Mail, MapPin, Heart, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, Mail } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
 
 export const Footer: React.FC<{
   onOpenImpressum: () => void;
   onOpenPrivacy: () => void;
 }> = ({ onOpenImpressum, onOpenPrivacy }) => {
-  const { setCurrentView, isAdminLoggedIn, generalSettings } = useApp();
+  const { generalSettings } = useApp();
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -184,17 +184,6 @@ export const Footer: React.FC<{
                 <span>14 Tage testen</span>
                 <ArrowUpRight size={13} />
               </a>
-            </div>
-
-            {/* Admin Keyhole */}
-            <div className="pt-1">
-              <button
-                onClick={() => setCurrentView('admin')}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-[#A09048] hover:text-white transition-all cursor-pointer text-[10px] font-mono uppercase text-[#F4F2E6]/85"
-              >
-                {isAdminLoggedIn ? <ShieldCheck size={12} className="text-[#A09048]" /> : <Lock size={11} />}
-                <span>{isAdminLoggedIn ? 'ADMIN AKTIV' : 'ADMIN BEREICH'}</span>
-              </button>
             </div>
           </div>
 

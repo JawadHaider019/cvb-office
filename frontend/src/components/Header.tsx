@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { Menu, X, ArrowUpRight, Lock, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { CvbOfficeIcon } from './CvbLogo';
 
 export const Header: React.FC = () => {
-  const { generalSettings, isAdminLoggedIn, setCurrentView } = useApp();
+  const { generalSettings } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -157,16 +157,6 @@ export const Header: React.FC = () => {
               </span>
             </button>
 
-            {/* Discrete Admin Keyhole */}
-            <button
-              onClick={() => setCurrentView('admin')}
-              title={isAdminLoggedIn ? 'Admin angemeldet' : 'Admin Login'}
-              className="p-2 text-[#585828]/50 hover:text-[#384808] transition-colors cursor-pointer hidden xl:block"
-              aria-label="Admin Bereich"
-            >
-              <Lock size={15} />
-            </button>
-
             {/* Mobile Menu Trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -230,15 +220,6 @@ export const Header: React.FC = () => {
               >
                 14 Tage kostenlos testen ↗
               </a>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setCurrentView('admin');
-                }}
-                className="text-center py-1 text-xs text-[#889028] font-bold uppercase tracking-wider"
-              >
-                Admin-Bereich öffnen
-              </button>
             </div>
           </div>
         )}
