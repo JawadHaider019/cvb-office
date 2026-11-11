@@ -130,7 +130,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
 
   return (
     <>
-      {/* Floating Success Toast Notification (Tech Destination Solar Yellow & Midnight) */}
+      {/* Floating Success Toast Notification */}
       <AnimatePresence>
         {showToast && toastData && (
           <motion.div

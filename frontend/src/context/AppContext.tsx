@@ -19,6 +19,32 @@ import {
   sampleInitialRequests,
 } from '../data/defaultContent';
 
+/** Resolve backend API base URL; returns null on non-local origins when VITE_API_URL is unset so browsers never prompt for local network access. */
+const getApiBaseUrl = (): string | null => {
+  const configured = import.meta.env.VITE_API_URL?.trim();
+  if (configured) {
+    return configured.replace(/\/+$/, '');
+  }
+  if (
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ) {
+    return 'http://localhost:5000';
+  }
+  return null;
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+const syncContentPatch = (payload: Record<string, unknown>) => {
+  if (!API_BASE_URL) return;
+  fetch(`${API_BASE_URL}/api/content`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).catch(() => {});
+};
+
 interface AppContextType {
   // Content & Settings
   content: SiteContent;
@@ -189,9 +215,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  // Sync from backend on mount if online
+  // Sync from backend on mount if API backend is configured/local
   useEffect(() => {
-    fetch('http://localhost:5000/api/requests')
+    if (!API_BASE_URL) return;
+    fetch(`${API_BASE_URL}/api/requests`)
       .then((res) => (res.ok ? res.json() : null))
       .then((serverRequests) => {
         if (Array.isArray(serverRequests) && serverRequests.length > 0) {
@@ -209,56 +236,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Persistence effects
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.CONTENT, JSON.stringify(content));
-    fetch('http://localhost:5000/api/content', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
-    }).catch(() => {});
+    syncContentPatch({ content });
   }, [content]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.PRICES, JSON.stringify(priceSettings));
-    fetch('http://localhost:5000/api/content', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceSettings }),
-    }).catch(() => {});
+    syncContentPatch({ priceSettings });
   }, [priceSettings]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(generalSettings));
-    fetch('http://localhost:5000/api/content', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ generalSettings }),
-    }).catch(() => {});
+    syncContentPatch({ generalSettings });
   }, [generalSettings]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.FEATURES, JSON.stringify(features));
-    fetch('http://localhost:5000/api/content', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ features }),
-    }).catch(() => {});
+    syncContentPatch({ features });
   }, [features]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.STEPS, JSON.stringify(steps));
-    fetch('http://localhost:5000/api/content', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ steps }),
-    }).catch(() => {});
+    syncContentPatch({ steps });
   }, [steps]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(faqs));
-    fetch('http://localhost:5000/api/content', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ faqs }),
-    }).catch(() => {});
+    syncContentPatch({ faqs });
   }, [faqs]);
 
   useEffect(() => {
@@ -441,38 +444,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       email_sent: true,
     };
 
-    // Attempt backend sync
-    try {
-      const response = await fetch('http://localhost:5000/api/requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: trimmedEmail,
-          vehicleCount,
-          priceConsent,
-          privacyConsent,
-          honeypot: honeypotValue,
-          formOpenedAt,
-          priceConsentText: currentPriceText,
-          contact_name: contactName,
-          phone,
-        }),
-      });
+    // Attempt backend sync when API backend is available
+    if (API_BASE_URL) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/requests`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: trimmedEmail,
+            vehicleCount,
+            priceConsent,
+            privacyConsent,
+            honeypot: honeypotValue,
+            formOpenedAt,
+            priceConsentText: currentPriceText,
+            contact_name: contactName,
+            phone,
+          }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        if (errorData && errorData.error) {
-          return { success: false, error: errorData.error };
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          if (errorData && errorData.error) {
+            return { success: false, error: errorData.error };
+          }
+        } else {
+          const resData = await response.json().catch(() => null);
+          if (resData && resData.data) {
+            setRequests((prev) => [resData.data, ...prev.filter((r) => r.id !== resData.data.id)]);
+            return { success: true };
+          }
         }
-      } else {
-        const resData = await response.json().catch(() => null);
-        if (resData && resData.data) {
-          setRequests((prev) => [resData.data, ...prev.filter((r) => r.id !== resData.data.id)]);
-          return { success: true };
-        }
+      } catch {
+        // Offline fallback: store locally
       }
-    } catch {
-      // Offline fallback: store locally
     }
 
     setRequests((prev) => [newRequest, ...prev]);
@@ -481,8 +486,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateRequestStatus = (id: string, status: RequestStatus) => {
     setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+    if (!API_BASE_URL) return;
     try {
-      fetch(`http://localhost:5000/api/requests/${id}`, {
+      fetch(`${API_BASE_URL}/api/requests/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -492,8 +498,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateRequestNote = (id: string, notes: string) => {
     setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, notes } : r)));
+    if (!API_BASE_URL) return;
     try {
-      fetch(`http://localhost:5000/api/requests/${id}`, {
+      fetch(`${API_BASE_URL}/api/requests/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes }),
@@ -503,8 +510,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const deleteRequest = (id: string) => {
     setRequests((prev) => prev.filter((r) => r.id !== id));
+    if (!API_BASE_URL) return;
     try {
-      fetch(`http://localhost:5000/api/requests/${id}`, {
+      fetch(`${API_BASE_URL}/api/requests/${id}`, {
         method: 'DELETE',
       }).catch(() => {});
     } catch {}

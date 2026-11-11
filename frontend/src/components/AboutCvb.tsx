@@ -38,7 +38,7 @@ export const AboutCvb: React.FC = () => {
       <div className="absolute top-1/3 left-0 w-[550px] h-[550px] bg-[#F4F2E6] rounded-full blur-[140px] pointer-events-none" />
 
       <div className="relative max-w-[1400px] mx-auto px-4 sm:px-10 lg:px-14">
-        {/* Section Header: Matching All Other Top Headings (PriceTrialBox, Faq, ProblemSolution) */}
+        {/* Section Header */}
         <ScrollReveal>
           <div className="mb-6 sm:mb-12 lg:mb-16">
             <div className="tech-tag mb-2 sm:mb-4">
@@ -114,7 +114,7 @@ export const AboutCvb: React.FC = () => {
             {/* TOP ROW: 2 Cards Side-by-Side (Dark Navy/Olive Card + Warm Gold Card) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
 
-              {/* Card 1: Verbandssitz (Matching "ADMISSIONS OFFICE" Card) */}
+              {/* Card 1: Verbandssitz & Leitung */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -147,7 +147,7 @@ export const AboutCvb: React.FC = () => {
                 </div>
               </motion.div>
 
-              {/* Card 2: E-Mail & Beratung (Matching Yellow "WRITE TO US" Card) */}
+              {/* Card 2: E-Mail & Persönliche Beratung */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -202,7 +202,7 @@ export const AboutCvb: React.FC = () => {
 
             </div>
 
-            {/* BOTTOM ROW: Wide Banner Card (Matching Purple "Applicant Support" Card with compact gap) */}
+            {/* BOTTOM ROW: Wide Banner Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -227,7 +227,7 @@ export const AboutCvb: React.FC = () => {
                 Gemeinsam stark im Verbund – wir geben unabhängigen Wohnmobil- und Caravan-Vermietern die besten Werkzeuge an die Hand. 100 % DSGVO-konform, faire Verbundkonditionen und 0 % Buchungsprovision.
               </p>
 
-              {/* 3 Action Buttons (Matching reference: Primary white pill + Ghost pills) */}
+              {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                 {/* Primary Button: "Mehr über den CVB erfahren →" */}
                 <a

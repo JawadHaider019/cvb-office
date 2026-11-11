@@ -74,7 +74,7 @@ export const BenefitsAudience: React.FC = () => {
 
   return (
     <>
-      {/* BAND 1 (Guide Image 1): White Background — Split Left Headline + Numbered 1-6 Benefit Track Right */}
+      {/* BAND 1: White Background — Split Left Headline + Numbered 1-6 Benefit Track Right */}
       <section className="relative py-14 sm:py-20 lg:py-28 bg-white text-[#242E05] border-b border-[#A09048]/20 overflow-hidden">
         <div className="relative max-w-[1400px] mx-auto px-4 sm:px-10 lg:px-14">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 items-center">
@@ -110,7 +110,7 @@ export const BenefitsAudience: React.FC = () => {
               </ScrollReveal>
             </div>
 
-            {/* Right Column (7 Cols): Vertical Numbered Step List matching Reference Image 1 */}
+            {/* Right Column (7 Cols): Vertical Numbered Step List */}
             <div className="lg:col-span-7 relative">
               {/* Vertical Connecting Line */}
               <div
@@ -186,7 +186,7 @@ export const BenefitsAudience: React.FC = () => {
         </div>
       </section>
 
-      {/* BAND 2 (Guide Image 2): Dark Olive-to-Black Gradient — Praxis-Stimmen Cards + Zielgruppen Banner */}
+      {/* BAND 2: Dark Olive Gradient — Praxis-Stimmen Cards + Zielgruppen Banner */}
       <section className="relative py-14 sm:py-20 lg:py-28 bg-gradient-to-b from-[#283505] via-[#131A02] to-[#060801] text-white border-b border-[#A09048]/25 overflow-hidden">
         {/* Soft centered glow behind cards */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-[#889028]/15 rounded-full blur-[150px] pointer-events-none" />
@@ -204,7 +204,7 @@ export const BenefitsAudience: React.FC = () => {
             </div>
           </ScrollReveal>
 
-          {/* 3 Clean Dark Cards (Matching Reference Image 2 Top) */}
+          {/* 3 Testimonial Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 mb-8 sm:mb-10">
             {testimonials.map((t, idx) => {
               const Icon = t.icon;
@@ -245,7 +245,7 @@ export const BenefitsAudience: React.FC = () => {
             })}
           </div>
 
-          {/* Bottom Centered Gradient Banner (Matching Reference Image 2 Bottom Card) */}
+          {/* Bottom Centered Audience Banner */}
           <ScrollReveal delay={0.1}>
             <div className="relative rounded-[24px] sm:rounded-[32px] py-9 px-5 sm:py-16 sm:px-12 bg-gradient-to-br from-[#3D4F09] via-[#51680B] to-[#889028]/75 border border-[#A09048]/40 shadow-2xl overflow-hidden text-center">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_center,rgba(160,144,72,0.22),transparent_62%)] pointer-events-none" />
