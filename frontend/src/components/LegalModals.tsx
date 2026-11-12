@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { X, Shield } from 'lucide-react';
 
@@ -44,8 +46,9 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
                 <h4 className="font-bold text-[#384808] text-base mb-1">Angaben gemäß § 5 DDG</h4>
                 <p>
                   Caravan-Vermieter-Bund (CVB)<br />
+                  DS-Caravaning GmbH<br />
                   Vertreten durch: Detlef Scheer<br />
-                  Deutschland
+                  Niederkrüchten, Deutschland
                 </p>
               </div>
 

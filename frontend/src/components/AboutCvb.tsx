@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import {
@@ -44,7 +46,7 @@ export const AboutCvb: React.FC = () => {
             <div className="tech-tag mb-2 sm:mb-4">
               <span className="tech-tagn">✦</span>
               <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                ÜBER DEN BUND
+                ÜBER DAS CVB-NETZWERK
               </span>
             </div>
 
@@ -114,7 +116,7 @@ export const AboutCvb: React.FC = () => {
             {/* TOP ROW: 2 Cards Side-by-Side (Dark Navy/Olive Card + Warm Gold Card) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
 
-              {/* Card 1: Verbandssitz & Leitung */}
+              {/* Card 1: Unternehmenssitz & Leitung */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -132,7 +134,7 @@ export const AboutCvb: React.FC = () => {
                       <MapPin size={15} />
                     </div>
                     <span className="text-[10px] font-mono font-bold tracking-widest text-[#F4F2E6]/75 uppercase">
-                      VERBANDSSITZ & LEITUNG
+                      UNTERNEHMENSSITZ & LEITUNG
                     </span>
                   </div>
 
@@ -141,9 +143,9 @@ export const AboutCvb: React.FC = () => {
                   </h3>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-[#F4F2E6]/80 font-mono mt-3 pt-2.5 border-t border-white/10">
-                  <span>Detlef Scheer · Deutschland</span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#A09048] animate-pulse" />
+                <div className="flex items-center justify-between text-xs text-[#F4F2E6]/85 font-mono mt-3 pt-2.5 border-t border-white/10">
+                  <span>DS-Caravaning GmbH, Detlef Scheer · Niederkrüchten</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#A09048] animate-pulse shrink-0 ml-2" />
                 </div>
               </motion.div>
 
@@ -219,12 +221,12 @@ export const AboutCvb: React.FC = () => {
                   <ShieldCheck size={20} />
                 </div>
                 <h3 className="font-spartan font-black text-lg sm:text-2xl text-white uppercase tracking-tight">
-                  Offizielles Verbands-Office
+                  Offizielles Vermieter-Office
                 </h3>
               </div>
 
               <p className="text-xs sm:text-sm text-[#F4F2E6]/90 font-normal leading-relaxed mb-5 sm:mb-6 max-w-xl font-sans">
-                Gemeinsam stark im Verbund – wir geben unabhängigen Wohnmobil- und Caravan-Vermietern die besten Werkzeuge an die Hand. 100 % DSGVO-konform, faire Verbundkonditionen und 0 % Buchungsprovision.
+                Gemeinsam stark im Netzwerk – wir geben unabhängigen Wohnmobil- und Caravan-Vermietern die besten Werkzeuge an die Hand. 100 % DSGVO-konform, faire Konditionen und 0 % Buchungsprovision.
               </p>
 
               {/* Action Buttons */}

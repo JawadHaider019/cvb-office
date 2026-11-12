@@ -1,12 +1,14 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Check, ArrowRight, ArrowUpRight, Calculator, TrendingUp } from 'lucide-react';
+import { Check, ArrowRight, ArrowUpRight, Calculator, TrendingUp, ShieldCheck } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 
 export const PriceTrialBox: React.FC = () => {
   const { priceSettings, content, generalSettings, selectedVehicleCount, selectVehicleAndScrollToForm } = useApp();
-  const [calcVehicles, setCalcVehicles] = useState<number>(selectedVehicleCount || 4);
+  const [calcVehicles, setCalcVehicles] = useState<number>(selectedVehicleCount || 1);
 
   const formattedMonthly = priceSettings.monthlyNet.toLocaleString('de-DE', {
     minimumFractionDigits: 2,
@@ -48,14 +50,14 @@ export const PriceTrialBox: React.FC = () => {
               <div className="tech-tag mb-4">
                 <span className="tech-tagn">✦</span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                  TARIFE & VERBUNDKONDITIONEN
+                  TARIFE & EXKLUSIVKONDITIONEN
                 </span>
               </div>
 
               <h2 className="font-spartan text-[22px] sm:text-5xl lg:text-[42px] xl:text-6xl font-black uppercase text-[#384808] leading-[1.06] sm:leading-[1.02] tracking-tight break-words">
                 EINFACHE, TRANSPARENTE PREISSTRUKTUR FÜR{' '}
                 <span className="text-[#889028]">
-                  VERBUNDMITGLIEDER<span className="text-[#A09048]">.</span>
+                  CVB-MITGLIEDER<span className="text-[#A09048]">.</span>
                 </span>
               </h2>
             </div>
@@ -105,7 +107,7 @@ export const PriceTrialBox: React.FC = () => {
                   </div>
 
                   {/* Feature Checklist */}
-                  <ul className="space-y-3 sm:space-y-3.5 text-sm text-white/95 font-medium mb-7 sm:mb-8">
+                  <ul className="space-y-3 sm:space-y-3.5 text-sm text-white/95 font-medium mb-6">
                     <li className="flex items-center gap-3">
                       <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 shadow-sm">
                         <Check size={12} strokeWidth={3} />
@@ -131,6 +133,36 @@ export const PriceTrialBox: React.FC = () => {
                       <span>{content.trialPromiseLine}</span>
                     </li>
                   </ul>
+
+                  {/* Exclusive CVB Membership Notice Callout */}
+                  <div className="mb-6 sm:mb-7 p-4 sm:p-4.5 rounded-2xl bg-white/[0.08] border border-[#A09048]/55 backdrop-blur-xs">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-[#A09048] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                        <ShieldCheck size={17} strokeWidth={2.5} />
+                      </div>
+                      <div className="space-y-2">
+                        <div>
+                          <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#F4F2E6]">
+                            Voraussetzung: CVB-Mitgliedschaft
+                          </div>
+                          <p className="text-xs sm:text-sm text-white/95 leading-relaxed mt-0.5">
+                            <strong>CVB-Office gibt es exklusiv für CVB-Mitglieder.</strong> Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.
+                          </p>
+                        </div>
+                        <div>
+                          <a
+                            href="https://caravan-vermieter-bund.de/mitglied-werden"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-all shadow-xs hover:-translate-y-0.5 group"
+                          >
+                            <span>Jetzt Mitglied werden</span>
+                            <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Action Buttons */}
@@ -191,7 +223,7 @@ export const PriceTrialBox: React.FC = () => {
 
                     {/* Crisp 1-Click Fleet Presets */}
                     <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-3.5">
-                      {[2, 5, 10, 20].map((count) => (
+                      {[1, 2, 5, 10].map((count) => (
                         <motion.button
                           key={count}
                           type="button"
@@ -261,6 +293,20 @@ export const PriceTrialBox: React.FC = () => {
                     <span>Für {calcVehicles} {calcVehicles === 1 ? 'Fahrzeug' : 'Fahrzeuge'} anfragen</span>
                     <ArrowRight size={15} className="shrink-0" />
                   </button>
+                  <div className="mt-2.5 text-center">
+                    <span className="text-[11px] text-[#585828]">
+                      Exklusiv für CVB-Mitglieder.{' '}
+                      <a
+                        href="https://caravan-vermieter-bund.de/mitglied-werden"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#384808] font-bold underline hover:text-[#889028] inline-flex items-center gap-0.5"
+                      >
+                        <span>Jetzt Mitglied werden</span>
+                        <ArrowUpRight size={11} />
+                      </a>
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             </div>

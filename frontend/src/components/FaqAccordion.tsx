@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import {
@@ -8,6 +10,7 @@ import {
   ShieldCheck,
   Plus,
   ArrowRight,
+  ArrowUpRight,
   Mail,
   HelpCircle,
 } from 'lucide-react';
@@ -47,7 +50,7 @@ export const FaqAccordion: React.FC = () => {
       const q = faq.question.toLowerCase();
       let categoryId = 'software';
 
-      if (q.includes('preis') || q.includes('kosten') || q.includes('bezahlt') || q.includes('testen') || q.includes('gebühr')) {
+      if (q.includes('preis') || q.includes('kosten') || q.includes('bezahlt') || q.includes('testen') || q.includes('gebühr') || q.includes('mitglied')) {
         categoryId = 'pricing';
       } else if (q.includes('website') || q.includes('widget') || q.includes('video') || q.includes('standort') || q.includes('einweisung')) {
         categoryId = 'features';
@@ -126,7 +129,7 @@ export const FaqAccordion: React.FC = () => {
             {/* Right Column: Editorial Paragraph */}
             <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-end">
               <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body">
-                Hier findest Du verlässliche Antworten auf die wichtigsten Fragen rund um die Einführung, Verbundtarife, die digitale Vorab-Einweisung und die rechtssichere Digitalisierung Deiner Vermietung.
+                Hier findest Du verlässliche Antworten auf die wichtigsten Fragen rund um die Einführung, Mitgliedstarife, die digitale Vorab-Einweisung und die rechtssichere Digitalisierung Deiner Vermietung.
               </p>
             </div>
           </div>
@@ -195,7 +198,7 @@ export const FaqAccordion: React.FC = () => {
                   Noch Fragen offen?
                 </h3>
                 <p className="text-xs text-[#F4F2E6]/85 leading-relaxed mb-5 font-sans">
-                  Unser Verbandsteam hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.
+                  Unser CVB-Team hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.
                 </p>
 
                 <div className="text-xs font-mono text-[#F4F2E6] font-bold mb-6 break-all">
@@ -287,6 +290,22 @@ export const FaqAccordion: React.FC = () => {
                               >
                                 <div className="px-4 sm:px-8 pb-5 sm:pb-6 pt-1 text-xs sm:text-sm text-[#585828] leading-relaxed border-t border-[#A09048]/15 font-body">
                                   <p>{faq.answer}</p>
+                                  {(faq.answer.includes('CVB-Mitglied') || faq.id.includes('mitglied') || faq.question.toLowerCase().includes('mitglied')) && (
+                                    <div className="mt-3.5 pt-3 border-t border-[#A09048]/20 flex items-center justify-between flex-wrap gap-2.5">
+                                      <span className="text-xs font-bold text-[#384808]">
+                                        Noch kein CVB-Mitglied?
+                                      </span>
+                                      <a
+                                        href="https://caravan-vermieter-bund.de/mitglied-werden"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#384808] hover:bg-[#242E05] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-all shadow-xs group"
+                                      >
+                                        <span>Jetzt Mitglied werden</span>
+                                        <ArrowUpRight size={13} className="text-[#A09048] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                      </a>
+                                    </div>
+                                  )}
                                 </div>
                               </motion.div>
                             )}
@@ -307,7 +326,7 @@ export const FaqAccordion: React.FC = () => {
                   Noch Fragen offen?
                 </h3>
                 <p className="text-xs text-[#F4F2E6]/85 leading-relaxed mb-4 font-sans">
-                  Unser Verbandsteam hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.
+                  Unser CVB-Team hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.
                 </p>
                 <div className="text-xs font-mono text-[#F4F2E6] font-bold mb-5 break-all">
                   {generalSettings.contactEmail}

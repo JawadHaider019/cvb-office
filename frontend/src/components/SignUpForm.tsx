@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
-import { CheckCircle2, AlertCircle, Loader2, ArrowRight, ShieldCheck, Check, X } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, ArrowRight, ArrowUpRight, ShieldCheck, Check, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 
@@ -196,7 +198,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
         <div className="relative max-w-[1400px] mx-auto px-4 sm:px-10 lg:px-14">
           <ScrollReveal>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 items-stretch">
-              {/* Section 1 (Left 5 cols): Editorial Headline, Trust Stack & Verbund-Portal Info */}
+              {/* Section 1 (Left 5 cols): Editorial Headline, Trust Stack & Vermieter-Portal Info */}
               <div className="lg:col-span-5 flex flex-col gap-6 sm:gap-7 lg:pr-4">
                 <div>
                   <div className="tech-tag mb-4 sm:mb-5 bg-[#384808] border-[#A09048] text-white">
@@ -235,10 +237,40 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                       <div className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
                         <Check size={14} strokeWidth={3} />
                       </div>
-                      <span>Persönliche Betreuung durch den Bund</span>
+                      <span>Persönliche Betreuung durch das CVB-Team</span>
                     </div>
                   </div>
                 </div>
+
+                {/* Exclusive CVB Membership Notice Callout */}
+                <motion.div
+                  whileHover={{ y: -2 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-white/[0.08] backdrop-blur-md rounded-[22px] sm:rounded-[26px] border border-[#A09048]/45 p-5 sm:p-6 shadow-xl space-y-3"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-[#A09048] text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <ShieldCheck size={17} strokeWidth={2.5} />
+                    </div>
+                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#F4F2E6]">
+                      EXKLUSIV FÜR CVB-MITGLIEDER
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-[#F4F2E6]/95 leading-relaxed">
+                    CVB-Office gibt es exklusiv für CVB-Mitglieder. Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.
+                  </p>
+                  <div>
+                    <a
+                      href="https://caravan-vermieter-bund.de/mitglied-werden"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-all shadow-md group"
+                    >
+                      <span>Jetzt Mitglied werden</span>
+                      <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </a>
+                  </div>
+                </motion.div>
 
                 {/* Integrated Brand & Contact Info Card */}
                 <motion.div
@@ -257,7 +289,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                         CVB-OFFICE
                       </div>
                       <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#A09048] mt-1">
-                        VERBUND-PORTAL
+                        VERMIETER-PORTAL
                       </div>
                     </div>
                   </div>
@@ -268,7 +300,8 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                         Organisation
                       </span>
                       <span className="font-semibold text-white block">Caravan-Vermieter-Bund (CVB)</span>
-                      <div className="text-[#F4F2E6]/80 mt-0.5">Detlef Scheer (Gründer)</div>
+                      <div className="text-[#F4F2E6]/80 mt-0.5">DS-Caravaning GmbH, Detlef Scheer</div>
+                      <div className="text-[#F4F2E6]/60 text-xs">Niederkrüchten</div>
                     </div>
 
                     <div className="space-y-3">
@@ -367,7 +400,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
 
                         <div className="pl-3 sm:pl-4 text-right">
                           <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#585828] mb-1">
-                            Verbundtarif
+                            Mitgliedstarif
                           </div>
                           <div className="font-spartan text-base sm:text-xl font-black text-[#384808] leading-tight">
                             {currentTotalMonthly} €{' '}
@@ -376,9 +409,20 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                         </div>
                       </div>
 
-                      <div className="px-3.5 sm:px-5 py-2.5 bg-[#EAE6D3]/70 border-t border-[#A09048]/20 flex items-center justify-center sm:justify-start gap-2 text-[11px] sm:text-xs text-[#384808] font-medium text-center sm:text-left">
-                        <ShieldCheck size={14} className="text-[#889028] shrink-0" />
-                        <span>14 Tage unverbindliche Testphase · Keine Zahlung heute</span>
+                      <div className="px-3.5 sm:px-5 py-2.5 bg-[#EAE6D3]/70 border-t border-[#A09048]/20 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] sm:text-xs text-[#384808]">
+                        <div className="flex items-center gap-2 font-medium">
+                          <ShieldCheck size={14} className="text-[#889028] shrink-0" />
+                          <span>Exklusiv für CVB-Mitglieder (ab 249 € netto/Fzg./Jahr)</span>
+                        </div>
+                        <a
+                          href="https://caravan-vermieter-bund.de/mitglied-werden"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-bold text-[#384808] hover:text-[#889028] underline inline-flex items-center gap-1 shrink-0"
+                        >
+                          <span>Jetzt Mitglied werden</span>
+                          <ArrowUpRight size={12} />
+                        </a>
                       </div>
                     </div>
 
@@ -434,7 +478,7 @@ export const SignUpForm: React.FC<{ onOpenPrivacyModal: () => void }> = ({
                               const val = e.target.value;
                               setVehicles(val === '' ? '' : parseInt(val, 10));
                             }}
-                            placeholder="z. B. 4"
+                            placeholder="z. B. 1"
                             className="w-full h-12 px-4 bg-[#F9F8F3] rounded-2xl border border-[#A09048]/35 text-[#384808] text-sm focus:bg-white focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/15 transition-all font-mono font-bold"
                             disabled={isSubmitting}
                           />

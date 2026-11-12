@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   SiteContent,
@@ -19,9 +21,13 @@ import {
   sampleInitialRequests,
 } from '../data/defaultContent';
 
-/** Resolve backend API base URL; returns null on non-local origins when VITE_API_URL is unset so browsers never prompt for local network access. */
+/** Resolve backend API base URL; returns null on non-local origins when NEXT_PUBLIC_API_URL / VITE_API_URL is unset so browsers never prompt for local network access. */
 const getApiBaseUrl = (): string | null => {
-  const configured = import.meta.env.VITE_API_URL?.trim();
+  const envUrl =
+    (typeof process !== 'undefined' &&
+      (process.env.NEXT_PUBLIC_API_URL || process.env.VITE_API_URL)) ||
+    '';
+  const configured = envUrl?.trim();
   if (configured) {
     return configured.replace(/\/+$/, '');
   }
@@ -122,7 +128,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Load states with localStorage fallback
   const [content, setContent] = useState<SiteContent>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.CONTENT);
+      const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.CONTENT) : null;
       return saved ? JSON.parse(saved) : defaultSiteContent;
     } catch {
       return defaultSiteContent;
@@ -131,7 +137,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [priceSettings, setPriceSettings] = useState<PriceSettings>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.PRICES);
+      const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.PRICES) : null;
       return saved ? JSON.parse(saved) : defaultPriceSettings;
     } catch {
       return defaultPriceSettings;
@@ -140,7 +146,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [generalSettings, setGeneralSettings] = useState<GeneralSettings>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+      const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.SETTINGS) : null;
       return saved ? JSON.parse(saved) : defaultGeneralSettings;
     } catch {
       return defaultGeneralSettings;
@@ -149,7 +155,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [features, setFeatures] = useState<FeatureCardItem[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.FEATURES);
+      const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.FEATURES) : null;
       return saved ? JSON.parse(saved) : defaultFeatures;
     } catch {
       return defaultFeatures;
@@ -158,7 +164,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [steps, setSteps] = useState<StepItem[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.STEPS);
+      const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.STEPS) : null;
       return saved ? JSON.parse(saved) : defaultSteps;
     } catch {
       return defaultSteps;
@@ -167,8 +173,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [faqs, setFaqs] = useState<FaqItem[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.FAQS);
-      return saved ? JSON.parse(saved) : defaultFaqs;
+      const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.FAQS) : null;
+      if (saved) {
+        const parsed: FaqItem[] = JSON.parse(saved);
+        if (!parsed.some((f) => f.id === 'faq-mitglied')) {
+          return [...defaultFaqs.filter((f) => f.id === 'faq-mitglied'), ...parsed];
+        }
+        return parsed;
+      }
+      return defaultFaqs;
     } catch {
       return defaultFaqs;
     }
@@ -176,7 +189,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [requests, setRequests] = useState<SignUpRequest[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.REQUESTS);
+      const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.REQUESTS) : null;
       return saved ? JSON.parse(saved) : sampleInitialRequests;
     } catch {
       return sampleInitialRequests;
@@ -185,7 +198,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
     try {
-      return localStorage.getItem(STORAGE_KEYS.AUTH) === 'true';
+      return typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEYS.AUTH) === 'true';
     } catch {
       return false;
     }
@@ -195,6 +208,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [adminLockUntil, setAdminLockUntil] = useState<number | null>(null);
   const [currentView, setCurrentView] = useState<'public' | 'admin' | '404'>(() => {
     try {
+      if (typeof window === 'undefined') return 'public';
       const path = window.location.pathname;
       if (path === '/admin') return 'admin';
       if (path !== '/' && path !== '' && !path.startsWith('/#')) return '404';
@@ -205,7 +219,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   // Interactive conversion sync
-  const [selectedVehicleCount, setSelectedVehicleCount] = useState<number>(4);
+  const [selectedVehicleCount, setSelectedVehicleCount] = useState<number>(1);
 
   const selectVehicleAndScrollToForm = (count: number) => {
     setSelectedVehicleCount(count);

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Inbox, CalendarCheck, FileCheck, ClipboardCheck, LucideIcon, ArrowRight, Sparkles } from 'lucide-react';

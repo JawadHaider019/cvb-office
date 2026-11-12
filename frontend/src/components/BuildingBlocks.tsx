@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { QrCode, Video, Sparkles, LayoutDashboard, FileCheck2, MapPin } from 'lucide-react';

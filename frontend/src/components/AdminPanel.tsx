@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { RequestStatus, SignUpRequest } from '../types';
@@ -1037,7 +1039,7 @@ export const AdminPanel: React.FC = () => {
 
                     <div>
                       <label className="block text-xs font-bold text-[#384808] mb-1">
-                        Beschreibungstext Verbund
+                        Beschreibungstext Netzwerk
                       </label>
                       <textarea
                         rows={2}

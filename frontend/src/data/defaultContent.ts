@@ -211,7 +211,7 @@ export const defaultAudience = [
     icon: 'Laptop',
   },
   {
-    title: 'Mehrere Standorte und Verbünde',
+    title: 'Mehrere Standorte und Flotten',
     text: 'Unternehmen mit mehreren Übergabestationen oder Vermiet-Partnerschaften mit klarer Rechtestruktur.',
     icon: 'MapPin',
   },
@@ -219,31 +219,38 @@ export const defaultAudience = [
 
 export const defaultFaqs: FaqItem[] = [
   {
+    id: 'faq-mitglied',
+    question: 'Wer kann CVB-Office nutzen und ist eine CVB-Mitgliedschaft erforderlich?',
+    answer: 'CVB-Office gibt es exklusiv für CVB-Mitglieder. Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.',
+    sort_order: 1,
+    visible: true,
+  },
+  {
     id: 'faq1',
     question: 'Für welche Art von Vermietung ist CVB-Office geeignet?',
     answer: 'Für Wohnmobile, Camper, Wohnwagen und Anhänger. Überall, wo Anfragen, Buchungen, Verträge und Übergaben anfallen.',
-    sort_order: 1,
+    sort_order: 2,
     visible: true,
   },
   {
     id: 'faq2',
     question: 'Wie schnell kann ich starten?',
     answer: 'Nach der Einrichtung Deines Zugangs kannst Du direkt loslegen. Du brauchst keine eigene IT und keine lange Schulung.',
-    sort_order: 2,
+    sort_order: 3,
     visible: true,
   },
   {
     id: 'faq3',
     question: 'Was kostet CVB-Office?',
     answer: '8,33 € netto pro Fahrzeug und Monat, also 100 € netto pro Fahrzeug und Jahr. Transparente Kosten ohne versteckte Gebühren.',
-    sort_order: 3,
+    sort_order: 4,
     visible: true,
   },
   {
     id: 'faq4',
     question: 'Wie wird CVB-Office bezahlt?',
-    answer: 'Der Betrag wird unkompliziert zusätzlich zu Deiner jährlichen CVB-Mitgliedsgebühr abgerechnet.',
-    sort_order: 4,
+    answer: 'Der Betrag von 8,33 € netto pro Fahrzeug und Monat wird unkompliziert zusätzlich zu Deiner jährlichen CVB-Mitgliedsgebühr abgerechnet. Voraussetzung für die Nutzung von CVB-Office ist die CVB-Mitgliedschaft (ab 249 € netto pro Fahrzeug und Jahr).',
+    sort_order: 5,
     visible: true,
   },
   {
@@ -263,7 +270,7 @@ export const defaultFaqs: FaqItem[] = [
   {
     id: 'faq7',
     question: 'Geht das auch mit mehreren Standorten?',
-    answer: 'Ja. CVB-Office unterstützt mehrere Standorte und Verbünde mit klarer Zuweisung von Fahrzeugen und Berechtigungen.',
+    answer: 'Ja. CVB-Office unterstützt mehrere Standorte und Flotten mit klarer Zuweisung von Fahrzeugen und Berechtigungen.',
     sort_order: 7,
     visible: true,
   },

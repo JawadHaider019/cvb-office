@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { ArrowRight, ArrowUpRight, X, Sparkles } from 'lucide-react';
@@ -63,7 +65,7 @@ export const FloatingConversionBar: React.FC = () => {
                     CVB-OFFICE FÜR DEINE VERMIETUNG
                   </span>
                   <span className="hidden lg:inline-block px-2 py-0.5 text-[9px] font-mono tracking-widest text-white bg-[#A09048] rounded-full font-black uppercase shrink-0">
-                    VERBUND
+                    EXKLUSIV
                   </span>
                 </div>
                 <div className="text-[10.5px] lg:text-[11px] text-[#F4F2E6]/85 flex flex-wrap items-center gap-x-2 gap-y-0.5">

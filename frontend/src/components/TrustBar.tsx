@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { ShieldCheck, Server, Scale, Award } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
@@ -21,7 +23,7 @@ export const TrustBar: React.FC = () => {
     },
     {
       icon: Award,
-      title: 'Offizieller CVB-Verbandsstandard',
+      title: 'Offizieller CVB-Standard',
       subtitle: 'Entwickelt von Vermietern für Vermieter',
     },
   ];

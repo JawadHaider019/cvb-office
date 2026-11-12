@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { ArrowUpRight, Mail } from 'lucide-react';
@@ -109,13 +111,13 @@ export const Footer: React.FC<{
                   onClick={() => scrollToSection('ueber-cvb')}
                   className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  Über den Bund (CVB)
+                  Über CVB
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Column 3 (2 cols): Verband & Recht */}
+          {/* Column 3 (2 cols): CVB & Recht */}
           <div className="lg:col-span-2 space-y-4">
             <h4 className="font-spartan font-black text-xs uppercase tracking-[0.18em] text-[#A09048]">
               RECHT & SICHERHEIT
@@ -144,7 +146,7 @@ export const Footer: React.FC<{
                   rel="noopener noreferrer"
                   className="hover:text-white hover:underline transition-colors inline-flex items-center gap-1"
                 >
-                  <span>CVB Verband</span>
+                  <span>Caravan-Vermieter-Bund</span>
                   <ArrowUpRight size={12} className="text-[#A09048]" />
                 </a>
               </li>

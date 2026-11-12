@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Home, ArrowLeft } from 'lucide-react';
 import { CvbOfficeIcon } from './CvbLogo';

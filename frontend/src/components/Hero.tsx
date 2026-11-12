@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { ArrowRight, ArrowUpRight, Server, ShieldCheck, Scale, Award, Check } from 'lucide-react';
@@ -22,7 +24,7 @@ const heroTrustItems = [
   },
   {
     icon: Award,
-    title: 'Offizieller CVB-Verbandsstandard',
+    title: 'Offizieller CVB-Standard',
     subtitle: 'Entwickelt von Vermietern für Vermieter',
   },
 ];
@@ -114,7 +116,7 @@ export const Hero: React.FC = () => {
             className="inline-flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 sm:py-3 mb-4 rounded-full bg-white/75 md:bg-white/60 backdrop-blur-xl border border-[#A09048]/25 md:border-white/80 shadow-[0_4px_20px_rgba(56,72,8,0.06),inset_0_1px_1px_rgba(255,255,255,0.9)] text-[11px] sm:text-xs font-bold text-[#384808] max-w-full"
           >
             <span className="w-2 h-2 rounded-full bg-[#889028] animate-pulse shrink-0" />
-            <span className="leading-snug">Offizielles Verbands-Office · {content.trustLine}</span>
+            <span className="leading-snug">Offizielles Vermieter-Office · {content.trustLine}</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
@@ -215,50 +217,38 @@ export const Hero: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* 4. BOTTOM SLIDING TRUST MARQUEE INSIDE HERO */}
+      {/* 4. SOLID 4-COLUMN TRUST BAR (Calm, perfectly balanced across desktop and mobile, no edge cutoff) */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.5 }}
         aria-label="Sicherheits- und Vertrauensstandards"
-        className="relative z-10 w-full bg-gradient-to-r from-[#283505]/95 via-[#1B2403]/95 to-[#0D1201]/95 backdrop-blur-md text-white border-t border-[#A09048]/35 py-4 sm:py-8 overflow-hidden"
+        className="relative z-10 w-full bg-gradient-to-r from-[#283505]/95 via-[#1B2403]/95 to-[#0D1201]/95 backdrop-blur-md text-white border-t border-[#A09048]/35 py-4 sm:py-6"
       >
-        <div className="animate-marquee items-center hover:[animation-play-state:paused]">
-          {[0, 1].map((dupIdx) => (
-            <div
-              key={dupIdx}
-              aria-hidden={dupIdx === 1}
-              className="flex items-center gap-6 sm:gap-12 pr-6 sm:pr-12 shrink-0"
-            >
-              {heroTrustItems.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <React.Fragment key={`${dupIdx}-${idx}`}>
-                    <div className="flex items-center gap-3 sm:gap-4 shrink-0 group">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#384808] border border-[#A09048]/40 flex items-center justify-center shrink-0 text-[#F4F2E6] group-hover:bg-[#889028] group-hover:text-white transition-colors shadow-sm">
-                        <Icon size={20} strokeWidth={2.2} className="sm:w-[22px] sm:h-[22px]" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-spartan font-black text-xs sm:text-base uppercase tracking-wider text-white whitespace-nowrap">
-                          {item.title}
-                        </span>
-                        <span className="text-[11px] sm:text-xs text-[#F4F2E6]/80 mt-0.5 whitespace-nowrap">
-                          {item.subtitle}
-                        </span>
-                      </div>
-                    </div>
-
-                    <span
-                      aria-hidden="true"
-                      className="text-[#A09048] text-sm sm:text-lg select-none shrink-0"
-                    >
-                      ✦
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-center">
+            {heroTrustItems.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 sm:gap-3.5 group"
+                >
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#384808] border border-[#A09048]/40 flex items-center justify-center shrink-0 text-[#A09048] group-hover:bg-[#889028] group-hover:text-white transition-colors shadow-sm">
+                    <Icon size={19} strokeWidth={2.2} />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-spartan font-black text-xs sm:text-[13px] uppercase tracking-wider text-white group-hover:text-[#F4F2E6] transition-colors leading-tight">
+                      {item.title}
                     </span>
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          ))}
+                    <span className="text-[11px] text-[#F4F2E6]/75 mt-0.5 leading-snug">
+                      {item.subtitle}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </motion.div>
     </section>

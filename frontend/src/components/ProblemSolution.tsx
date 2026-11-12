@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { Check, X, ArrowRight } from 'lucide-react';
@@ -64,7 +66,7 @@ export const ProblemSolution: React.FC = () => {
             <div className="hidden lg:block lg:col-span-1" />
             <div className="md:col-span-1 lg:col-span-6 flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-widest text-[#384808]">
               <span className="w-2 h-2 rounded-full bg-[#889028]" />
-              <span>MIT CVB-OFFICE IM VERBUND</span>
+              <span>MIT DEM CVB-OFFICE</span>
             </div>
           </div>
         </ScrollReveal>

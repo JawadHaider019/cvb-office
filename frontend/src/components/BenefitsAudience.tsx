@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { defaultBenefits, defaultAudience } from '../data/defaultContent';
@@ -35,7 +37,7 @@ const testimonials = [
     title: 'Familienbetrieb (6 Fahrzeuge)',
     region: 'Bayern · 50 % Zeitersparnis',
     quote:
-      '„Die Video-Einweisung vorab spart uns samstags pro Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren.“',
+      '„Die Video-Einweisung vorab spart uns Samstags pro Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren.“',
   },
   {
     num: '02',
@@ -51,7 +53,7 @@ const testimonials = [
     title: 'Camper-Station (3 Vans)',
     region: 'Norddeutschland · Rechtssicher',
     quote:
-      '„Die geprüften Verbands-Mietverträge und die digitale Unterschrift auf dem Tablet geben uns und unseren Mietern volle Rechtssicherheit.“',
+      '„Die CVB Mietverträge und die digitale Unterschrift auf dem Tablet oder Smartphone geben uns und unseren Mietern absolute Sicherheit.“',
   },
 ];
 
@@ -257,7 +259,7 @@ export const BenefitsAudience: React.FC = () => {
 
                 <h3 className="font-spartan text-[23px] sm:text-4xl lg:text-[46px] font-black uppercase tracking-tight leading-[1.08] sm:leading-[1.06] mb-4">
                   <span className="text-white block">FÜR JEDE VERMIETUNG GEBAUT.</span>
-                  <span className="text-[#F4F2E6]/90 block mt-1 sm:mt-0">VOM EINZELCAMPER BIS ZUM VERBUND.</span>
+                  <span className="text-[#F4F2E6]/90 block mt-1 sm:mt-0">VOM EINZELCAMPER BIS ZUR FLOTTE.</span>
                 </h3>
 
                 <p className="text-xs sm:text-sm text-[#F4F2E6]/85 max-w-xl mx-auto leading-relaxed mb-6">

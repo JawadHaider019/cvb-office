@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-dark-olive: #384808;
+    --color-olive: #889028;
+    --color-text: #585828;
+    --color-gold: #A09048;
+    --color-white: #FFFFFF;
+    --color-cream: #F4F2E6;
+
+    --accent: #889028;
+    --bg-dark: #384808;
+    --bg-cream: #F4F2E6;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background-color: #FFFFFF;
+    color: #384808;
+    letter-spacing: -0.01em;
+  }
+
+  body {
+    background-color: #FFFFFF;
+    color: #585828;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* League Spartan for punchy, high-impact headings */
+  .font-spartan,
+  .font-serif-editorial {
+    font-family: 'League Spartan', system-ui, sans-serif !important;
+    letter-spacing: -0.02em;
+  }
+
+  .font-body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Animations */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes ctaPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(160, 144, 72, 0.4), 0 16px 36px -10px rgba(56, 72, 8, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(160, 144, 72, 0), 0 16px 36px -10px rgba(56, 72, 8, 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(160, 144, 72, 0), 0 16px 36px -10px rgba(56, 72, 8, 0.35);
+  }
+}
+
+.animate-cta-pulse {
+  animation: ctaPulse 2.6s ease-out infinite;
+}
+
+/* Signature Primary Action Button - Dark olive green #384808 with Gold/Olive accent */
+.tech-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 6px 0 24px;
+  border-radius: 999px;
+  background: #384808;
+  color: #FFFFFF;
+  font-family: 'League Spartan', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 14.5px;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 10px 25px -6px rgba(56, 72, 8, 0.35);
+}
+
+.tech-cta-primary:hover {
+  transform: translateY(-2px);
+  background: #2D3A06;
+  box-shadow: 0 14px 35px -8px rgba(56, 72, 8, 0.45);
+}
+
+.tech-cta-primary .tech-ci {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #A09048;
+  color: #FFFFFF;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tech-cta-primary:hover .tech-ci {
+  transform: rotate(-45deg);
+  background: #889028;
+}
+
+/* Secondary Ghost Pill Button */
+.tech-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: #FFFFFF;
+  border: 1.5px solid #A09048;
+  color: #384808;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.tech-cta-ghost:hover {
+  background: #F4F2E6;
+  border-color: #384808;
+  color: #384808;
+  transform: translateY(-2px);
+}
+
+/* Bento & Card Utilities */
+.tech-card-cream {
+  background: #F4F2E6;
+  border: 1px solid rgba(160, 144, 72, 0.3);
+  border-radius: 28px;
+}
+
+.tech-card-white {
+  background: #FFFFFF;
+  border: 1px solid rgba(160, 144, 72, 0.25);
+  border-radius: 28px;
+  box-shadow: 0 12px 35px -15px rgba(56, 72, 8, 0.08);
+}
+
+.tech-card-dark {
+  background: #384808;
+  color: #FFFFFF;
+  border: 1px solid #A09048;
+  border-radius: 28px;
+}
+
+/* Pill badge with olive circle */
+.tech-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px 5px 6px;
+  border-radius: 999px;
+  background: #F4F2E6;
+  border: 1px solid rgba(160, 144, 72, 0.35);
+  color: #384808;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tech-tagn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #889028;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 800;
+}
+
