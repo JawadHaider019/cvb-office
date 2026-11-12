@@ -120,3 +120,4 @@ model AdminUser {
   last_login      DateTime?
   two_step_secret String?
 }
+
