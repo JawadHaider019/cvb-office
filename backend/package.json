@@ -6,19 +6,26 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "prisma:generate": "node node_modules/prisma/build/index.js generate --schema prisma/schema.prisma",
+    "prisma:push": "node node_modules/prisma/build/index.js db push --schema prisma/schema.prisma",
+    "seed": "tsx src/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "nodemailer": "^10.4.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "@types/nodemailer": "^8.0.2",
+    "prisma": "^6.4.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }

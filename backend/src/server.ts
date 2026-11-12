@@ -1,7 +1,20 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { getDb, saveDb, recordVersion, SignUpRequest } from './db.js';
+import bcrypt from 'bcryptjs';
+import {
+  initDb,
+  prisma,
+  isConnectedToPostgres,
+  fetchFullSiteData,
+  insertSignUpRequest,
+  updateSignUpRequest,
+  deleteSignUpRequest,
+  recordVersion,
+  getDb,
+  saveDb,
+  SignUpRequest,
+} from './db.js';
 import { sendClientAlertEmail } from './email.js';
 
 dotenv.config();
@@ -13,7 +26,7 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
 // ---------------------------------------------------------------------------
-// Rate Limiting & Anti-Spam Memory Stores
+// Rate Limiting & Anti-Spam Memory Stores (Section 6.3)
 // ---------------------------------------------------------------------------
 const ipRequestsMap = new Map<string, number[]>(); // IP -> timestamps of requests
 const adminFailedAttemptsMap = new Map<string, { count: number; lockUntil: number | null }>();
@@ -22,12 +35,12 @@ function isIpRateLimited(ip: string): boolean {
   const now = Date.now();
   const oneHourAgo = now - 60 * 60 * 1000;
   const timestamps = (ipRequestsMap.get(ip) || []).filter((t) => t > oneHourAgo);
-  
+
   if (timestamps.length >= 5) {
     ipRequestsMap.set(ip, timestamps);
     return true;
   }
-  
+
   timestamps.push(now);
   ipRequestsMap.set(ip, timestamps);
   return false;
@@ -41,30 +54,59 @@ app.get('/api/health', (req: Request, res: Response) => {
     status: 'ok',
     service: 'cvb-office-backend',
     version: '1.0.0',
+    database: isConnectedToPostgres ? 'postgresql' : 'file-json-fallback',
     timestamp: new Date().toISOString(),
   });
 });
 
 // ---------------------------------------------------------------------------
-// 2. Public Content & Settings Endpoint
+// 2. Public Content & Settings Endpoint (Section 8.2 & Appendix B)
 // ---------------------------------------------------------------------------
-app.get('/api/content', (req: Request, res: Response) => {
-  const db = getDb();
-  res.json({
-    content: db.content,
-    priceSettings: db.priceSettings,
-    generalSettings: db.generalSettings,
-    features: db.features,
-    steps: db.steps,
-    faqs: db.faqs,
-  });
+app.get('/api/content', async (req: Request, res: Response) => {
+  try {
+    const data = await fetchFullSiteData();
+    res.json({
+      content: data.content,
+      priceSettings: data.priceSettings,
+      generalSettings: data.generalSettings,
+      features: data.features,
+      steps: data.steps,
+      faqs: data.faqs,
+      benefits: data.benefits,
+      audiences: data.audiences,
+    });
+  } catch (err: any) {
+    console.error('Error fetching site data:', err);
+    const fallback = getDb();
+    res.json({
+      content: fallback.content,
+      priceSettings: fallback.priceSettings,
+      generalSettings: fallback.generalSettings,
+      features: fallback.features,
+      steps: fallback.steps,
+      faqs: fallback.faqs,
+    });
+  }
+});
+
+app.get('/api/settings', async (req: Request, res: Response) => {
+  const data = await fetchFullSiteData();
+  res.json(data.generalSettings);
+});
+
+app.get('/api/prices', async (req: Request, res: Response) => {
+  const data = await fetchFullSiteData();
+  res.json(data.priceSettings);
 });
 
 // ---------------------------------------------------------------------------
-// 3. Sign-Up Form Submission (Section 6.1 - 6.5)
+// 3. Sign-Up Form Submission (Section 6.1 - 6.5 & Appendix B/C)
 // ---------------------------------------------------------------------------
 app.post('/api/requests', async (req: Request, res: Response) => {
-  const clientIp = req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || req.socket.remoteAddress || 'unknown';
+  const clientIp =
+    req.headers['x-forwarded-for']?.toString().split(',')[0].trim() ||
+    req.socket.remoteAddress ||
+    'unknown';
 
   const {
     email,
@@ -78,9 +120,8 @@ app.post('/api/requests', async (req: Request, res: Response) => {
     phone,
   } = req.body;
 
-  // 1. Honeypot check (Section 6.1)
+  // 1. Honeypot check (Section 6.1: Reject silently with 200 OK)
   if (honeypot && typeof honeypot === 'string' && honeypot.trim() !== '') {
-    // Reject silently as per brief Section 6.1
     return res.status(200).json({ success: true, message: 'Anfrage übermittelt' });
   }
 
@@ -103,18 +144,18 @@ app.post('/api/requests', async (req: Request, res: Response) => {
   // 4. Strict Validation (Section 6.5)
   const trimmedEmail = (email || '').trim().toLowerCase();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+  if (!trimmedEmail || !emailRegex.test(trimmedEmail) || trimmedEmail.length > 254) {
     return res.status(400).json({
       success: false,
       error: 'Bitte gib eine gültige E-Mail-Adresse ein.',
     });
   }
 
-  const vCount = Number(vehicleCount);
-  if (!vCount || vCount < 1 || vCount > 999) {
+  const vCount = parseInt(String(vehicleCount), 10);
+  if (isNaN(vCount) || vCount < 1 || vCount > 999) {
     return res.status(400).json({
       success: false,
-      error: 'Bitte gib die Anzahl Deiner Fahrzeuge an (Zahl ab 1).',
+      error: 'Bitte gib die Anzahl Deiner Fahrzeuge an (Zahl zwischen 1 und 999).',
     });
   }
 
@@ -132,12 +173,11 @@ app.post('/api/requests', async (req: Request, res: Response) => {
     });
   }
 
-  const db = getDb();
+  const siteData = await fetchFullSiteData();
 
-  // 5. Duplicate Check (Section 6.3 Step 6: within 10 minutes)
-  const now = new Date();
-  const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
-  const isDuplicate = db.requests.some((r) => {
+  // 5. Duplicate Check (Section 6.3 Step 6: same email within 10 minutes)
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+  const isDuplicate = siteData.requests.some((r) => {
     if (r.email.toLowerCase() === trimmedEmail) {
       const createdDate = new Date(r.created_at);
       return createdDate > tenMinutesAgo;
@@ -148,125 +188,148 @@ app.post('/api/requests', async (req: Request, res: Response) => {
   if (isDuplicate) {
     return res.status(200).json({
       success: true,
-      message: db.content.successMessage || 'Vielen Dank! Deine Anfrage ist bei uns eingegangen.',
+      duplicate: true,
+      message:
+        siteData.content.successMessage ||
+        'Eine Anfrage mit dieser E-Mail-Adresse ist vor wenigen Minuten bereits bei uns eingegangen. Wir bearbeiten sie bereits!',
     });
   }
 
-  // 6. Build the Request Object according to Appendix B
-  const nowFormatted = now.toISOString().replace('T', ' ').substring(0, 16);
-  const formattedMonthly = db.priceSettings.monthlyNet.toLocaleString('de-DE', {
+  // 6. Pricing calculations (8.33 € net per vehicle/month = 100.00 € net per vehicle/year)
+  const unitMonthlyNet = siteData.priceSettings.monthlyNet || 8.33;
+  const unitYearlyNet = siteData.priceSettings.yearlyNet || 100.0;
+  const priceMonthlyNet = Number((vCount * unitMonthlyNet).toFixed(2));
+  const priceYearlyNet = Number((vCount * unitYearlyNet).toFixed(2));
+
+  const formattedUnitMonthly = unitMonthlyNet.toLocaleString('de-DE', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  const formattedYearly = db.priceSettings.yearlyNet.toLocaleString('de-DE', {
+  const formattedUnitYearly = unitYearlyNet.toLocaleString('de-DE', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  const defaultPriceText = `Ich bestätige, dass CVB-Office ${formattedMonthly} € netto pro Fahrzeug und Monat kostet (${formattedYearly} € netto pro Fahrzeug und Jahr) und dass dieser Betrag zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet wird.`;
 
-  const contactDetails = [
-    contact_name ? `Ansprechpartner: ${contact_name}` : '',
-    phone ? `Telefon: ${phone}` : '',
-  ]
-    .filter(Boolean)
-    .join(' | ');
+  const defaultPriceConsentText = `Ich bestätige, dass CVB-Office ${formattedUnitMonthly} € netto pro Fahrzeug und Monat kostet (${formattedUnitYearly} € netto pro Fahrzeug und Jahr) und dass dieser Betrag zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet wird.`;
 
-  const newRequest: SignUpRequest = {
-    id: `req-${Date.now()}`,
-    created_at: nowFormatted,
+  // 7. Insert to Database (PostgreSQL via Prisma with JSON fallback)
+  const createdRequest = await insertSignUpRequest({
     email: trimmedEmail,
     vehicle_count: vCount,
-    price_monthly_net_at_signup: db.priceSettings.monthlyNet,
-    price_yearly_net_at_signup: db.priceSettings.yearlyNet,
+    price_monthly_net_at_signup: priceMonthlyNet,
+    price_yearly_net_at_signup: priceYearlyNet,
     price_consent: true,
-    price_consent_text: priceConsentText || defaultPriceText,
-    price_consent_at: nowFormatted,
+    price_consent_text: priceConsentText || defaultPriceConsentText,
     privacy_consent: true,
-    privacy_consent_at: nowFormatted,
-    status: 'neu',
-    notes: contactDetails || '',
-    email_sent: false,
-  };
+    contact_name: contact_name || undefined,
+    phone: phone || undefined,
+  });
 
-  // 7. Send Alert Email to Client (Appendix C)
+  // 8. Send Alert Email to Client (Appendix C)
   const emailRes = await sendClientAlertEmail({
     email: trimmedEmail,
     vehicleCount: vCount,
-    createdAt: nowFormatted,
-    priceConsentText: newRequest.price_consent_text,
-    requestId: newRequest.id,
+    createdAt: createdRequest.created_at,
+    priceConsentText: createdRequest.price_consent_text,
+    requestId: createdRequest.id,
   });
 
-  newRequest.email_sent = emailRes.success;
-  if (!emailRes.success) {
-    newRequest.email_error = emailRes.error;
+  // Update request with email status
+  if (emailRes.success) {
+    await updateSignUpRequest(createdRequest.id, { email_sent: true });
+    createdRequest.email_sent = true;
+  } else {
+    await updateSignUpRequest(createdRequest.id, {
+      email_sent: false,
+      email_error: emailRes.error,
+    });
+    createdRequest.email_sent = false;
+    createdRequest.email_error = emailRes.error;
   }
-
-  // 8. Save to DB
-  db.requests.unshift(newRequest);
-  saveDb(db);
 
   return res.status(201).json({
     success: true,
-    data: newRequest,
-    message: db.content.successMessage,
+    data: createdRequest,
+    message: siteData.content.successMessage || 'Vielen Dank für Deine Anfrage! Wir melden uns in Kürze.',
   });
 });
 
 // ---------------------------------------------------------------------------
-// 4. Admin Requests List & Detail (Section 8.2)
+// 4. Admin Requests List, Detail, CSV Export (Section 8.2 & 9.8)
 // ---------------------------------------------------------------------------
-app.get('/api/requests', (req: Request, res: Response) => {
-  const db = getDb();
-  res.json(db.requests);
+app.get('/api/requests', async (req: Request, res: Response) => {
+  const { status, search, sort } = req.query;
+  const siteData = await fetchFullSiteData();
+  let list = [...siteData.requests];
+
+  // Filter by status ("all" | "neu" | "in_bearbeitung" | "erledigt")
+  if (status && status !== 'all') {
+    list = list.filter((r) => r.status === status);
+  }
+
+  // Filter by search query (email, contact_name, notes)
+  if (search && typeof search === 'string' && search.trim() !== '') {
+    const term = search.trim().toLowerCase();
+    list = list.filter(
+      (r) =>
+        r.email.toLowerCase().includes(term) ||
+        (r.contact_name && r.contact_name.toLowerCase().includes(term)) ||
+        (r.notes && r.notes.toLowerCase().includes(term))
+    );
+  }
+
+  // Sort
+  if (sort === 'asc') {
+    list.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  } else {
+    list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }
+
+  res.json(list);
 });
 
 // Update Request Status or Private Note
-app.patch('/api/requests/:id', (req: Request, res: Response) => {
+app.patch('/api/requests/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { status, notes } = req.body;
+  const { status, notes, contact_name, phone } = req.body;
 
-  const db = getDb();
-  const requestIndex = db.requests.findIndex((r) => r.id === id);
+  const patch: Partial<SignUpRequest> = {};
+  if (status) patch.status = status;
+  if (notes !== undefined) patch.notes = notes;
+  if (contact_name !== undefined) patch.contact_name = contact_name;
+  if (phone !== undefined) patch.phone = phone;
 
-  if (requestIndex === -1) {
+  const updated = await updateSignUpRequest(id, patch);
+
+  if (!updated) {
     return res.status(404).json({ error: 'Anfrage nicht gefunden' });
   }
 
-  if (status) {
-    db.requests[requestIndex].status = status;
-  }
-  if (notes !== undefined) {
-    db.requests[requestIndex].notes = notes;
-  }
-
-  saveDb(db);
-  res.json({ success: true, data: db.requests[requestIndex] });
+  res.json({ success: true, data: updated });
 });
 
-// Delete Request (Right to Erasure, Section 9.8)
-app.delete('/api/requests/:id', (req: Request, res: Response) => {
+// Delete Request (GDPR Right to Erasure, Section 9.8)
+app.delete('/api/requests/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
-  const db = getDb();
-  const initialLen = db.requests.length;
-  db.requests = db.requests.filter((r) => r.id !== id);
+  const deleted = await deleteSignUpRequest(id);
 
-  if (db.requests.length === initialLen) {
+  if (!deleted) {
     return res.status(404).json({ error: 'Anfrage nicht gefunden' });
   }
 
-  saveDb(db);
-  res.json({ success: true, message: 'Anfrage gelöscht' });
+  res.json({ success: true, message: 'Anfrage DSGVO-konform gelöscht' });
 });
 
 // CSV Export for German Excel (Semicolon, UTF-8 BOM, Section 8.2)
-app.get('/api/requests/export', (req: Request, res: Response) => {
-  const db = getDb();
+const handleCsvExport = async (req: Request, res: Response) => {
+  const siteData = await fetchFullSiteData();
 
   const headers = [
     'ID',
     'Datum',
     'E-Mail',
+    'Ansprechpartner',
+    'Telefon',
     'Fahrzeuge',
     'Status',
     'Monatspreis netto',
@@ -276,16 +339,18 @@ app.get('/api/requests/export', (req: Request, res: Response) => {
     'Notizen',
   ];
 
-  const rows = db.requests.map((r) => [
+  const rows = siteData.requests.map((r) => [
     `"${r.id}"`,
     `"${r.created_at}"`,
     `"${r.email}"`,
+    `"${(r.contact_name || '').replace(/"/g, '""')}"`,
+    `"${(r.phone || '').replace(/"/g, '""')}"`,
     r.vehicle_count,
     `"${r.status === 'neu' ? 'Neu' : r.status === 'in_bearbeitung' ? 'In Bearbeitung' : 'Erledigt'}"`,
     `"${r.price_monthly_net_at_signup.toFixed(2).replace('.', ',')} €"`,
     `"${r.price_yearly_net_at_signup.toFixed(2).replace('.', ',')} €"`,
     `"${(r.price_consent_text || '').replace(/"/g, '""')}"`,
-    `"${r.email_sent ? 'Ja' : 'Nein (E-Mail nicht gesendet)'}"`,
+    `"${r.email_sent ? 'Ja' : 'Nein'}"`,
     `"${(r.notes || '').replace(/"/g, '""')}"`,
   ]);
 
@@ -297,79 +362,192 @@ app.get('/api/requests/export', (req: Request, res: Response) => {
     `attachment; filename="CVB-Office-Anfragen_${new Date().toISOString().slice(0, 10)}.csv"`
   );
   res.send(csvContent);
-});
+};
+
+app.get('/api/requests/export', handleCsvExport);
+app.get('/api/requests/export/csv', handleCsvExport);
 
 // ---------------------------------------------------------------------------
 // 5. Admin Content & Settings Updates with Version History (Section 8.2 S1)
 // ---------------------------------------------------------------------------
-app.get('/api/content', (req: Request, res: Response) => {
-  const db = getDb();
-  res.json({
-    content: db.content,
-    priceSettings: db.priceSettings,
-    generalSettings: db.generalSettings,
-    features: db.features,
-    steps: db.steps,
-    faqs: db.faqs,
-  });
-});
-
-app.get('/api/settings', (req: Request, res: Response) => {
-  const db = getDb();
-  res.json(db.generalSettings);
-});
-
-app.get('/api/prices', (req: Request, res: Response) => {
-  const db = getDb();
-  res.json(db.priceSettings);
-});
-
-app.put('/api/content', (req: Request, res: Response) => {
+app.put('/api/content', async (req: Request, res: Response) => {
   const { content, priceSettings, generalSettings, features, steps, faqs, user } = req.body;
   const db = getDb();
+  const userName = user || 'Detlef Scheer';
 
   if (content) {
-    recordVersion('content', db.content, user);
+    await recordVersion('content', db.content, userName);
     db.content = { ...db.content, ...content };
+
+    if (isConnectedToPostgres) {
+      try {
+        for (const [k, v] of Object.entries(content)) {
+          const type = Array.isArray(v) || typeof v === 'object' ? 'json' : 'text';
+          const valStr = typeof v === 'string' ? v : JSON.stringify(v);
+          await prisma.contentBlock.upsert({
+            where: { key: k },
+            update: { value: valStr, type, updated_by: userName },
+            create: { key: k, value: valStr, type, updated_by: userName },
+          });
+        }
+      } catch (e) {
+        console.error('Failed to update content blocks in PostgreSQL:', e);
+      }
+    }
   }
+
   if (priceSettings) {
-    recordVersion('priceSettings', db.priceSettings, user);
+    await recordVersion('priceSettings', db.priceSettings, userName);
     db.priceSettings = { ...db.priceSettings, ...priceSettings };
+
+    if (isConnectedToPostgres) {
+      try {
+        if (priceSettings.monthlyNet !== undefined) {
+          await prisma.setting.upsert({
+            where: { key: 'monthly_net_per_vehicle' },
+            update: { value: String(priceSettings.monthlyNet) },
+            create: { key: 'monthly_net_per_vehicle', value: String(priceSettings.monthlyNet) },
+          });
+        }
+        if (priceSettings.yearlyNet !== undefined) {
+          await prisma.setting.upsert({
+            where: { key: 'yearly_net_per_vehicle' },
+            update: { value: String(priceSettings.yearlyNet) },
+            create: { key: 'yearly_net_per_vehicle', value: String(priceSettings.yearlyNet) },
+          });
+        }
+        if (priceSettings.noteText !== undefined) {
+          await prisma.setting.upsert({
+            where: { key: 'price_note_text' },
+            update: { value: String(priceSettings.noteText) },
+            create: { key: 'price_note_text', value: String(priceSettings.noteText) },
+          });
+        }
+      } catch (e) {
+        console.error('Failed to update price settings in PostgreSQL:', e);
+      }
+    }
   }
+
   if (generalSettings) {
-    recordVersion('generalSettings', db.generalSettings, user);
+    await recordVersion('generalSettings', db.generalSettings, userName);
     db.generalSettings = { ...db.generalSettings, ...generalSettings };
+
+    if (isConnectedToPostgres) {
+      try {
+        const mappings: Record<string, string> = {
+          alertEmail: 'alert_email',
+          senderName: 'sender_name',
+          trialLink: 'trial_link',
+          cvbWebsiteLink: 'cvb_website_link',
+          contactEmail: 'contact_email',
+          pageTitle: 'page_title',
+          pageDescription: 'page_description',
+        };
+        for (const [field, dbKey] of Object.entries(mappings)) {
+          if (generalSettings[field] !== undefined) {
+            await prisma.setting.upsert({
+              where: { key: dbKey },
+              update: { value: String(generalSettings[field]) },
+              create: { key: dbKey, value: String(generalSettings[field]) },
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Failed to update general settings in PostgreSQL:', e);
+      }
+    }
   }
+
   if (features) {
-    recordVersion('features', db.features, user);
+    await recordVersion('features', db.features, userName);
     db.features = features;
   }
   if (steps) {
-    recordVersion('steps', db.steps, user);
+    await recordVersion('steps', db.steps, userName);
     db.steps = steps;
   }
   if (faqs) {
-    recordVersion('faqs', db.faqs, user);
+    await recordVersion('faqs', db.faqs, userName);
     db.faqs = faqs;
   }
 
   saveDb(db);
-  res.json({ success: true, message: 'Gespeichert.' });
+  res.json({ success: true, message: 'Änderungen erfolgreich gespeichert.' });
 });
 
 // Version history retrieval
-app.get('/api/versions/:key', (req: Request, res: Response) => {
+app.get('/api/versions/:key', async (req: Request, res: Response) => {
   const { key } = req.params;
+
+  if (isConnectedToPostgres) {
+    try {
+      const versions = await prisma.contentVersion.findMany({
+        where: { block_key: key },
+        orderBy: { saved_at: 'desc' },
+        take: 20,
+      });
+      if (versions.length > 0) {
+        return res.json(
+          versions.map((v) => ({
+            id: v.id,
+            timestamp: v.saved_at.toISOString(),
+            value: v.value,
+            saved_by: v.saved_by || 'Admin',
+          }))
+        );
+      }
+    } catch (e) {
+      console.error('Error fetching versions from PostgreSQL:', e);
+    }
+  }
+
   const db = getDb();
   res.json(db.versionHistory?.[key] || []);
+});
+
+// Restore previous version
+app.post('/api/versions/restore/:key', async (req: Request, res: Response) => {
+  const { key } = req.params;
+  const { versionIndex, value } = req.body;
+  const db = getDb();
+
+  let targetValue = value;
+  if (!targetValue && db.versionHistory?.[key] && db.versionHistory[key][versionIndex]) {
+    targetValue = db.versionHistory[key][versionIndex].value;
+  }
+
+  if (!targetValue) {
+    return res.status(404).json({ error: 'Version nicht gefunden' });
+  }
+
+  if (key === 'content') {
+    db.content = { ...db.content, ...targetValue };
+  } else if (key === 'priceSettings') {
+    db.priceSettings = { ...db.priceSettings, ...targetValue };
+  } else if (key === 'generalSettings') {
+    db.generalSettings = { ...db.generalSettings, ...targetValue };
+  } else if (key === 'features') {
+    db.features = targetValue;
+  } else if (key === 'steps') {
+    db.steps = targetValue;
+  } else if (key === 'faqs') {
+    db.faqs = targetValue;
+  }
+
+  saveDb(db);
+  res.json({ success: true, message: `Version für "${key}" erfolgreich wiederhergestellt.` });
 });
 
 // ---------------------------------------------------------------------------
 // 6. Admin Authentication (Section 8.2 Login, 15 min lock after 5 fails)
 // ---------------------------------------------------------------------------
-app.post('/api/auth/login', (req: Request, res: Response) => {
-  const clientIp = req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || req.socket.remoteAddress || 'unknown';
-  const { password } = req.body;
+app.post('/api/auth/login', async (req: Request, res: Response) => {
+  const clientIp =
+    req.headers['x-forwarded-for']?.toString().split(',')[0].trim() ||
+    req.socket.remoteAddress ||
+    'unknown';
+  const { email, password } = req.body;
 
   const attemptData = adminFailedAttemptsMap.get(clientIp) || { count: 0, lockUntil: null };
 
@@ -381,11 +559,52 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
     });
   }
 
-  const validPasswords = [process.env.ADMIN_PASSWORD || 'cvb-office-2026', 'admin123', 'detlef2026'];
+  let isAuthenticated = false;
 
-  if (validPasswords.includes(password)) {
+  // 1. Try PostgreSQL AdminUser check via bcrypt
+  if (isConnectedToPostgres && email) {
+    try {
+      const adminUser = await prisma.adminUser.findUnique({
+        where: { email: email.toLowerCase().trim() },
+      });
+      if (adminUser && password) {
+        isAuthenticated = await bcrypt.compare(password, adminUser.password_hash);
+        if (isAuthenticated) {
+          await prisma.adminUser.update({
+            where: { id: adminUser.id },
+            data: { last_login: new Date() },
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Admin authentication query error:', e);
+    }
+  }
+
+  // 2. Fallback to configured passwords
+  if (!isAuthenticated && password) {
+    const validPasswords = [
+      process.env.ADMIN_PASSWORD || 'CVB-Office-Admin-2026!',
+      'cvb-office-2026',
+      'admin123',
+      'detlef2026',
+    ];
+    if (validPasswords.includes(password)) {
+      isAuthenticated = true;
+    }
+  }
+
+  if (isAuthenticated) {
     adminFailedAttemptsMap.delete(clientIp);
-    return res.json({ success: true, message: 'Erfolgreich angemeldet' });
+    return res.json({
+      success: true,
+      token: `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      user: {
+        email: email || process.env.ADMIN_EMAIL || 'admin@caravan-vermieter-bund.de',
+        role: 'admin',
+      },
+      message: 'Erfolgreich angemeldet',
+    });
   } else {
     const newCount = attemptData.count + 1;
     if (newCount >= 5) {
@@ -406,8 +625,11 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
 });
 
 // ---------------------------------------------------------------------------
-// Start Server
+// Start Server & Connect to DB
 // ---------------------------------------------------------------------------
-app.listen(PORT, () => {
-  console.log(`[CVB-Office Backend] Server running on http://localhost:${PORT}`);
+initDb().then(() => {
+  app.listen(PORT, () => {
+    console.log(`[CVB-Office Backend] Server running on http://localhost:${PORT}`);
+    console.log(`[Database Status] Mode: ${isConnectedToPostgres ? 'PostgreSQL (Prisma)' : 'JSON fallback'}`);
+  });
 });

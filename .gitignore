@@ -20,6 +20,10 @@ pnpm-debug.log*
 .env.local
 .env.*.local
 
+# Database clusters
+pg_cluster/
+backend/pg_cluster/
+
 # OS & Editor files
 .DS_Store
 Thumbs.db

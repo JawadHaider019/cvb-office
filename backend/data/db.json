@@ -1,6 +1,25 @@
 {
   "requests": [
     {
+      "id": "ac5b285e-c287-4402-9760-88a8827ac035",
+      "created_at": "2026-11-12T19:53:12.818Z",
+      "email": "test-1794513192572@example.de",
+      "vehicle_count": 3,
+      "price_monthly_net_at_signup": 24.99,
+      "price_yearly_net_at_signup": 300,
+      "price_consent": true,
+      "price_consent_text": "Ich bestätige, dass CVB-Office 8,33 € netto pro Fahrzeug und Monat kostet (100,00 € netto pro Fahrzeug und Jahr) und dass dieser Betrag zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet wird.",
+      "price_consent_at": "2026-11-12T19:53:12.814Z",
+      "privacy_consent": true,
+      "privacy_consent_at": "2026-11-12T19:53:12.814Z",
+      "status": "neu",
+      "notes": null,
+      "email_sent": true,
+      "email_error": null,
+      "contact_name": "Max Mustermann",
+      "phone": "+49 170 1234567"
+    },
+    {
       "id": "req-1794263012159",
       "created_at": "2026-11-09 22:23",
       "email": "vermieter-test@alpen-campers.de",

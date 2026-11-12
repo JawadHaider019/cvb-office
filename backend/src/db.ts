@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -6,6 +7,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_DIR = path.resolve(__dirname, '../data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
+
+// Initialize Prisma Client
+export const prisma = new PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+});
+
+export let isConnectedToPostgres = false;
+
+// ---------------------------------------------------------------------------
+// Type Definitions conforming to Appendix B
+// ---------------------------------------------------------------------------
 
 export interface SignUpRequest {
   id: string;
@@ -20,9 +32,11 @@ export interface SignUpRequest {
   privacy_consent: boolean;
   privacy_consent_at: string;
   status: 'neu' | 'in_bearbeitung' | 'erledigt';
-  notes?: string;
+  notes?: string | null;
   email_sent: boolean;
-  email_error?: string;
+  email_error?: string | null;
+  contact_name?: string | null;
+  phone?: string | null;
 }
 
 export interface SiteContent {
@@ -82,9 +96,15 @@ export interface DatabaseSchema {
   features: Array<{ id: string; title: string; text: string; icon: string; sort_order: number; visible: boolean }>;
   steps: Array<{ id: string; number: number; title: string; text: string; icon: string; visible: boolean }>;
   faqs: Array<{ id: string; question: string; answer: string; sort_order: number; visible: boolean }>;
+  benefits?: Array<{ id: string; title: string; text: string; icon: string; sort_order: number; visible: boolean }>;
+  audiences?: Array<{ id: string; title: string; text: string; icon: string; sort_order: number; visible: boolean }>;
   versionHistory: Record<string, Array<{ timestamp: string; value: any; saved_by: string }>>;
   auditLog: Array<{ timestamp: string; action: string; details: any }>;
 }
+
+// ---------------------------------------------------------------------------
+// Fallback In-Memory / File Database
+// ---------------------------------------------------------------------------
 
 const defaultDatabase: DatabaseSchema = {
   requests: [
@@ -101,119 +121,81 @@ const defaultDatabase: DatabaseSchema = {
       price_consent_at: '2026-11-08 14:22',
       privacy_consent: true,
       privacy_consent_at: '2026-11-08 14:22',
-      status: 'in_bearbeitung',
-      notes: 'Detlef: Smarlps-Instanz wird angelegt, Kunde will 5 Kastenwagen verwalten.',
-      email_sent: true,
-    },
-    {
-      id: 'req-002',
-      created_at: '2026-11-08 09:15',
-      email: 'hans.meier.camper@gmail.com',
-      vehicle_count: 2,
-      price_monthly_net_at_signup: 8.33,
-      price_yearly_net_at_signup: 100.0,
-      price_consent: true,
-      price_consent_text:
-        'Ich bestätige, dass CVB-Office 8,33 € netto pro Fahrzeug und Monat kostet (100 € netto pro Fahrzeug und Jahr) und dass dieser Betrag zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet wird.',
-      price_consent_at: '2026-11-08 09:15',
-      privacy_consent: true,
-      privacy_consent_at: '2026-11-08 09:15',
       status: 'neu',
-      notes: 'Neu eingegangen über Messekontakt.',
+      notes: 'Hat 5 Camper in Oberbayern. Interessiert an digitaler Unterschrift.',
       email_sent: true,
-    },
-    {
-      id: 'req-003',
-      created_at: '2026-11-07 16:40',
-      email: 'info@nordsee-reisemobile.de',
-      vehicle_count: 12,
-      price_monthly_net_at_signup: 8.33,
-      price_yearly_net_at_signup: 100.0,
-      price_consent: true,
-      price_consent_text:
-        'Ich bestätige, dass CVB-Office 8,33 € netto pro Fahrzeug und Monat kostet (100 € netto pro Fahrzeug und Jahr) und dass dieser Betrag zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet wird.',
-      price_consent_at: '2026-11-07 16:40',
-      privacy_consent: true,
-      privacy_consent_at: '2026-11-07 16:40',
-      status: 'erledigt',
-      notes: 'Zugangsdaten erfolgreich übermittelt. Widget bereits auf Website aktiv.',
-      email_sent: true,
+      contact_name: 'Markus Weber',
+      phone: '+49 89 12345678',
     },
   ],
   content: {
-    heroHeadline: 'CVB-Office: Dein digitales Vermiet-Office',
-    heroText: 'Anfrage, Buchung, Vertrag und Übergabe an einem Ort. Entwickelt für Wohnmobil- und Caravan-Vermieter im Caravan-Vermieter-Bund.',
-    trustLine: 'Ein Angebot des Caravan-Vermieter-Bund',
-    problemHeadline: 'Vermietung kostet Zeit. CVB-Office gibt sie Dir zurück.',
+    heroHeadline: 'Weniger Einweisungs-Stress. Mehr Zeit fürs Vermietgeschäft.',
+    heroText: 'Digitale Vorab-Einweisung für Deine Mieter und ein übersichtliches Cockpit für Deine Vermietung. Entwickelt von Vermietern für Vermieter im Caravan-Vermieter-Bund (CVB).',
+    trustLine: 'Entwickelt von Vermietern für Vermieter · Exklusiv im CVB · 100 % DSGVO-konform',
+    problemHeadline: 'Kennst Du das? Samstags Übergabe, das Telefon steht nicht still.',
     problems: [
-      'Lange Einweisungen vor Ort bei jeder Übergabe',
-      'Anfragen, Buchungen und Verträge verteilt auf E-Mail, Excel und Zettel',
-      'Unklare Preise, Saisonaufschläge und Verfügbarkeiten',
-      'Brüche zwischen Anfrage, Vertrag, Zahlung und Übergabe',
+      'Mieter rufen am ersten Urlaubstag an: „Wie geht die Heizung an?“',
+      'Jede Übergabe dauert 45 Minuten, weil alles von Grund auf erklärt werden muss.',
+      'Mietverträge, Kautionen und Schäden liegen auf drei verschiedenen Zetteln.',
+      'Im Schadensfall fehlt der Nachweis, wer was wann unterschrieben hat.',
     ],
     solutions: [
-      'Digitale Vorab-Einweisung per Video und QR-Code',
-      'Eine Lösung von der Anfrage bis zur Übergabe',
-      'Klare Preislogik mit Saison, Rabatten und Zubehör',
-      'Klare Abläufe, weniger Rückfragen, ein professioneller Auftritt',
+      'Deine Mieter schauen sich die Video-Einweisung vor der Abholung an – ganz in Ruhe zu Hause.',
+      'Übergabe am Hof in 15 Minuten: Nur noch offene Fragen klären, Zustand prüfen, unterschreiben.',
+      'Digitales Cockpit: Alle Buchungen, Verträge, Kautionsstatus und Mieterdaten an einem Ort.',
+      'Rechtssichere BGB-Musterverträge und digitale Übergabeprotokolle auf Smartphone oder Tablet.',
     ],
-    blockATitle: 'Digitale Vorab-Einweisung',
-    blockAText: 'Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug.',
-    blockBTitle: 'Dein Vermiet-Office',
-    blockBText: 'Anfragen, Buchungen, Verträge, Zahlungen und Übergaben an einem Ort, immer aktuell und übersichtlich. Inklusive Live-Verfügbarkeit, Saisonpreisen und digitaler Vertragserstellung als PDF.',
-    aboutText: 'Der Caravan-Vermieter-Bund unterstützt Wohnmobil-Vermieter mit Wissen, Versicherungen und einem starken Netzwerk. Heute betreuen wir mehr als 1.000 Fahrzeuge in ganz Deutschland.',
-    aboutFounder: 'Detlef Scheer (Gründer & Geschäftsführer)',
+    blockATitle: 'Die digitale Fahrzeug-Einweisung',
+    blockAText: 'Deine Mieter erhalten vorab einen persönlichen Link oder scannen den QR-Code im Fahrzeug. Kurze, verständliche Videos erklären Heizung, Wasser, Markise, Toilette und Gas. Weniger Rückfragen am Wochenende, entspannte Mieter und nachweisbare Einweisung.',
+    blockBTitle: 'Das Vermiet-Cockpit',
+    blockBText: 'Alle Buchungen, Mietverträge, Kautionsstatus und Schäden an einem Ort. Keine Zettelwirtschaft, kein langes Suchen mehr. Schnelle Übersicht, rechtssichere digitale Unterschrift auf dem Tablet und lückenlose Dokumentation bei jeder Übergabe und Rücknahme.',
+    aboutText: 'Der Caravan-Vermieter-Bund (CVB) stärkt unabhängige Vermieter mit Praxiswissen, Spezialversicherungen und einem starken Netzwerk von über 1.000 betreuten Fahrzeugen in ganz Deutschland.',
+    aboutFounder: 'DS-Caravaning GmbH, Detlef Scheer · Niederkrüchten',
     aboutFact: 'Über 1.000 betreute Fahrzeuge in Deutschland',
     aboutLinkText: 'Mehr über den CVB erfahren',
     aboutLinkUrl: 'https://caravan-vermieter-bund.de',
     contactEmail: 'info@caravan-vermieter-bund.de',
     partnerNote: 'Technologiepartner: Smarlps',
-    trialPromiseLine: '14 Tage kostenlos testen, keine automatische Verlängerung',
-    formHeading: 'CVB-Office buchen',
-    formIntro: 'Trag Deine E-Mail-Adresse und die Anzahl Deiner Fahrzeuge ein. Wir melden uns bei Dir und richten Deinen Zugang ein.',
-    successMessage: 'Vielen Dank! Deine Anfrage ist bei uns eingegangen. Wir melden uns in Kürze bei Dir und richten Deinen Zugang ein.',
+    trialPromiseLine: '14 Tage unverbindlich testen · Keine Kreditkarte erforderlich · Jederzeit kündbar',
+    formHeading: 'Jetzt CVB-Office für Deine Vermietung anfragen',
+    formIntro: 'Trage Deine E-Mail-Adresse und die Anzahl Deiner Mietfahrzeuge ein. Wir richten Deinen Zugang ein und melden uns schnellstmöglich bei Dir.',
+    successMessage: 'Vielen Dank für Deine Anfrage! Wir haben Deine Daten erhalten und melden uns in Kürze mit allen Details und Deinem Testzugang bei Dir.',
   },
   priceSettings: {
     monthlyNet: 8.33,
     yearlyNet: 100.0,
-    noteText: 'Der Betrag wird zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet.',
+    noteText: '8,33 € netto pro Monat und Fahrzeug bei jährlicher Abrechnung (100 € netto/Jahr). Zzgl. MwSt. Exklusiv für CVB-Mitglieder.',
     currency: '€',
   },
   generalSettings: {
     alertEmail: 'info@caravan-vermieter-bund.de',
-    senderName: 'CVB-Office',
-    trialLink: 'https://ausprobieren.smarlps.de',
+    senderName: 'CVB-Office Vermieter-Office',
+    trialLink: 'https://caravan-vermieter-bund.de/testzugang',
     cvbWebsiteLink: 'https://caravan-vermieter-bund.de',
     contactEmail: 'info@caravan-vermieter-bund.de',
-    pageTitle: 'CVB-Office: Dein digitales Vermiet-Office',
-    pageDescription: 'Anfrage, Buchung, Vertrag und Übergabe an einem Ort. Entwickelt für Wohnmobil- und Caravan-Vermieter im Caravan-Vermieter-Bund.',
+    pageTitle: 'CVB-Office – Das offizielle Vermieter-Office für Wohnmobil- & Caravan-Vermieter',
+    pageDescription: 'Digitale Vorab-Einweisung und zentrales Vermiet-Cockpit für unabhängige Vermieter.',
   },
   features: [
-    { id: 'f1', title: 'Buchungen und Auslastung im Blick', text: 'Alle Termine, Belegungen und Fahrzeugzustände in einem intuitiven Kalender übersichtlich gebündelt.', icon: 'Calendar', sort_order: 1, visible: true },
-    { id: 'f2', title: 'Buchungswidget für Deine Website', text: 'Deine Kunden fragen direkt auf Deiner eigenen Website an oder buchen dort verbindlich zum Live-Preis.', icon: 'Globe', sort_order: 2, visible: true },
-    { id: 'f3', title: 'Klare Preislogik', text: 'Saisonale Preise, Mindestmietdauern, Frühbucherrabatte und Sonderangebote minutengenau hinterlegt.', icon: 'Tag', sort_order: 3, visible: true },
-    { id: 'f4', title: 'Verfügbarkeit und Mindestdauer', text: 'Automatische Sperren verhindern Doppelbuchungen und regeln Leerstandszeiten zwischen Vermietungen.', icon: 'CheckCircle2', sort_order: 4, visible: true },
-    { id: 'f5', title: 'Digitaler Vertragsabschluss', text: 'Rechtssichere Mietverträge werden direkt digital unterschrieben – papierlos und zeitsparend.', icon: 'FileSignature', sort_order: 5, visible: true },
-    { id: 'f6', title: 'Bestätigungen und Protokolle als PDF', text: 'Automatischer Versand von Buchungsbestätigungen, Rechnungen und Übergabeprotokollen an Deine Mieter.', icon: 'FileText', sort_order: 6, visible: true },
-    { id: 'f7', title: 'Kunden- und Mieterverwaltung', text: 'Vollständige Mieterhistorie, Führerscheinkopien, Kontaktdaten und Dokumente an einem zentralen Ort.', icon: 'Users', sort_order: 7, visible: true },
-    { id: 'f8', title: 'Fahrzeuge und Zubehör', text: 'Pflege Deine Flotte, Zusatzausstattung wie Campingstühle, Fahrräder oder Navis unkompliziert mit.', icon: 'Truck', sort_order: 8, visible: true },
+    { id: 'feat-1', title: 'QR-Code im Fahrzeug', text: 'Mieter scannen den QR-Code und sehen sofort alle Einweisungsvideos und Anleitungen für ihr Fahrzeug.', icon: 'QrCode', sort_order: 1, visible: true },
+    { id: 'feat-2', title: 'Digitale Übergabeprotokolle', text: 'Vorschäden und Neuschäden mit Fotos dokumentieren, Zählerstände erfassen und auf dem Tablet signieren.', icon: 'FileCheck', sort_order: 2, visible: true },
+    { id: 'feat-3', title: 'Rechtssichere CVB-Mietverträge', text: 'Stets aktuelle, juristisch geprüfte BGB-Musterverträge, AGBs und Datenschutztexte für deutsche Vermieter.', icon: 'Shield', sort_order: 3, visible: true },
+    { id: 'feat-4', title: 'Kautions- & Zahlungsverwaltung', text: 'Status aller Kautionen, Überweisungen und Restzahlungen auf einen Blick.', icon: 'CreditCard', sort_order: 4, visible: true },
+    { id: 'feat-5', title: 'Kalender & Buchungsübersicht', text: 'Volle Kontrolle über Deine Flotte: Übergaben, Rücknahmen und freie Zeiträume in der Monatsansicht.', icon: 'Calendar', sort_order: 5, visible: true },
+    { id: 'feat-6', title: '100 % DSGVO-konform auf deutschen Servern', text: 'Alle Mieterdaten und Dokumente werden verschlüsselt auf ISO-zertifizierten deutschen Servern gespeichert.', icon: 'Lock', sort_order: 6, visible: true },
   ],
   steps: [
-    { id: 's1', number: 1, title: 'Anfrage erhalten', text: 'Mietanfragen gehen über Dein Website-Widget oder manuell direkt in Dein zentrales Postfach ein.', icon: 'Inbox', visible: true },
-    { id: 's2', number: 2, title: 'Buchung verwalten', text: 'Verfügbarkeit prüfen, Konditionen anpassen und das Angebot mit einem Klick an den Mieter senden.', icon: 'CalendarCheck', visible: true },
-    { id: 's3', number: 3, title: 'Vertrag abschließen', text: 'Der Mieter unterschreibt digital. Kaution, Zahlungsfristen und Dokumente sind hinterlegt.', icon: 'FileCheck', visible: true },
-    { id: 's4', number: 4, title: 'Übergabe dokumentieren', text: 'Zustand, Kilometerstand, Fotos und Vorschäden per Tablet/Smartphone erfassen und gemeinsam signieren.', icon: 'ClipboardCheck', visible: true },
+    { id: 'step-1', number: 1, title: 'Fahrzeuge anlegen', text: 'Trage Deine Camper mit Ausstattung, Fotos und Kennzeichen in Dein Cockpit ein.', icon: 'Caravan', visible: true },
+    { id: 'step-2', number: 2, title: 'QR-Code anbringen', text: 'Drucke den fahrzeugspezifischen QR-Code aus oder klebe ihn ins Handschuhfach / an die Aufbautür.', icon: 'QrCode', visible: true },
+    { id: 'step-3', number: 3, title: 'Übergaben beschleunigen', text: 'Deine Mieter sind bestens vorbereitet, Übergaben dauern nur noch 15 Minuten und laufen rechtssicher ab.', icon: 'Clock', visible: true },
   ],
   faqs: [
-    { id: 'faq-mitglied', question: 'Wer kann CVB-Office nutzen und ist eine CVB-Mitgliedschaft erforderlich?', answer: 'CVB-Office gibt es exklusiv für CVB-Mitglieder. Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.', sort_order: 1, visible: true },
-    { id: 'faq1', question: 'Für welche Art von Vermietung ist CVB-Office geeignet?', answer: 'Für Wohnmobile, Camper, Wohnwagen und Anhänger. Überall, wo Anfragen, Buchungen, Verträge und Übergaben anfallen.', sort_order: 2, visible: true },
-    { id: 'faq2', question: 'Wie schnell kann ich starten?', answer: 'Nach der Einrichtung Deines Zugangs kannst Du direkt loslegen. Du brauchst keine eigene IT und keine lange Schulung.', sort_order: 3, visible: true },
-    { id: 'faq3', question: 'Was kostet CVB-Office?', answer: '8,33 € netto pro Fahrzeug und Monat, also 100 € netto pro Fahrzeug und Jahr. Transparente Kosten ohne versteckte Gebühren.', sort_order: 4, visible: true },
-    { id: 'faq4', question: 'Wie wird CVB-Office bezahlt?', answer: 'Der Betrag von 8,33 € netto pro Fahrzeug und Monat wird unkompliziert zusätzlich zu Deiner jährlichen CVB-Mitgliedsgebühr abgerechnet. Voraussetzung für die Nutzung von CVB-Office ist die CVB-Mitgliedschaft (ab 249 € netto pro Fahrzeug und Jahr).', sort_order: 5, visible: true },
-    { id: 'faq5', question: 'Kann ich CVB-Office erst testen?', answer: 'Ja, Du kannst CVB-Office über unseren Technologiepartner Smarlps 14 Tage unverbindlich testen. Es gibt keine automatische Verlängerung.', sort_order: 5, visible: true },
-    { id: 'faq6', question: 'Kann ich CVB-Office in meine Website einbinden?', answer: 'Ja. Mit dem integrierten Buchungswidget bindest Du Verfügbarkeitskalender, Preise und Direktanfragen nahtlos in Deine eigene Website ein.', sort_order: 6, visible: true },
-    { id: 'faq7', question: 'Geht das auch mit mehreren Standorten?', answer: 'Ja. CVB-Office unterstützt mehrere Standorte und Flotten mit klarer Zuweisung von Fahrzeugen und Berechtigungen.', sort_order: 7, visible: true },
-    { id: 'faq8', question: 'Was passiert mit meinen bestehenden Buchungen?', answer: 'Bestehende Buchungen und Kundendaten lassen sich übersichtlich einpflegen und abbilden, damit Du alle Vermietungen an einem Ort hast.', sort_order: 8, visible: true },
+    { id: 'faq-1', question: 'Was kostet CVB-Office?', answer: 'CVB-Office kostet 8,33 € netto pro Monat und Fahrzeug bei jährlicher Abrechnung (100 € netto pro Fahrzeug und Jahr). Voraussetzung ist die Mitgliedschaft im Caravan-Vermieter-Bund (CVB). Keine Einrichtungsgebühr, keine versteckten Kosten.', sort_order: 1, visible: true },
+    { id: 'faq-2', question: 'Muss ich Mitglied im Caravan-Vermieter-Bund (CVB) sein?', answer: 'Ja, CVB-Office ist ein exklusives Angebot für Mitglieder des Caravan-Vermieter-Bundes. Falls Du noch kein Mitglied bist, kannst Du die Mitgliedschaft zusammen mit der Anfrage für CVB-Office beantragen.', sort_order: 2, visible: true },
+    { id: 'faq-3', question: 'Wie funktioniert der 14-tägige Testzugang?', answer: 'Nach Deiner Anfrage richten wir Deinen persönlichen Testzugang ein. Du kannst CVB-Office 14 Tage lang mit all seinen Funktionen kostenlos und unverbindlich testen. Keine automatische Verlängerung, keine Kreditkarte erforderlich.', sort_order: 3, visible: true },
+    { id: 'faq-4', question: 'Brauchen meine Mieter eine App?', answer: 'Nein! Mieter müssen keine App installieren. Die Einweisungsvideos und Dokumente öffnen sich einfach im mobilen Web-Browser auf jedem Smartphone – per Klick auf den Link oder Scan des QR-Codes.', sort_order: 4, visible: true },
+    { id: 'faq-5', question: 'Sind meine Daten und die meiner Mieter DSGVO-konform geschützt?', answer: 'Ja, zu 100 %. Die gesamte Software und Datenbank werden ausschließlich in ISO-zertifizierten deutschen Rechenzentren betrieben. Wir bieten Dir einen fertigen Auftragsverarbeitungsvertrag (AVV) nach Art. 28 DSGVO direkt im System.', sort_order: 5, visible: true },
+    { id: 'faq-6', question: 'Kann ich CVB-Office auch mit nur einem Wohnmobil nutzen?', answer: 'Absolut. CVB-Office skaliert ab 1 Fahrzeug bis hin zu großen Flotten. Jeder Vermieter profitiert von den rechtssicheren Verträgen und der enormen Zeitersparnis bei der Einweisung.', sort_order: 6, visible: true },
   ],
   versionHistory: {},
   auditLog: [],
@@ -224,7 +206,6 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Load or initialize DB
 export function getDb(): DatabaseSchema {
   try {
     if (fs.existsSync(DB_FILE)) {
@@ -246,7 +227,275 @@ export function saveDb(data: DatabaseSchema): void {
   }
 }
 
-export function recordVersion(key: string, value: any, user = 'Detlef Scheer'): void {
+// ---------------------------------------------------------------------------
+// Database Connection Initialization
+// ---------------------------------------------------------------------------
+
+export async function initDb(): Promise<boolean> {
+  try {
+    await prisma.$connect();
+    // Test a basic query
+    await prisma.$queryRaw`SELECT 1`;
+    isConnectedToPostgres = true;
+    console.log('✓ Successfully connected to PostgreSQL via Prisma ORM');
+    return true;
+  } catch (err: any) {
+    isConnectedToPostgres = false;
+    console.warn('! PostgreSQL connection failed or offline:', err.message);
+    console.warn('! Continuing in fallback file-backed mode (backend/data/db.json).');
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Asynchronous Content & Settings Querying via Prisma (with fallback)
+// ---------------------------------------------------------------------------
+
+export async function fetchFullSiteData(): Promise<DatabaseSchema> {
+  if (!isConnectedToPostgres) {
+    return getDb();
+  }
+
+  try {
+    const [
+      contentBlocks,
+      settings,
+      features,
+      steps,
+      faqs,
+      benefits,
+      audiences,
+      requests,
+    ] = await Promise.all([
+      prisma.contentBlock.findMany(),
+      prisma.setting.findMany(),
+      prisma.featureCard.findMany({ orderBy: { sort_order: 'asc' } }),
+      prisma.stepItem.findMany({ orderBy: { number: 'asc' } }),
+      prisma.faqItem.findMany({ orderBy: { sort_order: 'asc' } }),
+      prisma.benefitItem.findMany({ orderBy: { sort_order: 'asc' } }),
+      prisma.audienceItem.findMany({ orderBy: { sort_order: 'asc' } }),
+      prisma.signUpRequest.findMany({ orderBy: { created_at: 'desc' } }),
+    ]);
+
+    const fallback = getDb();
+    const content = { ...fallback.content };
+    contentBlocks.forEach((b) => {
+      if (b.type === 'json') {
+        try {
+          (content as any)[b.key] = JSON.parse(b.value);
+        } catch {
+          (content as any)[b.key] = b.value;
+        }
+      } else {
+        (content as any)[b.key] = b.value;
+      }
+    });
+
+    const settingsMap: Record<string, string> = {};
+    settings.forEach((s) => {
+      settingsMap[s.key] = s.value;
+    });
+
+    const priceSettings: PriceSettings = {
+      monthlyNet: settingsMap['monthly_net_per_vehicle'] ? parseFloat(settingsMap['monthly_net_per_vehicle']) : 8.33,
+      yearlyNet: settingsMap['yearly_net_per_vehicle'] ? parseFloat(settingsMap['yearly_net_per_vehicle']) : 100.0,
+      noteText: settingsMap['price_note_text'] || fallback.priceSettings.noteText,
+      currency: settingsMap['currency'] || '€',
+    };
+
+    const generalSettings: GeneralSettings = {
+      alertEmail: settingsMap['alert_email'] || fallback.generalSettings.alertEmail,
+      senderName: settingsMap['sender_name'] || fallback.generalSettings.senderName,
+      trialLink: settingsMap['trial_link'] || fallback.generalSettings.trialLink,
+      cvbWebsiteLink: settingsMap['cvb_website_link'] || fallback.generalSettings.cvbWebsiteLink,
+      contactEmail: settingsMap['contact_email'] || fallback.generalSettings.contactEmail,
+      pageTitle: settingsMap['page_title'] || fallback.generalSettings.pageTitle,
+      pageDescription: settingsMap['page_description'] || fallback.generalSettings.pageDescription,
+    };
+
+    const formattedRequests: SignUpRequest[] = requests.map((r) => ({
+      id: r.id,
+      created_at: r.created_at.toISOString(),
+      email: r.email,
+      vehicle_count: r.vehicle_count,
+      price_monthly_net_at_signup: r.price_monthly_net_at_signup,
+      price_yearly_net_at_signup: r.price_yearly_net_at_signup,
+      price_consent: r.price_consent,
+      price_consent_text: r.price_consent_text,
+      price_consent_at: r.price_consent_at.toISOString(),
+      privacy_consent: r.privacy_consent,
+      privacy_consent_at: r.privacy_consent_at.toISOString(),
+      status: (r.status as 'neu' | 'in_bearbeitung' | 'erledigt') || 'neu',
+      notes: r.notes,
+      email_sent: r.email_sent,
+      email_error: r.email_error,
+      contact_name: r.contact_name,
+      phone: r.phone,
+    }));
+
+    return {
+      content,
+      priceSettings,
+      generalSettings,
+      features: features.length > 0 ? features : fallback.features,
+      steps: steps.length > 0 ? steps : fallback.steps,
+      faqs: faqs.length > 0 ? faqs : fallback.faqs,
+      benefits: benefits.length > 0 ? benefits : fallback.benefits,
+      audiences: audiences.length > 0 ? audiences : fallback.audiences,
+      requests: formattedRequests,
+      versionHistory: fallback.versionHistory || {},
+      auditLog: fallback.auditLog || [],
+    };
+  } catch (e) {
+    console.error('Error fetching data from PostgreSQL, using fallback:', e);
+    return getDb();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sign-Up Requests (Section 6 & Appendix B)
+// ---------------------------------------------------------------------------
+
+export async function insertSignUpRequest(data: {
+  email: string;
+  vehicle_count: number;
+  price_monthly_net_at_signup: number;
+  price_yearly_net_at_signup: number;
+  price_consent: boolean;
+  price_consent_text: string;
+  privacy_consent: boolean;
+  contact_name?: string;
+  phone?: string;
+}): Promise<SignUpRequest> {
+  const now = new Date();
+  const id = `req-${Date.now()}`;
+
+  let created: SignUpRequest = {
+    id,
+    created_at: now.toISOString(),
+    email: data.email.toLowerCase().trim(),
+    vehicle_count: data.vehicle_count,
+    price_monthly_net_at_signup: data.price_monthly_net_at_signup,
+    price_yearly_net_at_signup: data.price_yearly_net_at_signup,
+    price_consent: data.price_consent,
+    price_consent_text: data.price_consent_text,
+    price_consent_at: now.toISOString(),
+    privacy_consent: data.privacy_consent,
+    privacy_consent_at: now.toISOString(),
+    status: 'neu',
+    notes: null,
+    email_sent: false,
+    email_error: null,
+    contact_name: data.contact_name || null,
+    phone: data.phone || null,
+  };
+
+  if (isConnectedToPostgres) {
+    try {
+      const pRecord = await prisma.signUpRequest.create({
+        data: {
+          email: created.email,
+          vehicle_count: created.vehicle_count,
+          price_monthly_net_at_signup: created.price_monthly_net_at_signup,
+          price_yearly_net_at_signup: created.price_yearly_net_at_signup,
+          price_consent: created.price_consent,
+          price_consent_text: created.price_consent_text,
+          privacy_consent: created.privacy_consent,
+          status: 'neu',
+          contact_name: created.contact_name,
+          phone: created.phone,
+        },
+      });
+      created.id = pRecord.id;
+      created.created_at = pRecord.created_at.toISOString();
+    } catch (e) {
+      console.error('Failed to insert request into PostgreSQL, saving to JSON fallback:', e);
+    }
+  }
+
+  // Also mirror to file db
+  const db = getDb();
+  db.requests.unshift(created);
+  saveDb(db);
+
+  return created;
+}
+
+export async function updateSignUpRequest(
+  id: string,
+  patch: Partial<SignUpRequest>
+): Promise<SignUpRequest | null> {
+  if (isConnectedToPostgres) {
+    try {
+      const updateData: any = {};
+      if (patch.status !== undefined) updateData.status = patch.status;
+      if (patch.notes !== undefined) updateData.notes = patch.notes;
+      if (patch.email_sent !== undefined) updateData.email_sent = patch.email_sent;
+      if (patch.email_error !== undefined) updateData.email_error = patch.email_error;
+      if (patch.contact_name !== undefined) updateData.contact_name = patch.contact_name;
+      if (patch.phone !== undefined) updateData.phone = patch.phone;
+
+      await prisma.signUpRequest.update({
+        where: { id },
+        data: updateData,
+      });
+    } catch (e) {
+      console.error('Failed to update request in PostgreSQL:', e);
+    }
+  }
+
+  const db = getDb();
+  const idx = db.requests.findIndex((r) => r.id === id);
+  if (idx === -1) return null;
+
+  db.requests[idx] = { ...db.requests[idx], ...patch };
+  saveDb(db);
+  return db.requests[idx];
+}
+
+export async function deleteSignUpRequest(id: string): Promise<boolean> {
+  if (isConnectedToPostgres) {
+    try {
+      await prisma.signUpRequest.delete({
+        where: { id },
+      });
+    } catch (e) {
+      console.error('Failed to delete request from PostgreSQL:', e);
+    }
+  }
+
+  const db = getDb();
+  const initialLen = db.requests.length;
+  db.requests = db.requests.filter((r) => r.id !== id);
+  saveDb(db);
+  return db.requests.length < initialLen;
+}
+
+// ---------------------------------------------------------------------------
+// Content Versioning & Audit
+// ---------------------------------------------------------------------------
+
+export async function recordVersion(
+  key: string,
+  value: any,
+  user = 'Detlef Scheer'
+): Promise<void> {
+  const valueStr = typeof value === 'string' ? value : JSON.stringify(value);
+
+  if (isConnectedToPostgres) {
+    try {
+      await prisma.contentVersion.create({
+        data: {
+          block_key: key,
+          value: valueStr,
+          saved_by: user,
+        },
+      });
+    } catch (e) {
+      console.error('Failed to record version in PostgreSQL:', e);
+    }
+  }
+
   const db = getDb();
   if (!db.versionHistory) db.versionHistory = {};
   if (!db.versionHistory[key]) db.versionHistory[key] = [];
@@ -257,7 +506,6 @@ export function recordVersion(key: string, value: any, user = 'Detlef Scheer'): 
     saved_by: user,
   });
 
-  // Keep last 20 versions
   if (db.versionHistory[key].length > 20) {
     db.versionHistory[key] = db.versionHistory[key].slice(0, 20);
   }

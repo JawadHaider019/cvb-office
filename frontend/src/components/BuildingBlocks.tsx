@@ -234,7 +234,7 @@ export const BuildingBlocks: React.FC = () => {
                           </div>
                           <div>
                             <div className="text-xs sm:text-base font-spartan font-black uppercase tracking-wider text-white mb-1">
-                              Standorte & Verbünde
+                              Standorte & Partnerflotten
                             </div>
                             <p className="text-xs sm:text-[13px] text-[#F4F2E6]/80 leading-relaxed">
                               Mehrere Übergabestationen oder Partnerflotten mit klarer Trennung verwalten.

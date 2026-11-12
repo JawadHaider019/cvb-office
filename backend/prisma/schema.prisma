@@ -1,0 +1,122 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------------------------------------------------------------------------
+// Appendix B Data Models (Page 26 of Developer Brief)
+// ---------------------------------------------------------------------------
+
+model SignUpRequest {
+  id                          String   @id @default(uuid())
+  created_at                  DateTime @default(now())
+  email                       String
+  vehicle_count               Int
+  price_monthly_net_at_signup Float
+  price_yearly_net_at_signup  Float
+  price_consent               Boolean  @default(false)
+  price_consent_text          String
+  price_consent_at            DateTime @default(now())
+  privacy_consent             Boolean  @default(false)
+  privacy_consent_at          DateTime @default(now())
+  status                      String   @default("neu") // "neu" | "in_bearbeitung" | "erledigt"
+  notes                       String?
+  email_sent                  Boolean  @default(false)
+  email_error                 String?
+  contact_name                String?
+  phone                       String?
+
+  @@index([email])
+  @@index([status])
+  @@index([created_at])
+}
+
+model ContentBlock {
+  key        String   @id
+  type       String   @default("text") // "text" | "html" | "hero" | "json"
+  value      String
+  updated_at DateTime @updatedAt
+  updated_by String?
+}
+
+model ContentVersion {
+  id        String   @id @default(uuid())
+  block_key String
+  value     String
+  saved_at  DateTime @default(now())
+  saved_by  String?
+
+  @@index([block_key])
+  @@index([saved_at])
+}
+
+model FeatureCard {
+  id         String  @id @default(uuid())
+  title      String
+  text       String
+  icon       String
+  sort_order Int     @default(0)
+  visible    Boolean @default(true)
+}
+
+model StepItem {
+  id      String  @id @default(uuid())
+  number  Int     @default(1)
+  title   String
+  text    String
+  icon    String
+  visible Boolean @default(true)
+}
+
+model BenefitItem {
+  id         String  @id @default(uuid())
+  title      String
+  text       String
+  icon       String
+  sort_order Int     @default(0)
+  visible    Boolean @default(true)
+}
+
+model AudienceItem {
+  id         String  @id @default(uuid())
+  title      String
+  text       String
+  icon       String
+  sort_order Int     @default(0)
+  visible    Boolean @default(true)
+}
+
+model FaqItem {
+  id         String  @id @default(uuid())
+  question   String
+  answer     String
+  sort_order Int     @default(0)
+  visible    Boolean @default(true)
+}
+
+model MediaFile {
+  id          String   @id @default(uuid())
+  file_name   String
+  alt_text    String?
+  size        Int
+  type        String
+  uploaded_at DateTime @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model AdminUser {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password_hash   String
+  created_at      DateTime  @default(now())
+  last_login      DateTime?
+  two_step_secret String?
+}
