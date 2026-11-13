@@ -4,12 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "dev": "node --watch src/server.js",
+    "build": "echo \"JavaScript backend ready\"",
+    "start": "node src/server.js",
     "prisma:generate": "node node_modules/prisma/build/index.js generate --schema prisma/schema.prisma",
     "prisma:push": "node node_modules/prisma/build/index.js db push --schema prisma/schema.prisma",
-    "seed": "tsx src/seed.ts"
+    "seed": "node src/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
@@ -20,13 +20,6 @@
     "nodemailer": "^10.4.0"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/node": "^22.14.0",
-    "@types/nodemailer": "^8.0.2",
-    "prisma": "^6.4.1",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "prisma": "^6.4.1"
   }
 }

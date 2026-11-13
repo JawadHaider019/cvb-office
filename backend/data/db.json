@@ -1,6 +1,25 @@
 {
   "requests": [
     {
+      "id": "1190bd4b-93a8-490a-a9ee-bc3e6359055b",
+      "created_at": "2026-11-13T22:57:46.399Z",
+      "email": "js-test-1794610666170@example.de",
+      "vehicle_count": 4,
+      "price_monthly_net_at_signup": 33.32,
+      "price_yearly_net_at_signup": 400,
+      "price_consent": true,
+      "price_consent_text": "Ich bestätige, dass CVB-Office 8,33 € netto pro Fahrzeug und Monat kostet (100,00 € netto pro Fahrzeug und Jahr) und dass dieser Betrag zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet wird.",
+      "price_consent_at": "2026-11-13T22:57:46.396Z",
+      "privacy_consent": true,
+      "privacy_consent_at": "2026-11-13T22:57:46.396Z",
+      "status": "neu",
+      "notes": null,
+      "email_sent": true,
+      "email_error": null,
+      "contact_name": null,
+      "phone": null
+    },
+    {
       "id": "dd2b5bc9-afeb-4eea-9200-1b186556c65c",
       "created_at": "2026-11-12T20:06:45.623Z",
       "email": "modular-test-1794514005515@example.de",
