@@ -24,7 +24,7 @@ export const ScrollReveal = ({ children, delay = 0, direction = 'up', distance =
     return (<motion.div initial={initial} whileInView={{ opacity: 1, x: 0, y: 0 }} viewport={{ once, margin: '-40px' }} transition={{
             duration,
             delay,
-            ease: [0.21, 0.47, 0.32, 0.98],
+            ease: 'easeOut',
         }} className={className}>
       {children}
     </motion.div>);
@@ -52,7 +52,7 @@ export const StaggerItem = ({ children, className = '', yOffset = 28 }) => {
             y: 0,
             transition: {
                 duration: 0.65,
-                ease: [0.21, 0.47, 0.32, 0.98],
+                ease: 'easeOut',
             },
         },
     };

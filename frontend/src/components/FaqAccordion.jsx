@@ -205,7 +205,7 @@ export const FaqAccordion = () => {
                           </button>
 
                           <AnimatePresence initial={false}>
-                            {isOpen && (<motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }} className="overflow-hidden">
+                            {isOpen && (<motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25, ease: 'easeOut' }} className="overflow-hidden">
                                 <div className="px-4 sm:px-8 pb-5 sm:pb-6 pt-1 text-xs sm:text-sm text-[#585828] leading-relaxed border-t border-[#A09048]/15 font-body">
                                   <p>{faq.answer}</p>
                                   {(faq.answer.includes('CVB-Mitglied') || faq.id.includes('mitglied') || faq.question.toLowerCase().includes('mitglied')) && (<div className="mt-3.5 pt-3 border-t border-[#A09048]/20 flex items-center justify-between flex-wrap gap-2.5">

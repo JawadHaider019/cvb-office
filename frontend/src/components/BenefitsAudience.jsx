@@ -153,7 +153,7 @@ export const BenefitsAudience = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 mb-8 sm:mb-10">
             {testimonials.map((t, idx) => {
             const Icon = t.icon;
-            return (<motion.div key={idx} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} whileHover={{ y: -5 }} transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.21, 0.47, 0.32, 0.98] }} className="bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-[#A09048]/40 rounded-[22px] p-5 sm:p-7 flex flex-col justify-between shadow-xl transition-colors">
+            return (<motion.div key={idx} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} whileHover={{ y: -5 }} transition={{ duration: 0.5, delay: idx * 0.08, ease: 'easeOut' }} className="bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-[#A09048]/40 rounded-[22px] p-5 sm:p-7 flex flex-col justify-between shadow-xl transition-colors">
                   <div>
                     <div className="flex items-start justify-between mb-4 sm:mb-6">
                       <div className="w-10 h-10 rounded-xl bg-[#889028] text-white flex items-center justify-center shadow-md">

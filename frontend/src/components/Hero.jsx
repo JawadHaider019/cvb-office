@@ -83,7 +83,7 @@ export const Hero = () => {
             <span className="w-2 h-2 rounded-full bg-[#889028] animate-pulse shrink-0"/>
             <span className="leading-snug">Offizielles Vermieter-Office · {content.trustLine}</span>
           </motion.div>
-          <motion.h1 initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }} className="font-spartan font-black uppercase text-[42px] sm:text-6xl lg:text-7xl xl:text-8xl leading-[0.94] sm:leading-[0.92] tracking-[-0.025em] mb-5 sm:mb-6 text-[#384808]">
+          <motion.h1 initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }} className="font-spartan font-black uppercase text-[42px] sm:text-6xl lg:text-7xl xl:text-8xl leading-[0.94] sm:leading-[0.92] tracking-[-0.025em] mb-5 sm:mb-6 text-[#384808]">
             <span className="block text-[#384808]">
               CVB-OFFICE<span className="text-[#A09048]">.</span>
             </span>

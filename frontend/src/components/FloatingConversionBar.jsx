@@ -33,7 +33,7 @@ export const FloatingConversionBar = () => {
         maximumFractionDigits: 2,
     });
     return (<AnimatePresence>
-      {isVisible && (<motion.aside aria-label="Schnellbuchung" initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} className="fixed bottom-3 sm:bottom-5 lg:bottom-6 inset-x-3 sm:inset-x-6 md:inset-x-4 lg:inset-x-8 max-w-4xl mx-auto z-40 bg-[#242E05]/95 backdrop-blur-xl border border-[#A09048]/40 shadow-[0_20px_60px_rgba(36,46,5,0.7)] text-white px-4 md:px-5 lg:px-8 py-3 md:py-3.5 lg:py-4 rounded-2xl md:rounded-full flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 md:gap-3 lg:gap-4">
+      {isVisible && (<motion.aside aria-label="Schnellbuchung" initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }} transition={{ duration: 0.35, ease: 'easeOut' }} className="fixed bottom-3 sm:bottom-5 lg:bottom-6 inset-x-3 sm:inset-x-6 md:inset-x-4 lg:inset-x-8 max-w-4xl mx-auto z-40 bg-[#242E05]/95 backdrop-blur-xl border border-[#A09048]/40 shadow-[0_20px_60px_rgba(36,46,5,0.7)] text-white px-4 md:px-5 lg:px-8 py-3 md:py-3.5 lg:py-4 rounded-2xl md:rounded-full flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 md:gap-3 lg:gap-4">
           {/* Left: Value proposition & Live Tariff */}
           <div className="flex items-center justify-between gap-3 w-full md:w-auto min-w-0">
             <div className="flex items-center gap-2.5 lg:gap-3.5 min-w-0">

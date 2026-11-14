@@ -57,7 +57,7 @@ export const HowItWorks = () => {
           {visibleSteps.map((step, index) => {
             const Icon = iconMap[step.icon] || FileCheck;
             const isHovered = activeStepHover === index;
-            return (<motion.div key={step.id || index} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} onMouseEnter={() => setActiveStepHover(index)} onMouseLeave={() => setActiveStepHover(null)} whileHover={{ y: -6 }} transition={{ duration: 0.5, delay: index * 0.08, ease: [0.21, 0.47, 0.32, 0.98] }} className={`relative bg-white rounded-[22px] sm:rounded-[28px] p-5 sm:p-8 border transition-all flex flex-col justify-between group overflow-hidden ${isHovered
+            return (<motion.div key={step.id || index} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} onMouseEnter={() => setActiveStepHover(index)} onMouseLeave={() => setActiveStepHover(null)} whileHover={{ y: -6 }} transition={{ duration: 0.5, delay: index * 0.08, ease: 'easeOut' }} className={`relative bg-white rounded-[22px] sm:rounded-[28px] p-5 sm:p-8 border transition-all flex flex-col justify-between group overflow-hidden ${isHovered
                     ? 'border-[#889028] shadow-[0_20px_45px_rgba(56,72,8,0.12)]'
                     : 'border-[#A09048]/25 hover:border-[#889028] shadow-sm'}`}>
                 {/* Top Accent Hairline */}

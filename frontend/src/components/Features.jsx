@@ -113,7 +113,7 @@ export const Features = () => {
 
           {/* Right Column (7 Cols): 3 Clean Vertical Photo Cards */}
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-5">
-            {spotlightModules.map((item, idx) => (<motion.div key={item.num} initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.55, delay: idx * 0.1, ease: [0.21, 0.47, 0.32, 0.98] }} whileHover={{ y: -6 }} onClick={scrollToForm} className={`relative min-h-[250px] sm:min-h-[300px] md:min-h-[380px] lg:min-h-[410px] rounded-[22px] sm:rounded-[26px] overflow-hidden shadow-lg hover:shadow-2xl border border-[#A09048]/25 cursor-pointer group flex flex-col justify-between bg-[#172002] ${idx === 2 ? 'sm:col-span-2 md:col-span-1' : ''}`}>
+            {spotlightModules.map((item, idx) => (<motion.div key={item.num} initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.55, delay: idx * 0.1, ease: 'easeOut' }} whileHover={{ y: -6 }} onClick={scrollToForm} className={`relative min-h-[250px] sm:min-h-[300px] md:min-h-[380px] lg:min-h-[410px] rounded-[22px] sm:rounded-[26px] overflow-hidden shadow-lg hover:shadow-2xl border border-[#A09048]/25 cursor-pointer group flex flex-col justify-between bg-[#172002] ${idx === 2 ? 'sm:col-span-2 md:col-span-1' : ''}`}>
                 {/* Full-Bleed Photo */}
                 <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer"/>
 
