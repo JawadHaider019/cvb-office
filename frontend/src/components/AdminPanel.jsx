@@ -339,20 +339,7 @@ export const AdminPanel = () => {
             </button>
           </div>
 
-          {/* Quick Notice Pill in Sidebar */}
-          {newRequestsCount > 0 && (
-            <div className="mx-4 mt-5 p-3.5 rounded-2xl bg-[#A09048]/15 border border-[#A09048]/35 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#A09048] animate-pulse" />
-                <span className="text-xs font-spartan font-bold uppercase tracking-wider text-white">
-                  Neue Anfragen
-                </span>
-              </div>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-[#A09048] text-[#172002]">
-                {newRequestsCount}
-              </span>
-            </div>
-          )}
+
 
           {/* Navigation Category Groups */}
           <nav className="p-4 space-y-6 overflow-y-auto max-h-[calc(100vh-270px)]">
@@ -401,7 +388,7 @@ export const AdminPanel = () => {
         </div>
 
         {/* Bottom Profile & Exit Area */}
-        <div className="p-4 border-t border-white/10 bg-[#121A02] space-y-3">
+        <div className="p-4 border-t border-white/10 bg-[#121A02]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-2xl bg-[#A09048] text-[#172002] font-spartan font-black text-sm flex items-center justify-center shrink-0 shadow-md">
@@ -424,13 +411,7 @@ export const AdminPanel = () => {
             </button>
           </div>
 
-          <button
-            onClick={() => setCurrentView('public')}
-            className="tech-cta-ghost w-full justify-between h-11 text-xs px-4"
-          >
-            <span>Live-Website öffnen</span>
-            <ExternalLink size={14} className="text-[#A09048]" />
-          </button>
+
         </div>
       </aside>
 
