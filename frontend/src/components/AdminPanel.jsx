@@ -159,13 +159,6 @@ export const AdminPanel = () => {
 
         <div className="max-w-md w-full bg-[#F4F2E6] rounded-[32px] p-8 sm:p-11 border-2 border-[#A09048]/40 shadow-[0_25px_70px_rgba(26,35,4,0.6)] relative z-10 text-[#384808]">
           <div className="text-center mb-8">
-            <div className="tech-tag mb-4 mx-auto">
-              <span className="tech-tagn">✦</span>
-              <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                CVB-OFFICE VERWALTUNG
-              </span>
-            </div>
-
             <div className="w-16 h-16 mx-auto rounded-2xl bg-[#384808] border-2 border-[#A09048] text-white flex items-center justify-center font-spartan font-black text-2xl mb-4 shadow-xl">
               <span className="text-[#A09048]">CVB</span>
             </div>
@@ -463,29 +456,19 @@ export const AdminPanel = () => {
               <Sliders size={20} />
             </button>
 
-            {/* Breadcrumb Tag matching .tech-tag */}
-            <div className="tech-tag hidden sm:inline-flex">
-              <span className="tech-tagn">✦</span>
-              <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                {activeTab === 'dashboard' && 'Dashboard Übersicht'}
-                {activeTab === 'requests' && 'Mietanfragen CRM'}
-                {activeTab === 'content' && 'Landing Page CMS'}
-                {activeTab === 'prices' && 'Tarife & Konditionen'}
-                {activeTab === 'faq' && 'FAQ Wissensbasis'}
-                {activeTab === 'settings' && 'System-Einstellungen'}
-                {activeTab === 'account' && 'Administrator Profil'}
-              </span>
-            </div>
+            <h1 className="font-spartan font-black text-xl sm:text-2xl uppercase tracking-tight text-[#242E05]">
+              {activeTab === 'dashboard' && 'Dashboard Übersicht'}
+              {activeTab === 'requests' && 'Mietanfragen CRM'}
+              {activeTab === 'content' && 'Landing Page CMS'}
+              {activeTab === 'prices' && 'Tarife & Konditionen'}
+              {activeTab === 'faq' && 'FAQ Wissensbasis'}
+              {activeTab === 'settings' && 'System-Einstellungen'}
+              {activeTab === 'account' && 'Administrator Profil'}
+            </h1>
           </div>
 
           {/* Quick Header Actions */}
           <div className="flex items-center gap-4">
-            {/* System Status Pill */}
-            <div className="hidden lg:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F4F2E6] border border-[#A09048]/35 text-[#384808] text-xs font-spartan font-bold uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>PostgreSQL &amp; API Online</span>
-            </div>
-
             {/* Direct Link to Public Site (Signature tech-cta-primary) */}
             <button
               onClick={() => setCurrentView('public')}
@@ -523,13 +506,6 @@ export const AdminPanel = () => {
 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div>
-                    <div className="tech-tag mb-3">
-                      <span className="tech-tagn">★</span>
-                      <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                        CVB-OFFICE VERWALTUNGSZENTRALE
-                      </span>
-                    </div>
-
                     <h1 className="font-spartan font-black text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-[#242E05]">
                       WILLKOMMEN, DETLEF<span className="text-[#889028]">.</span>
                     </h1>
@@ -560,12 +536,7 @@ export const AdminPanel = () => {
 
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="tech-tag">
-                        <span className="tech-tagn">!</span>
-                        <span className="text-[11px] font-spartan font-bold uppercase tracking-wider text-[#384808]">
-                          NEUE ANFRAGEN
-                        </span>
-                      </div>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">NEUE ANFRAGEN</span>
                       <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center font-bold border border-amber-200">
                         <Inbox size={18} />
                       </div>
@@ -590,12 +561,7 @@ export const AdminPanel = () => {
 
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="tech-tag">
-                        <span className="tech-tagn">⏳</span>
-                        <span className="text-[11px] font-spartan font-bold uppercase tracking-wider text-[#384808]">
-                          IN SETUP
-                        </span>
-                      </div>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">IN SETUP</span>
                       <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center font-bold border border-blue-200">
                         <Clock size={18} />
                       </div>
@@ -620,12 +586,7 @@ export const AdminPanel = () => {
 
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="tech-tag">
-                        <span className="tech-tagn">✓</span>
-                        <span className="text-[11px] font-spartan font-bold uppercase tracking-wider text-[#384808]">
-                          AKTIV
-                        </span>
-                      </div>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">AKTIV</span>
                       <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center font-bold border border-emerald-200">
                         <CheckCircle size={18} />
                       </div>
@@ -650,12 +611,7 @@ export const AdminPanel = () => {
 
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="tech-tag">
-                        <span className="tech-tagn">✦</span>
-                        <span className="text-[11px] font-spartan font-bold uppercase tracking-wider text-[#384808]">
-                          GESAMTFLOTTE
-                        </span>
-                      </div>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">GESAMTFLOTTE</span>
                       <div className="w-10 h-10 rounded-xl bg-[#F4F2E6] text-[#384808] flex items-center justify-center font-bold border border-[#A09048]/30">
                         <Car size={18} />
                       </div>
@@ -682,9 +638,8 @@ export const AdminPanel = () => {
                     <div className="w-14 h-14 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/30 text-[#384808] flex items-center justify-center mb-5 group-hover:bg-[#384808] group-hover:text-white transition-all shadow-xs">
                       <FileEdit size={24} />
                     </div>
-                    <span className="tech-tag mb-3 inline-flex">
-                      <span className="tech-tagn">12</span>
-                      <span>TEILE CMS</span>
+                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-2">
+                      12 TEILE CMS
                     </span>
                     <h3 className="font-spartan font-black text-xl text-[#242E05] uppercase tracking-tight mb-2">
                       SEITE BEARBEITEN
@@ -712,9 +667,8 @@ export const AdminPanel = () => {
                     <div className="w-14 h-14 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/30 text-[#384808] flex items-center justify-center mb-5 group-hover:bg-[#384808] group-hover:text-white transition-all shadow-xs">
                       <Inbox size={24} />
                     </div>
-                    <span className="tech-tag mb-3 inline-flex">
-                      <span className="tech-tagn">{requests.length}</span>
-                      <span>VERTRÄGE</span>
+                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-2">
+                      VERTRÄGE &amp; ANFRAGEN
                     </span>
                     <h3 className="font-spartan font-black text-xl text-[#242E05] uppercase tracking-tight mb-2">
                       ANFRAGEN CRM
@@ -742,9 +696,8 @@ export const AdminPanel = () => {
                     <div className="w-14 h-14 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/30 text-[#384808] flex items-center justify-center mb-5 group-hover:bg-[#384808] group-hover:text-white transition-all shadow-xs">
                       <DollarSign size={24} />
                     </div>
-                    <span className="tech-tag mb-3 inline-flex">
-                      <span className="tech-tagn">€</span>
-                      <span>NETTO TARIFE</span>
+                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-2">
+                      NETTO TARIFE
                     </span>
                     <h3 className="font-spartan font-black text-xl text-[#242E05] uppercase tracking-tight mb-2">
                       TARIFE ANPASSEN
@@ -769,10 +722,6 @@ export const AdminPanel = () => {
               <div className="bg-white rounded-[32px] p-7 sm:p-9 border border-[#A09048]/30 shadow-xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div>
-                    <div className="tech-tag mb-2">
-                      <span className="tech-tagn">✦</span>
-                      <span>VERLAUF</span>
-                    </div>
                     <h3 className="font-spartan font-black text-xl sm:text-2xl uppercase tracking-tight text-[#242E05]">
                       DIE NEUESTEN ANFRAGEN
                     </h3>
@@ -873,10 +822,6 @@ export const AdminPanel = () => {
               <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs">
                 {/* Header */}
                 <div className="mb-6 pb-6 border-b border-[#A09048]/20">
-                  <div className="tech-tag mb-2">
-                    <span className="tech-tagn">✦</span>
-                    <span>VERMIETER KUNDENDATEN</span>
-                  </div>
                   <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
                     MIETANFRAGEN CRM
                   </h2>
@@ -1046,10 +991,6 @@ export const AdminPanel = () => {
                   <div className="bg-[#F4F2E6] rounded-[32px] max-w-2xl w-full p-7 sm:p-10 shadow-2xl border-2 border-[#A09048]/40 max-h-[92vh] overflow-y-auto space-y-6 text-[#384808]">
                     <div className="flex justify-between items-start border-b border-[#A09048]/25 pb-4">
                       <div>
-                        <div className="tech-tag mb-1.5">
-                          <span className="tech-tagn">ID</span>
-                          <span>{selectedRequest.id}</span>
-                        </div>
                         <h3 className="font-spartan font-black text-2xl uppercase tracking-tight text-[#242E05]">
                           ANFRAGE DETAILS
                         </h3>
@@ -1090,7 +1031,7 @@ export const AdminPanel = () => {
                             Speicherung
                           </span>
                           <span className="text-emerald-700 font-bold flex items-center gap-1">
-                            <CheckCircle size={14} /> PostgreSQL Datenbank
+                            <CheckCircle size={14} /> In Datenbank gespeichert
                           </span>
                         </div>
                       </div>
@@ -1187,10 +1128,6 @@ export const AdminPanel = () => {
                 {/* CMS Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-[#A09048]/20">
                   <div>
-                    <div className="tech-tag mb-2">
-                      <span className="tech-tagn">✦</span>
-                      <span>INHALTE VERWALTEN</span>
-                    </div>
                     <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
                       LANDING PAGE TEXT-CMS
                     </h2>
@@ -1270,11 +1207,6 @@ export const AdminPanel = () => {
                   {/* Teil 1: Hero */}
                   {cmsSection === 'hero' && (
                     <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-4">
-                      <div className="tech-tag mb-2">
-                        <span className="tech-tagn">1</span>
-                        <span>HERO KOPFBEREICH</span>
-                      </div>
-
                       <div>
                         <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
                           Hauptüberschrift (H1)
@@ -1343,11 +1275,6 @@ export const AdminPanel = () => {
                   {/* Teil 2: Problem & Lösung */}
                   {cmsSection === 'problem' && (
                     <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-4">
-                      <div className="tech-tag mb-2">
-                        <span className="tech-tagn">2</span>
-                        <span>PROBLEM &amp; LÖSUNG</span>
-                      </div>
-
                       <div>
                         <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
                           Abschnittsüberschrift
@@ -1365,17 +1292,11 @@ export const AdminPanel = () => {
                   {/* Teil 4: Bausteine A & B */}
                   {cmsSection === 'blocks' && (
                     <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-6">
-                      <div className="tech-tag mb-2">
-                        <span className="tech-tagn">4</span>
-                        <span>DIE 2 KERN-BAUSTEINE</span>
-                      </div>
-
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Block A */}
                         <div className="p-6 bg-white rounded-3xl border border-[#A09048]/30 space-y-4 shadow-xs">
-                          <span className="tech-tag">
-                            <span className="tech-tagn">A</span>
-                            <span>FÜR DEINE MIETER</span>
+                          <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#384808] block mb-2">
+                            FÜR DEINE MIETER
                           </span>
                           <div>
                             <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
@@ -1414,9 +1335,8 @@ export const AdminPanel = () => {
 
                         {/* Block B */}
                         <div className="p-6 bg-white rounded-3xl border border-[#A09048]/30 space-y-4 shadow-xs">
-                          <span className="tech-tag">
-                            <span className="tech-tagn">B</span>
-                            <span>FÜR DICH ALS VERMIETER</span>
+                          <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-2">
+                            FÜR DICH ALS VERMIETER
                           </span>
                           <div>
                             <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
@@ -1459,11 +1379,6 @@ export const AdminPanel = () => {
                   {/* Teil 5: 4 Schritte */}
                   {cmsSection === 'steps' && (
                     <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-4">
-                      <div className="tech-tag mb-2">
-                        <span className="tech-tagn">5</span>
-                        <span>4-SCHRITTE-ABLAUF</span>
-                      </div>
-
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {steps.map((st) => (
                           <div key={st.id} className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-2 shadow-xs">
@@ -1493,11 +1408,6 @@ export const AdminPanel = () => {
                   {/* Teil 11: Über den CVB */}
                   {cmsSection === 'about' && (
                     <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-4">
-                      <div className="tech-tag mb-2">
-                        <span className="tech-tagn">11</span>
-                        <span>ÜBER DEN CVB &amp; GRÜNDER</span>
-                      </div>
-
                       <div>
                         <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1.5">
                           Netzwerk-Beschreibung
@@ -1559,10 +1469,6 @@ export const AdminPanel = () => {
               <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div>
-                    <div className="tech-tag mb-2">
-                      <span className="tech-tagn">✦</span>
-                      <span>MODUL-VERWALTUNG</span>
-                    </div>
                     <h3 className="font-spartan font-black text-xl sm:text-2xl uppercase tracking-tight text-[#242E05]">
                       FUNKTIONS-KARTEN (FEATURES)
                     </h3>
@@ -1678,10 +1584,6 @@ export const AdminPanel = () => {
               {/* Form Settings (7 cols) */}
               <div className="lg:col-span-7 bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs space-y-6">
                 <div>
-                  <div className="tech-tag mb-2">
-                    <span className="tech-tagn">€</span>
-                    <span>KONDITIONEN</span>
-                  </div>
                   <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
                     PREISE &amp; TARIFANGABEN
                   </h2>
@@ -1772,12 +1674,7 @@ export const AdminPanel = () => {
               {/* Exact Home Price Box Preview (5 cols) */}
               <div className="lg:col-span-5 bg-[#242E05] text-white rounded-[32px] p-7 sm:p-9 border-2 border-[#A09048]/40 shadow-2xl space-y-6 sticky top-24">
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                  <div className="tech-tag bg-white/[0.08] border-[#A09048]/40 text-white">
-                    <span className="tech-tagn">✦</span>
-                    <span className="text-[11px] text-white font-spartan font-bold uppercase tracking-wider">
-                      ECHTZEIT VORSCHAU
-                    </span>
-                  </div>
+                  <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048]">ECHTZEIT VORSCHAU</span>
                   <span className="text-[10px] uppercase font-spartan font-black px-2.5 py-1 rounded-full bg-[#A09048] text-[#242E05]">
                     LIVE-SYNC
                   </span>
@@ -1830,10 +1727,6 @@ export const AdminPanel = () => {
             <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#A09048]/20">
                 <div>
-                  <div className="tech-tag mb-2">
-                    <span className="tech-tagn">?</span>
-                    <span>WISSENSDATENBANK</span>
-                  </div>
                   <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
                     FAQ WISSENSBASIS
                   </h2>
@@ -1951,10 +1844,6 @@ export const AdminPanel = () => {
           {activeTab === 'settings' && (
             <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs max-w-4xl space-y-6">
               <div className="pb-6 border-b border-[#A09048]/20">
-                <div className="tech-tag mb-2">
-                  <span className="tech-tagn">⚙</span>
-                  <span>INTEGRATIONEN</span>
-                </div>
                 <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
                   SYSTEM-EINSTELLUNGEN
                 </h2>
@@ -2055,10 +1944,6 @@ export const AdminPanel = () => {
           {activeTab === 'account' && (
             <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs max-w-2xl space-y-6">
               <div className="pb-6 border-b border-[#A09048]/20">
-                <div className="tech-tag mb-2">
-                  <span className="tech-tagn">👤</span>
-                  <span>ADMINISTRATOR</span>
-                </div>
                 <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
                   ADMINISTRATOR PROFIL
                 </h2>
