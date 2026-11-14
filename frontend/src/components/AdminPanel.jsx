@@ -12,7 +12,6 @@ import {
   LogOut,
   ExternalLink,
   Search,
-  Download,
   Trash2,
   CheckCircle,
   AlertTriangle,
@@ -52,7 +51,6 @@ export const AdminPanel = () => {
     updateRequestStatus,
     updateRequestNote,
     deleteRequest,
-    exportRequestsCsv,
     content,
     updateContent,
     priceSettings,
@@ -466,15 +464,6 @@ export const AdminPanel = () => {
               <span>System Aktiv · PostgreSQL &amp; API Online</span>
             </div>
 
-            {/* CSV Export shortcut */}
-            <button
-              onClick={exportRequestsCsv}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-300 hover:border-[#384808] text-xs font-bold text-stone-700 hover:text-[#384808] transition-colors cursor-pointer bg-white"
-            >
-              <Download size={14} className="text-[#A09048]" />
-              <span>CSV Export</span>
-            </button>
-
             {/* Direct Link to Public Site */}
             <button
               onClick={() => setCurrentView('public')}
@@ -773,22 +762,12 @@ export const AdminPanel = () => {
           {activeTab === 'requests' && (
             <div className="space-y-6">
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-xs">
-                {/* Header with Title and Export */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-stone-100">
-                  <div>
-                    <h2 className="text-2xl font-black text-[#242E05] tracking-tight">Mietanfragen CRM</h2>
-                    <p className="text-xs sm:text-sm text-stone-500 mt-1">
-                      Alle über das Buchungsformular auf cvb-office.de eingegangenen Anträge von Vermietern.
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={exportRequestsCsv}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#242E05] hover:bg-[#384808] text-white rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer shrink-0"
-                  >
-                    <Download size={16} className="text-[#A09048]" />
-                    <span>Als CSV exportieren (Excel)</span>
-                  </button>
+                {/* Header with Title */}
+                <div className="mb-6 pb-6 border-b border-stone-100">
+                  <h2 className="text-2xl font-black text-[#242E05] tracking-tight">Mietanfragen CRM</h2>
+                  <p className="text-xs sm:text-sm text-stone-500 mt-1">
+                    Alle über das Buchungsformular auf cvb-office.de eingegangenen Anträge von Vermietern.
+                  </p>
                 </div>
 
                 {/* Filter and search bar */}
