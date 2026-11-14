@@ -38,102 +38,20 @@ const STORAGE_KEYS = {
     AUTH: 'cvb_office_auth_v1',
 };
 export const AppProvider = ({ children }) => {
-    // Load states with localStorage fallback
-    const [content, setContent] = useState(() => {
-        try {
-            const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.CONTENT) : null;
-            return saved ? JSON.parse(saved) : defaultSiteContent;
-        }
-        catch {
-            return defaultSiteContent;
-        }
-    });
-    const [priceSettings, setPriceSettings] = useState(() => {
-        try {
-            const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.PRICES) : null;
-            return saved ? JSON.parse(saved) : defaultPriceSettings;
-        }
-        catch {
-            return defaultPriceSettings;
-        }
-    });
-    const [generalSettings, setGeneralSettings] = useState(() => {
-        try {
-            const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.SETTINGS) : null;
-            return saved ? JSON.parse(saved) : defaultGeneralSettings;
-        }
-        catch {
-            return defaultGeneralSettings;
-        }
-    });
-    const [features, setFeatures] = useState(() => {
-        try {
-            const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.FEATURES) : null;
-            return saved ? JSON.parse(saved) : defaultFeatures;
-        }
-        catch {
-            return defaultFeatures;
-        }
-    });
-    const [steps, setSteps] = useState(() => {
-        try {
-            const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.STEPS) : null;
-            return saved ? JSON.parse(saved) : defaultSteps;
-        }
-        catch {
-            return defaultSteps;
-        }
-    });
-    const [faqs, setFaqs] = useState(() => {
-        try {
-            const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.FAQS) : null;
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                if (!parsed.some((f) => f.id === 'faq-mitglied')) {
-                    return [...defaultFaqs.filter((f) => f.id === 'faq-mitglied'), ...parsed];
-                }
-                return parsed;
-            }
-            return defaultFaqs;
-        }
-        catch {
-            return defaultFaqs;
-        }
-    });
-    const [requests, setRequests] = useState(() => {
-        try {
-            const saved = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.REQUESTS) : null;
-            return saved ? JSON.parse(saved) : sampleInitialRequests;
-        }
-        catch {
-            return sampleInitialRequests;
-        }
-    });
-    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
-        try {
-            return typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEYS.AUTH) === 'true';
-        }
-        catch {
-            return false;
-        }
-    });
+    // Initialize states with SSR-safe defaults (avoids React hydration mismatch)
+    const [content, setContent] = useState(defaultSiteContent);
+    const [priceSettings, setPriceSettings] = useState(defaultPriceSettings);
+    const [generalSettings, setGeneralSettings] = useState(defaultGeneralSettings);
+    const [features, setFeatures] = useState(defaultFeatures);
+    const [steps, setSteps] = useState(defaultSteps);
+    const [faqs, setFaqs] = useState(defaultFaqs);
+    const [requests, setRequests] = useState(sampleInitialRequests);
+    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
     const [adminLoginAttempts, setAdminLoginAttempts] = useState(0);
     const [adminLockUntil, setAdminLockUntil] = useState(null);
-    const [currentView, setCurrentView] = useState(() => {
-        try {
-            if (typeof window === 'undefined')
-                return 'public';
-            const path = window.location.pathname;
-            if (path === '/admin')
-                return 'admin';
-            if (path !== '/' && path !== '' && !path.startsWith('/#'))
-                return '404';
-            return 'public';
-        }
-        catch {
-            return 'public';
-        }
-    });
+    const [currentView, setCurrentView] = useState('public');
+    const [isHydrated, setIsHydrated] = useState(false);
+
     // Interactive conversion sync
     const [selectedVehicleCount, setSelectedVehicleCount] = useState(1);
     const selectVehicleAndScrollToForm = (count) => {
@@ -143,6 +61,54 @@ export const AppProvider = ({ children }) => {
             formElement.scrollIntoView({ behavior: 'smooth' });
         }
     };
+
+    // Client-side hydration from localStorage (runs strictly after mount, 0 hydration mismatch)
+    useEffect(() => {
+        try {
+            const savedContent = localStorage.getItem(STORAGE_KEYS.CONTENT);
+            if (savedContent) setContent(JSON.parse(savedContent));
+
+            const savedPrices = localStorage.getItem(STORAGE_KEYS.PRICES);
+            if (savedPrices) setPriceSettings(JSON.parse(savedPrices));
+
+            const savedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+            if (savedSettings) setGeneralSettings(JSON.parse(savedSettings));
+
+            const savedFeatures = localStorage.getItem(STORAGE_KEYS.FEATURES);
+            if (savedFeatures) setFeatures(JSON.parse(savedFeatures));
+
+            const savedSteps = localStorage.getItem(STORAGE_KEYS.STEPS);
+            if (savedSteps) setSteps(JSON.parse(savedSteps));
+
+            const savedFaqs = localStorage.getItem(STORAGE_KEYS.FAQS);
+            if (savedFaqs) {
+                const parsed = JSON.parse(savedFaqs);
+                if (!parsed.some((f) => f.id === 'faq-mitglied')) {
+                    setFaqs([...defaultFaqs.filter((f) => f.id === 'faq-mitglied'), ...parsed]);
+                } else {
+                    setFaqs(parsed);
+                }
+            }
+
+            const savedRequests = localStorage.getItem(STORAGE_KEYS.REQUESTS);
+            if (savedRequests) setRequests(JSON.parse(savedRequests));
+
+            const savedAuth = localStorage.getItem(STORAGE_KEYS.AUTH);
+            if (savedAuth === 'true') setIsAdminLoggedIn(true);
+
+            const path = window.location.pathname;
+            if (path === '/admin') {
+                setCurrentView('admin');
+            } else if (path !== '/' && path !== '' && !path.startsWith('/#')) {
+                setCurrentView('404');
+            }
+        } catch (e) {
+            console.error('Error hydrating state from localStorage:', e);
+        } finally {
+            setIsHydrated(true);
+        }
+    }, []);
+
     // Sync from backend on mount if API backend is configured/local
     useEffect(() => {
         if (!API_BASE_URL)
@@ -161,37 +127,46 @@ export const AppProvider = ({ children }) => {
         })
             .catch(() => { });
     }, []);
-    // Persistence effects
+
+    // Persistence effects (only persist once client hydration is complete)
     useEffect(() => {
+        if (!isHydrated) return;
         localStorage.setItem(STORAGE_KEYS.CONTENT, JSON.stringify(content));
         syncContentPatch({ content });
-    }, [content]);
+    }, [content, isHydrated]);
     useEffect(() => {
+        if (!isHydrated) return;
         localStorage.setItem(STORAGE_KEYS.PRICES, JSON.stringify(priceSettings));
         syncContentPatch({ priceSettings });
-    }, [priceSettings]);
+    }, [priceSettings, isHydrated]);
     useEffect(() => {
+        if (!isHydrated) return;
         localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(generalSettings));
         syncContentPatch({ generalSettings });
-    }, [generalSettings]);
+    }, [generalSettings, isHydrated]);
     useEffect(() => {
+        if (!isHydrated) return;
         localStorage.setItem(STORAGE_KEYS.FEATURES, JSON.stringify(features));
         syncContentPatch({ features });
-    }, [features]);
+    }, [features, isHydrated]);
     useEffect(() => {
+        if (!isHydrated) return;
         localStorage.setItem(STORAGE_KEYS.STEPS, JSON.stringify(steps));
         syncContentPatch({ steps });
-    }, [steps]);
+    }, [steps, isHydrated]);
     useEffect(() => {
+        if (!isHydrated) return;
         localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(faqs));
         syncContentPatch({ faqs });
-    }, [faqs]);
+    }, [faqs, isHydrated]);
     useEffect(() => {
+        if (!isHydrated) return;
         localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify(requests));
-    }, [requests]);
+    }, [requests, isHydrated]);
     useEffect(() => {
+        if (!isHydrated) return;
         localStorage.setItem(STORAGE_KEYS.AUTH, isAdminLoggedIn ? 'true' : 'false');
-    }, [isAdminLoggedIn]);
+    }, [isAdminLoggedIn, isHydrated]);
     // Update handlers
     const updateContent = (newContent) => {
         setContent((prev) => ({ ...prev, ...newContent }));
