@@ -140,7 +140,7 @@
       "Klare Abläufe, weniger Rückfragen, ein professioneller Auftritt"
     ],
     "blockATitle": "Digitale Vorab-Einweisung",
-    "blockAText": "Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug.",
+    "blockAText": "Deine Mieter lernen ihr Fahrzeug schon vor der Übergabe kennen, per Video auf dem Smartphone und per QR-Code im Fahrzeug. Bis zu 50 % Zeitersparnis bei der Übergabe vor Ort.",
     "blockBTitle": "Dein Vermiet-Office",
     "blockBText": "Anfragen, Buchungen, Verträge, Zahlungen und Übergaben an einem Ort, immer aktuell und übersichtlich. Inklusive Live-Verfügbarkeit, Saisonpreisen und digitaler Vertragserstellung als PDF.",
     "aboutText": "Der Caravan-Vermieter-Bund unterstützt Wohnmobil-Vermieter mit Wissen, Versicherungen und einem starken Netzwerk. Heute betreuen wir mehr als 1.000 Fahrzeuge in ganz Deutschland.",
@@ -279,6 +279,13 @@
     }
   ],
   "faqs": [
+    {
+      "id": "faq-mitglied",
+      "question": "Wer kann CVB-Office nutzen und ist eine CVB-Mitgliedschaft erforderlich?",
+      "answer": "CVB-Office gibt es exklusiv für CVB-Mitglieder. Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.",
+      "sort_order": 1,
+      "visible": true
+    },
     {
       "id": "faq1",
       "question": "Für welche Art von Vermietung ist CVB-Office geeignet?",

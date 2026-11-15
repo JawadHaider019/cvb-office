@@ -41,7 +41,25 @@ import {
   Scale,
   Server,
   TrendingUp,
+  RefreshCw,
+  Layers,
+  Smartphone,
+  CheckSquare,
+  HelpCircle as QuestionIcon,
 } from 'lucide-react';
+
+// Live Homepage Section Components
+import { Hero } from './Hero';
+import { ProblemSolution } from './ProblemSolution';
+import { Features } from './Features';
+import { BuildingBlocks } from './BuildingBlocks';
+import { HowItWorks } from './HowItWorks';
+import { BenefitsAudience } from './BenefitsAudience';
+import { PriceTrialBox } from './PriceTrialBox';
+import { SignUpForm } from './SignUpForm';
+import { FaqAccordion } from './FaqAccordion';
+import { AboutCvb } from './AboutCvb';
+import { Footer } from './Footer';
 
 export const AdminPanel = () => {
   const {
@@ -74,8 +92,11 @@ export const AdminPanel = () => {
     resetAllToDefaults,
   } = useApp();
 
-  // Tab navigation
+  // Active Tab state (dashboard, requests, section-*, settings, account)
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  // Edit Drawer state for Live Section Editor
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState('detlef@caravan-vermieter-bund.de');
@@ -92,14 +113,12 @@ export const AdminPanel = () => {
 
   // Save feedback state
   const [saveSuccessMsg, setSaveSuccessMsg] = useState(null);
+  const [showReloadDialog, setShowReloadDialog] = useState(false);
 
   // Local form drafts
   const [contentDraft, setContentDraft] = useState(content);
   const [priceDraft, setPriceDraft] = useState(priceSettings);
   const [settingsDraft, setSettingsDraft] = useState(generalSettings);
-
-  // CMS sub-tab selector
-  const [cmsSection, setCmsSection] = useState('hero');
 
   // FAQ new modal / form
   const [newFaqQ, setNewFaqQ] = useState('');
@@ -116,7 +135,7 @@ export const AdminPanel = () => {
 
   const showSaveNotice = (msg = 'Änderungen erfolgreich gespeichert.') => {
     setSaveSuccessMsg(msg);
-    setTimeout(() => setSaveSuccessMsg(null), 3200);
+    setTimeout(() => setSaveSuccessMsg(null), 3500);
   };
 
   const copyToClipboard = (text, id) => {
@@ -149,11 +168,46 @@ export const AdminPanel = () => {
     return requests.reduce((sum, r) => sum + (Number(r.vehicle_count) || 1), 0);
   }, [requests]);
 
-  // If not logged in, show Executive Login Screen with Home page styling
+  // Handler to update a section and offer home reload
+  const handleUpdateAndApply = (sectionName) => {
+    try {
+      localStorage.setItem('cvb_office_content_backup_v1', JSON.stringify(content));
+    } catch {}
+    updateContent(contentDraft);
+    updatePriceSettings(priceDraft);
+    showSaveNotice(`${sectionName} erfolgreich aktualisiert und auf der Startseite angewendet!`);
+    setIsEditDrawerOpen(false);
+    setShowReloadDialog(true);
+  };
+
+  // Reload the public home page
+  const handleReloadHomePage = () => {
+    setShowReloadDialog(false);
+    window.location.href = '/';
+  };
+
+  // Section tabs configuration
+  const homepageSections = [
+    { id: 'section-hero', num: '01', label: 'Hero-Bereich', title: 'Teil 1: Hero-Bereich (Kopfzeile)', component: <Hero /> },
+    { id: 'section-problem', num: '02', label: 'Problem & Lösung', title: 'Teil 2: Problem & Lösung', component: <ProblemSolution /> },
+    { id: 'section-features', num: '03', label: 'Funktions-Module', title: 'Teil 3: Die 6 Funktions-Module', component: <Features /> },
+    { id: 'section-blocks', num: '04', label: 'Die 2 Bausteine', title: 'Teil 4: Mieter-Einweisung & Cockpit', component: <BuildingBlocks /> },
+    { id: 'section-steps', num: '05', label: '4-Schritte-Ablauf', title: 'Teil 5: Der Ablauf in 4 Schritten', component: <HowItWorks /> },
+    { id: 'section-audience', num: '06', label: 'Vorteile & Zielgruppe', title: 'Teil 6 & 7: Zielgruppen & Vorteile', component: <BenefitsAudience /> },
+    { id: 'section-prices', num: '07', label: 'Preise & Tarife', title: 'Teil 8: Preis- & Testphasen-Box', component: <PriceTrialBox /> },
+    { id: 'section-form', num: '08', label: 'Buchungsformular', title: 'Teil 9: Mietanfrage-Formular', component: <SignUpForm onOpenPrivacyModal={() => {}} /> },
+    { id: 'section-faq', num: '09', label: 'FAQ Wissensbasis', title: 'Teil 10: Häufig gestellte Fragen (FAQ)', component: <FaqAccordion /> },
+    { id: 'section-about', num: '10', label: 'Über den CVB', title: 'Teil 11: Über den Caravan-Vermieter-Bund', component: <AboutCvb /> },
+    { id: 'section-footer', num: '11', label: 'Footer & Kontakt', title: 'Teil 12: Footer & Abschluss', component: <Footer onOpenImpressum={() => {}} onOpenPrivacy={() => {}} /> },
+  ];
+
+  // Active section metadata if on a section tab
+  const currentSection = homepageSections.find((s) => s.id === activeTab);
+
+  // If not logged in, show Executive Login Screen
   if (!isAdminLoggedIn) {
     return (
       <div className="min-h-screen w-full bg-[#1A2304] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-body">
-        {/* Ambient Warm Golden & Olive Lighting */}
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-[#A09048]/15 blur-[160px] pointer-events-none" />
         <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-[#889028]/20 blur-[180px] pointer-events-none" />
 
@@ -237,7 +291,6 @@ export const AdminPanel = () => {
               </div>
             </div>
 
-            {/* Quick Demo Credentials Pill */}
             <div className="p-3 bg-white/80 border border-[#A09048]/30 rounded-2xl text-[11px] text-[#585828] flex items-center justify-between">
               <span>Standard: <strong className="font-mono text-[#242E05]">cvb-office-2026</strong></span>
               <button
@@ -272,36 +325,10 @@ export const AdminPanel = () => {
     );
   }
 
-  // Navigation definition
-  const navGroups = [
-    {
-      group: 'ÜBERSICHT & CRM',
-      items: [
-        { id: 'dashboard', label: 'Dashboard Übersicht', icon: LayoutDashboard },
-        { id: 'requests', label: 'Mietanfragen CRM', icon: Inbox, badge: newRequestsCount },
-      ],
-    },
-    {
-      group: 'CONTENT & TARIFE',
-      items: [
-        { id: 'content', label: 'Landing Page CMS', icon: FileEdit },
-        { id: 'prices', label: 'Tarife & Konditionen', icon: DollarSign },
-        { id: 'faq', label: 'FAQ Wissensbasis', icon: HelpCircle },
-      ],
-    },
-    {
-      group: 'SYSTEM & KONTO',
-      items: [
-        { id: 'settings', label: 'System-Einstellungen', icon: Settings },
-        { id: 'account', label: 'Administrator Profil', icon: User },
-      ],
-    },
-  ];
-
   return (
     <div className="min-h-screen w-full bg-[#F8F7F0] text-[#384808] font-body flex antialiased selection:bg-[#A09048] selection:text-white">
       {/* =========================================================================
-          1. LUXURY ENTERPRISE SIDEBAR (Dark Olive with Gold Accents)
+          1. ENTERPRISE SIDEBAR WITH LIVE SECTIONS TABS
          ========================================================================= */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-72 lg:w-80 bg-[#172002] text-[#F4F2E6] flex flex-col justify-between border-r border-[#A09048]/30 shadow-2xl transition-transform duration-300 md:translate-x-0 ${
@@ -326,7 +353,7 @@ export const AdminPanel = () => {
                   CVB-OFFICE
                 </span>
                 <span className="text-[11px] font-semibold text-[#A09048] tracking-wider uppercase block mt-1">
-                  OFFICE COCKPIT
+                  ADMINISTRATION
                 </span>
               </div>
             </div>
@@ -339,55 +366,144 @@ export const AdminPanel = () => {
             </button>
           </div>
 
-
-
           {/* Navigation Category Groups */}
-          <nav className="p-4 space-y-6 overflow-y-auto max-h-[calc(100vh-270px)]">
-            {navGroups.map((group) => (
-              <div key={group.group}>
-                <div className="px-3.5 text-[10px] font-spartan font-black uppercase tracking-widest text-[#A09048]/80 mb-2">
-                  {group.group}
-                </div>
-                <div className="space-y-1.5">
-                  {group.items.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = activeTab === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => {
-                          setActiveTab(item.id);
-                          setSidebarOpen(false);
-                        }}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs sm:text-sm font-spartan uppercase tracking-wider transition-all text-left cursor-pointer ${
-                          isActive
-                            ? 'bg-[#A09048] text-[#172002] font-black shadow-lg shadow-[#A09048]/20'
-                            : 'text-[#E1E5D5] hover:bg-white/[0.08] hover:text-white font-bold'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Icon size={18} className={isActive ? 'text-[#172002]' : 'text-[#A09048]'} />
-                          <span>{item.label}</span>
-                        </div>
-                        {item.badge !== undefined && item.badge > 0 && (
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[11px] font-black ${
-                              isActive ? 'bg-[#172002] text-white' : 'bg-[#A09048] text-[#172002]'
-                            }`}
-                          >
-                            {item.badge}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+          <nav className="p-4 space-y-6 overflow-y-auto max-h-[calc(100vh-210px)]">
+            {/* Group 1: Overview & CRM */}
+            <div>
+              <div className="px-3.5 text-[10px] font-spartan font-black uppercase tracking-widest text-[#A09048]/80 mb-2">
+                ÜBERSICHT &amp; CRM
               </div>
-            ))}
+              <div className="space-y-1.5">
+                <button
+                  onClick={() => {
+                    setActiveTab('dashboard');
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs sm:text-sm font-spartan uppercase tracking-wider transition-all text-left cursor-pointer ${
+                    activeTab === 'dashboard'
+                      ? 'bg-[#A09048] text-[#172002] font-black shadow-lg shadow-[#A09048]/20'
+                      : 'text-[#E1E5D5] hover:bg-white/[0.08] hover:text-white font-bold'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <LayoutDashboard size={18} className={activeTab === 'dashboard' ? 'text-[#172002]' : 'text-[#A09048]'} />
+                    <span>Dashboard Übersicht</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab('requests');
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs sm:text-sm font-spartan uppercase tracking-wider transition-all text-left cursor-pointer ${
+                    activeTab === 'requests'
+                      ? 'bg-[#A09048] text-[#172002] font-black shadow-lg shadow-[#A09048]/20'
+                      : 'text-[#E1E5D5] hover:bg-white/[0.08] hover:text-white font-bold'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Inbox size={18} className={activeTab === 'requests' ? 'text-[#172002]' : 'text-[#A09048]'} />
+                    <span>Mietanfragen CRM</span>
+                  </div>
+                  {newRequestsCount > 0 && (
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[11px] font-black ${
+                        activeTab === 'requests' ? 'bg-[#172002] text-white' : 'bg-[#A09048] text-[#172002]'
+                      }`}
+                    >
+                      {newRequestsCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Group 2: Home Page Sections Live Editor */}
+            <div>
+              <div className="px-3.5 flex items-center justify-between text-[10px] font-spartan font-black uppercase tracking-widest text-[#A09048]/80 mb-2">
+                <span>STARTSEITE SEKTIONEN</span>
+                <span className="text-[9px] bg-[#A09048]/20 text-[#A09048] px-1.5 py-0.5 rounded">
+                  11 TEILE
+                </span>
+              </div>
+              <div className="space-y-1">
+                {homepageSections.map((sec) => {
+                  const isActive = activeTab === sec.id;
+                  return (
+                    <button
+                      key={sec.id}
+                      onClick={() => {
+                        setActiveTab(sec.id);
+                        setIsEditDrawerOpen(false);
+                        setSidebarOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-spartan uppercase tracking-wider transition-all text-left cursor-pointer ${
+                        isActive
+                          ? 'bg-[#A09048] text-[#172002] font-black shadow-md'
+                          : 'text-[#D5DBC7] hover:bg-white/[0.08] hover:text-white font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 truncate">
+                        <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                          isActive ? 'bg-[#172002] text-white' : 'bg-white/10 text-[#A09048]'
+                        }`}>
+                          {sec.num}
+                        </span>
+                        <span className="truncate">{sec.label}</span>
+                      </div>
+                      <ChevronRight size={13} className={isActive ? 'text-[#172002]' : 'text-stone-500'} />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Group 3: System & Account */}
+            <div>
+              <div className="px-3.5 text-[10px] font-spartan font-black uppercase tracking-widest text-[#A09048]/80 mb-2">
+                SYSTEM &amp; KONTO
+              </div>
+              <div className="space-y-1.5">
+                <button
+                  onClick={() => {
+                    setActiveTab('settings');
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs sm:text-sm font-spartan uppercase tracking-wider transition-all text-left cursor-pointer ${
+                    activeTab === 'settings'
+                      ? 'bg-[#A09048] text-[#172002] font-black shadow-lg shadow-[#A09048]/20'
+                      : 'text-[#E1E5D5] hover:bg-white/[0.08] hover:text-white font-bold'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Settings size={18} className={activeTab === 'settings' ? 'text-[#172002]' : 'text-[#A09048]'} />
+                    <span>System-Einstellungen</span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab('account');
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs sm:text-sm font-spartan uppercase tracking-wider transition-all text-left cursor-pointer ${
+                    activeTab === 'account'
+                      ? 'bg-[#A09048] text-[#172002] font-black shadow-lg shadow-[#A09048]/20'
+                      : 'text-[#E1E5D5] hover:bg-white/[0.08] hover:text-white font-bold'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <User size={18} className={activeTab === 'account' ? 'text-[#172002]' : 'text-[#A09048]'} />
+                    <span>Administrator Profil</span>
+                  </div>
+                </button>
+              </div>
+            </div>
           </nav>
         </div>
 
-        {/* Bottom Profile & Exit Area */}
+        {/* Bottom Profile Area */}
         <div className="p-4 border-t border-white/10 bg-[#121A02]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">
@@ -410,8 +526,6 @@ export const AdminPanel = () => {
               <LogOut size={17} />
             </button>
           </div>
-
-
         </div>
       </aside>
 
@@ -424,10 +538,10 @@ export const AdminPanel = () => {
       )}
 
       {/* =========================================================================
-          2. FLUID FULL-WIDTH WORKSPACE
+          2. FLUID MAIN WORKSPACE
          ========================================================================= */}
       <div className="flex-1 min-w-0 flex flex-col min-h-screen">
-        {/* Sticky Frosted Header matching Home Header */}
+        {/* Sticky Header */}
         <header className="h-20 px-6 sm:px-10 lg:px-12 bg-white/95 backdrop-blur-xl border-b border-[#A09048]/25 flex items-center justify-between sticky top-0 z-30 shadow-xs">
           <div className="flex items-center gap-3.5">
             <button
@@ -440,9 +554,7 @@ export const AdminPanel = () => {
             <h1 className="font-spartan font-black text-xl sm:text-2xl uppercase tracking-tight text-[#242E05]">
               {activeTab === 'dashboard' && 'Dashboard Übersicht'}
               {activeTab === 'requests' && 'Mietanfragen CRM'}
-              {activeTab === 'content' && 'Landing Page CMS'}
-              {activeTab === 'prices' && 'Tarife & Konditionen'}
-              {activeTab === 'faq' && 'FAQ Wissensbasis'}
+              {currentSection && currentSection.title}
               {activeTab === 'settings' && 'System-Einstellungen'}
               {activeTab === 'account' && 'Administrator Profil'}
             </h1>
@@ -450,7 +562,6 @@ export const AdminPanel = () => {
 
           {/* Quick Header Actions */}
           <div className="flex items-center gap-4">
-            {/* Direct Link to Public Site (Signature tech-cta-primary) */}
             <button
               onClick={() => setCurrentView('public')}
               className="tech-cta-primary h-11 text-xs px-4"
@@ -472,16 +583,48 @@ export const AdminPanel = () => {
           </div>
         )}
 
+        {/* Reload Confirmation Dialog */}
+        {showReloadDialog && (
+          <div className="fixed bottom-8 right-8 z-50 bg-[#242E05] text-white p-5 rounded-3xl shadow-2xl border-2 border-[#A09048] max-w-sm animate-in slide-in-from-bottom duration-300">
+            <div className="flex items-start gap-3 mb-3">
+              <CheckCircle size={22} className="text-[#A09048] shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-spartan font-black text-sm uppercase text-white">
+                  Änderungen Live geschaltet
+                </h4>
+                <p className="text-xs text-stone-300 mt-1">
+                  Möchtest Du die Startseite neu laden, um das Ergebnis im Browser zu sehen?
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+              <button
+                onClick={() => setShowReloadDialog(false)}
+                className="px-3.5 py-1.5 text-xs text-stone-300 hover:text-white cursor-pointer font-bold"
+              >
+                Im Admin bleiben
+              </button>
+              <button
+                onClick={handleReloadHomePage}
+                className="px-4 py-2 bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] rounded-xl text-xs font-spartan font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
+              >
+                <RefreshCw size={13} />
+                <span>Startseite neu laden</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* =========================================================================
-            3. TAB CONTENT PANELS (Full-Width Responsive Bento Architecture)
+            3. TAB CONTENT PANELS
            ========================================================================= */}
         <main className="flex-1 w-full max-w-[1720px] mx-auto px-6 sm:px-10 lg:px-12 py-8 space-y-8">
           {/* -----------------------------------------------------------------------
-              TAB 1: DASHBOARD (HOME-PAGE LUXURY BENTO DESIGN)
+              TAB 1: DASHBOARD
              ----------------------------------------------------------------------- */}
           {activeTab === 'dashboard' && (
             <div className="space-y-8">
-              {/* Executive Welcome Card (Cream Bento) */}
+              {/* Executive Welcome Card */}
               <div className="bg-[#F4F2E6] p-7 sm:p-10 rounded-[30px] border border-[#A09048]/35 shadow-xs relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-[#A09048]/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -491,7 +634,7 @@ export const AdminPanel = () => {
                       WILLKOMMEN, DETLEF<span className="text-[#889028]">.</span>
                     </h1>
                     <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed mt-2 max-w-2xl font-body">
-                      Verwalte hier alle eingegangenen Mietanfragen, passe die Texte der 12 Landingpage-Abschnitte an und steuere die Tarife.
+                      Wähle in der linken Navigation eine beliebige Sektion der Startseite aus, um das exakte Design live zu sehen, Texte anzupassen und mit einem Klick live zu schalten.
                     </p>
                   </div>
 
@@ -507,195 +650,134 @@ export const AdminPanel = () => {
                 </div>
               </div>
 
-              {/* 4 Premium Metric KPI Cards (Home Page Bento Cards with Faint Watermark Numbers) */}
+              {/* 4 Metric KPI Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                {/* Metric 1: Neue Anfragen */}
                 <div className="bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group flex flex-col justify-between">
                   <span className="absolute -bottom-3 -right-2 font-spartan font-black text-7xl text-[#384808]/10 group-hover:text-[#A09048]/25 transition-colors select-none pointer-events-none">
                     01
                   </span>
-
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">NEUE ANFRAGEN</span>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">
+                        NEUE ANFRAGEN
+                      </span>
                       <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center font-bold border border-amber-200">
                         <Inbox size={18} />
                       </div>
                     </div>
-
                     <div className="font-spartan font-black text-5xl text-[#242E05] tabular-nums tracking-tight">
                       {newRequestsCount}
                     </div>
                   </div>
-
                   <div className="text-xs text-amber-800 font-bold mt-4 flex items-center gap-1.5 pt-3 border-t border-stone-100">
                     <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                     <span>Müssen noch bearbeitet werden</span>
                   </div>
                 </div>
 
-                {/* Metric 2: In Bearbeitung */}
                 <div className="bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group flex flex-col justify-between">
                   <span className="absolute -bottom-3 -right-2 font-spartan font-black text-7xl text-[#384808]/10 group-hover:text-[#A09048]/25 transition-colors select-none pointer-events-none">
                     02
                   </span>
-
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">IN SETUP</span>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">
+                        IN SETUP
+                      </span>
                       <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center font-bold border border-blue-200">
                         <Clock size={18} />
                       </div>
                     </div>
-
                     <div className="font-spartan font-black text-5xl text-[#242E05] tabular-nums tracking-tight">
                       {inProgressCount}
                     </div>
                   </div>
-
                   <div className="text-xs text-blue-800 font-bold mt-4 flex items-center gap-1.5 pt-3 border-t border-stone-100">
                     <span className="w-2 h-2 rounded-full bg-blue-500" />
                     <span>Smarlps Zugang wird eingerichtet</span>
                   </div>
                 </div>
 
-                {/* Metric 3: Erledigt */}
                 <div className="bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group flex flex-col justify-between">
                   <span className="absolute -bottom-3 -right-2 font-spartan font-black text-7xl text-[#384808]/10 group-hover:text-[#A09048]/25 transition-colors select-none pointer-events-none">
                     03
                   </span>
-
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">AKTIV</span>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">
+                        AKTIV
+                      </span>
                       <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center font-bold border border-emerald-200">
                         <CheckCircle size={18} />
                       </div>
                     </div>
-
                     <div className="font-spartan font-black text-5xl text-[#242E05] tabular-nums tracking-tight">
                       {doneCount}
                     </div>
                   </div>
-
                   <div className="text-xs text-emerald-800 font-bold mt-4 flex items-center gap-1.5 pt-3 border-t border-stone-100">
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
                     <span>Zugang erfolgreich übermittelt</span>
                   </div>
                 </div>
 
-                {/* Metric 4: Flotte Gesamt */}
                 <div className="bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group flex flex-col justify-between">
                   <span className="absolute -bottom-3 -right-2 font-spartan font-black text-7xl text-[#384808]/10 group-hover:text-[#A09048]/25 transition-colors select-none pointer-events-none">
                     04
                   </span>
-
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">GESAMTFLOTTE</span>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">
+                        GESAMTFLOTTE
+                      </span>
                       <div className="w-10 h-10 rounded-xl bg-[#F4F2E6] text-[#384808] flex items-center justify-center font-bold border border-[#A09048]/30">
                         <Car size={18} />
                       </div>
                     </div>
-
                     <div className="font-spartan font-black text-5xl text-[#384808] tabular-nums tracking-tight">
                       {totalVehiclesCount} <span className="text-base font-bold text-[#585828]">Camper</span>
                     </div>
                   </div>
-
                   <div className="text-xs text-[#585828] font-bold mt-4 pt-3 border-t border-stone-100">
                     Über alle {requests.length} Anträge erfasst
                   </div>
                 </div>
               </div>
 
-              {/* Bento 3 Action Modules (Home Page Bento Cards with Rotating Icons) */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div
-                  onClick={() => setActiveTab('content')}
-                  className="bg-white p-8 rounded-[30px] border border-[#A09048]/30 hover:border-[#384808] hover:shadow-2xl transition-all group cursor-pointer flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-14 h-14 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/30 text-[#384808] flex items-center justify-center mb-5 group-hover:bg-[#384808] group-hover:text-white transition-all shadow-xs">
-                      <FileEdit size={24} />
-                    </div>
-                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-2">
-                      12 TEILE CMS
-                    </span>
-                    <h3 className="font-spartan font-black text-xl text-[#242E05] uppercase tracking-tight mb-2">
-                      SEITE BEARBEITEN
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#585828] leading-relaxed">
-                      Überschriften, Einleitungstexte, Bausteine A &amp; B sowie Bildpfade für die gesamte Landing Page anpassen.
-                    </p>
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
-                    <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#A09048] group-hover:text-[#384808]">
-                      Zum Content-Editor
-                    </span>
-                    <span className="tech-ci w-8 h-8">
-                      <ArrowRight size={15} />
-                    </span>
-                  </div>
+              {/* Sections Quick Grid */}
+              <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs">
+                <div className="mb-6">
+                  <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-1">
+                    SCHNELLZUGRIFF AUF DIE SEKTIONEN
+                  </span>
+                  <h3 className="font-spartan font-black text-2xl uppercase tracking-tight text-[#242E05]">
+                    STARTSEITEN SEKTIONEN DIREKT LIVE BEARBEITEN
+                  </h3>
                 </div>
 
-                <div
-                  onClick={() => setActiveTab('requests')}
-                  className="bg-white p-8 rounded-[30px] border border-[#A09048]/30 hover:border-[#384808] hover:shadow-2xl transition-all group cursor-pointer flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-14 h-14 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/30 text-[#384808] flex items-center justify-center mb-5 group-hover:bg-[#384808] group-hover:text-white transition-all shadow-xs">
-                      <Inbox size={24} />
-                    </div>
-                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-2">
-                      VERTRÄGE &amp; ANFRAGEN
-                    </span>
-                    <h3 className="font-spartan font-black text-xl text-[#242E05] uppercase tracking-tight mb-2">
-                      ANFRAGEN CRM
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#585828] leading-relaxed">
-                      Vollständige Einsicht in eingereichte E-Mails, Flottengrößen, Preiseinwilligungen und Notizen.
-                    </p>
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
-                    <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#A09048] group-hover:text-[#384808]">
-                      CRM öffnen
-                    </span>
-                    <span className="tech-ci w-8 h-8">
-                      <ArrowRight size={15} />
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  onClick={() => setActiveTab('prices')}
-                  className="bg-white p-8 rounded-[30px] border border-[#A09048]/30 hover:border-[#384808] hover:shadow-2xl transition-all group cursor-pointer flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-14 h-14 rounded-2xl bg-[#F4F2E6] border border-[#A09048]/30 text-[#384808] flex items-center justify-center mb-5 group-hover:bg-[#384808] group-hover:text-white transition-all shadow-xs">
-                      <DollarSign size={24} />
-                    </div>
-                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-2">
-                      NETTO TARIFE
-                    </span>
-                    <h3 className="font-spartan font-black text-xl text-[#242E05] uppercase tracking-tight mb-2">
-                      TARIFE ANPASSEN
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#585828] leading-relaxed">
-                      Aktuell hinterlegt: {priceSettings.monthlyNet.toFixed(2).replace('.', ',')} € netto / Fahrzeug / Monat.
-                    </p>
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
-                    <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#A09048] group-hover:text-[#384808]">
-                      Preistabelle konfigurieren
-                    </span>
-                    <span className="tech-ci w-8 h-8">
-                      <ArrowRight size={15} />
-                    </span>
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {homepageSections.map((sec) => (
+                    <button
+                      key={sec.id}
+                      onClick={() => {
+                        setActiveTab(sec.id);
+                        setIsEditDrawerOpen(true);
+                      }}
+                      className="p-5 bg-[#F9F8F3] hover:bg-white rounded-2xl border border-[#A09048]/25 hover:border-[#384808] transition-all text-left group shadow-xs hover:shadow-lg cursor-pointer flex flex-col justify-between"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-mono text-xs font-bold text-[#A09048]">
+                          Teil {sec.num}
+                        </span>
+                        <span className="tech-ci w-6 h-6">
+                          <ArrowRight size={12} />
+                        </span>
+                      </div>
+                      <span className="font-spartan font-black text-sm uppercase text-[#242E05] group-hover:text-[#384808]">
+                        {sec.label}
+                      </span>
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -703,6 +785,9 @@ export const AdminPanel = () => {
               <div className="bg-white rounded-[32px] p-7 sm:p-9 border border-[#A09048]/30 shadow-xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div>
+                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-1">
+                      VERLAUF
+                    </span>
                     <h3 className="font-spartan font-black text-xl sm:text-2xl uppercase tracking-tight text-[#242E05]">
                       DIE NEUESTEN ANFRAGEN
                     </h3>
@@ -796,12 +881,11 @@ export const AdminPanel = () => {
           )}
 
           {/* -----------------------------------------------------------------------
-              TAB 2: MIETANFRAGEN CRM (FULL-WIDTH MODERN BENTO CRM)
+              TAB 2: MIETANFRAGEN CRM
              ----------------------------------------------------------------------- */}
           {activeTab === 'requests' && (
             <div className="space-y-6">
               <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs">
-                {/* Header */}
                 <div className="mb-6 pb-6 border-b border-[#A09048]/20">
                   <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
                     MIETANFRAGEN CRM
@@ -811,9 +895,7 @@ export const AdminPanel = () => {
                   </p>
                 </div>
 
-                {/* Filter and Search Bar */}
                 <div className="flex flex-col lg:flex-row gap-4 mb-6">
-                  {/* Search input with home style */}
                   <div className="relative flex-1">
                     <Search className="absolute left-4 top-3.5 text-[#A09048]" size={18} />
                     <input
@@ -833,7 +915,6 @@ export const AdminPanel = () => {
                     )}
                   </div>
 
-                  {/* Status Pills */}
                   <div className="flex items-center gap-2 p-1.5 bg-[#F4F2E6] border border-[#A09048]/30 rounded-2xl text-xs overflow-x-auto shrink-0">
                     {[
                       { id: 'all', label: `Alle (${requests.length})` },
@@ -856,7 +937,6 @@ export const AdminPanel = () => {
                   </div>
                 </div>
 
-                {/* Full Width Table */}
                 <div className="overflow-x-auto rounded-2xl border border-[#A09048]/25">
                   <table className="w-full text-left text-xs sm:text-sm font-body">
                     <thead className="bg-[#F4F2E6] border-b border-[#A09048]/25 text-[#384808] font-spartan font-black uppercase text-[11px] tracking-wider">
@@ -963,7 +1043,7 @@ export const AdminPanel = () => {
                 </div>
               </div>
 
-              {/* Elevated Request Detail Modal */}
+              {/* Request Detail Modal */}
               {selectedRequest && (
                 <div
                   role="dialog"
@@ -972,6 +1052,9 @@ export const AdminPanel = () => {
                   <div className="bg-[#F4F2E6] rounded-[32px] max-w-2xl w-full p-7 sm:p-10 shadow-2xl border-2 border-[#A09048]/40 max-h-[92vh] overflow-y-auto space-y-6 text-[#384808]">
                     <div className="flex justify-between items-start border-b border-[#A09048]/25 pb-4">
                       <div>
+                        <span className="font-mono text-xs text-[#A09048] block mb-1">
+                          Vorgang #{selectedRequest.id}
+                        </span>
                         <h3 className="font-spartan font-black text-2xl uppercase tracking-tight text-[#242E05]">
                           ANFRAGE DETAILS
                         </h3>
@@ -985,7 +1068,6 @@ export const AdminPanel = () => {
                     </div>
 
                     <div className="space-y-4 text-sm font-body">
-                      {/* Overview Grid */}
                       <div className="grid grid-cols-2 gap-4 bg-white p-5 rounded-2xl border border-[#A09048]/30 shadow-xs">
                         <div>
                           <span className="text-[11px] font-spartan font-bold uppercase tracking-wider text-[#585828] block">
@@ -1017,7 +1099,6 @@ export const AdminPanel = () => {
                         </div>
                       </div>
 
-                      {/* Status Selector */}
                       <div>
                         <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
                           Bearbeitungsstatus
@@ -1038,7 +1119,6 @@ export const AdminPanel = () => {
                         </select>
                       </div>
 
-                      {/* Price Consent Evidence */}
                       <div>
                         <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#585828] mb-1.5">
                           Bestätigte Preiseinwilligung (BGB Nachweis):
@@ -1048,7 +1128,6 @@ export const AdminPanel = () => {
                         </div>
                       </div>
 
-                      {/* Private Notes */}
                       <div>
                         <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
                           Interne Notiz (nur für Dich als Administrator)
@@ -1101,726 +1180,506 @@ export const AdminPanel = () => {
           )}
 
           {/* -----------------------------------------------------------------------
-              TAB 3: CONTENT EDITOR (LANDING PAGE CMS)
+              LIVE HOMEPAGE SECTION TABS (SAME DESIGN AS HOMEPAGE + EDIT + UPDATE)
              ----------------------------------------------------------------------- */}
-          {activeTab === 'content' && (
+          {currentSection && (
             <div className="space-y-6">
-              <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs">
-                {/* CMS Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-[#A09048]/20">
-                  <div>
-                    <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
-                      LANDING PAGE TEXT-CMS
-                    </h2>
-                    <p className="text-xs sm:text-sm text-[#585828] mt-1">
-                      Passe alle Abschnitte, Überschriften, Einführungstexte und Bildpfade der öffentlichen Seite an.
-                    </p>
-                  </div>
+              {/* Top Control Bar for this Section */}
+              <div className="bg-white rounded-[32px] p-6 sm:p-8 border border-[#A09048]/30 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                  <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-1">
+                    STARTSEITEN SEKTION {currentSection.num} / 11
+                  </span>
+                  <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
+                    {currentSection.title}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#585828] mt-1 font-body">
+                    Originalgetreue Live-Vorschau. Klicke auf „Bearbeiten“, um Texte anzupassen, und auf „Aktualisieren“, um sie sofort auf die Startseite anzuwenden.
+                  </p>
+                </div>
 
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => {
-                        try {
-                          const backup = localStorage.getItem('cvb_office_content_backup_v1');
-                          if (backup) {
-                            const parsed = JSON.parse(backup);
-                            setContentDraft(parsed);
-                            updateContent(parsed);
-                            showSaveNotice('Vorherige Textversion erfolgreich wiederhergestellt.');
-                          } else {
-                            setContentDraft({ ...content });
-                            showSaveNotice('Aktueller Stand geladen.');
-                          }
-                        } catch {
-                          showSaveNotice('Wiederherstellung nicht möglich.');
-                        }
-                      }}
-                      className="tech-cta-ghost h-11 text-xs px-4"
-                      title="Vorherige Version wiederherstellen"
-                    >
-                      <RotateCcw size={15} />
-                      <span>Version wiederherstellen</span>
-                    </button>
+                <div className="flex items-center gap-3 shrink-0">
+                  <button
+                    onClick={() => setIsEditDrawerOpen(!isEditDrawerOpen)}
+                    className="tech-cta-ghost h-12 text-xs px-5 cursor-pointer"
+                  >
+                    <FileEdit size={16} className="text-[#A09048]" />
+                    <span>{isEditDrawerOpen ? 'Editor schließen' : 'Sektion bearbeiten'}</span>
+                  </button>
 
-                    <button
-                      onClick={() => {
-                        try {
-                          localStorage.setItem('cvb_office_content_backup_v1', JSON.stringify(content));
-                        } catch {}
-                        updateContent(contentDraft);
-                        showSaveNotice('Alle Text- & Bildänderungen live geschaltet.');
-                      }}
-                      className="tech-cta-primary h-11 text-xs px-4"
-                    >
-                      <span>ÄNDERUNGEN SPEICHERN</span>
-                      <span className="tech-ci w-7 h-7">
-                        <Save size={14} />
+                  <button
+                    onClick={() => handleUpdateAndApply(currentSection.label)}
+                    className="tech-cta-primary h-12 text-xs px-5 cursor-pointer"
+                  >
+                    <span>AKTUALISIEREN &amp; ANWENDEN</span>
+                    <span className="tech-ci w-8 h-8">
+                      <RefreshCw size={14} />
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Collapsible Edit Panel for this Specific Section */}
+              {isEditDrawerOpen && (
+                <div className="bg-[#F4F2E6] rounded-[32px] p-6 sm:p-8 border-2 border-[#A09048]/40 shadow-xl space-y-6 animate-in slide-in-from-top-4 duration-300">
+                  <div className="flex items-center justify-between border-b border-[#A09048]/25 pb-4">
+                    <div>
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#384808] block mb-1">
+                        SCHNELL-EDITOR
                       </span>
+                      <h3 className="font-spartan font-black text-xl uppercase tracking-tight text-[#242E05]">
+                        {currentSection.label} anpassen
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => setIsEditDrawerOpen(false)}
+                      className="p-2 text-stone-400 hover:text-stone-800 rounded-xl"
+                    >
+                      <X size={20} />
                     </button>
                   </div>
-                </div>
 
-                {/* Section Navigation Tabs (styled as home tags) */}
-                <div className="flex items-center gap-2 border-b border-[#A09048]/20 pb-4 mb-8 overflow-x-auto">
-                  {[
-                    { id: 'hero', label: 'Teil 1: Hero-Bereich' },
-                    { id: 'problem', label: 'Teil 2: Problem & Lösung' },
-                    { id: 'blocks', label: 'Teil 4: Die 2 Bausteine' },
-                    { id: 'steps', label: 'Teil 5: 4-Schritte-Ablauf' },
-                    { id: 'about', label: 'Teil 11: Über den CVB' },
-                  ].map((sec) => (
-                    <button
-                      key={sec.id}
-                      onClick={() => setCmsSection(sec.id)}
-                      className={`px-4 py-2.5 rounded-2xl font-spartan font-bold uppercase tracking-wider text-xs transition-all cursor-pointer whitespace-nowrap ${
-                        cmsSection === sec.id
-                          ? 'bg-[#384808] text-white shadow-md'
-                          : 'bg-[#F4F2E6] text-[#585828] hover:text-[#384808] border border-[#A09048]/30'
-                      }`}
-                    >
-                      {sec.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Section Editors */}
-                <div className="space-y-6">
-                  {/* Teil 1: Hero */}
-                  {cmsSection === 'hero' && (
-                    <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                          Hauptüberschrift (H1)
-                        </label>
-                        <input
-                          type="text"
-                          value={contentDraft.heroHeadline}
-                          onChange={(e) => setContentDraft({ ...contentDraft, heroHeadline: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/30 text-base font-spartan font-black uppercase text-[#242E05] bg-white focus:outline-none focus:ring-2 focus:ring-[#384808]/20"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                          Einführungstext (Subheadline)
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={contentDraft.heroText}
-                          onChange={(e) => setContentDraft({ ...contentDraft, heroText: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/30 text-sm font-body text-[#242E05] bg-white leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#384808]/20"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                          Vertrauenszeile (Kicker über dem Titel)
-                        </label>
-                        <input
-                          type="text"
-                          value={contentDraft.trustLine}
-                          onChange={(e) => setContentDraft({ ...contentDraft, trustLine: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/30 text-sm font-body text-[#242E05] bg-white focus:outline-none focus:ring-2 focus:ring-[#384808]/20"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-[#A09048]/25">
+                  {/* Section-Specific Inputs */}
+                  <div className="space-y-4">
+                    {/* HERO */}
+                    {currentSection.id === 'section-hero' && (
+                      <div className="space-y-4">
                         <div>
                           <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                            Hero-Bildpfad (Image URL)
+                            Hauptüberschrift (H1)
                           </label>
                           <input
                             type="text"
-                            value={contentDraft.heroImage || ''}
-                            placeholder="/images/luxury_motorhome_alps_1794219057461.jpg"
-                            onChange={(e) => setContentDraft({ ...contentDraft, heroImage: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-2xl border border-[#A09048]/30 text-xs font-mono bg-white"
+                            value={contentDraft.heroHeadline}
+                            onChange={(e) => setContentDraft({ ...contentDraft, heroHeadline: e.target.value })}
+                            className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-base font-spartan font-black uppercase text-[#242E05] bg-white"
                           />
                         </div>
                         <div>
                           <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                            Alt-Text für Screenreader &amp; SEO
+                            Einführungstext (Subheadline)
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.heroText}
+                            onChange={(e) => setContentDraft({ ...contentDraft, heroText: e.target.value })}
+                            className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-body text-[#242E05] bg-white leading-relaxed"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
+                            Vertrauenszeile (Kicker über dem Titel)
                           </label>
                           <input
                             type="text"
-                            value={contentDraft.heroImageAlt || ''}
-                            placeholder="Modernes Wohnmobil in Alpenkulisse"
-                            onChange={(e) => setContentDraft({ ...contentDraft, heroImageAlt: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-2xl border border-[#A09048]/30 text-xs bg-white"
+                            value={contentDraft.trustLine}
+                            onChange={(e) => setContentDraft({ ...contentDraft, trustLine: e.target.value })}
+                            className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-body text-[#242E05] bg-white"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
+                              Hero-Bildpfad
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.heroImage || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, heroImage: e.target.value })}
+                              className="w-full px-4 py-2.5 rounded-xl border border-[#A09048]/35 text-xs font-mono bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
+                              Alt-Text für SEO
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.heroImageAlt || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, heroImageAlt: e.target.value })}
+                              className="w-full px-4 py-2.5 rounded-xl border border-[#A09048]/35 text-xs bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* PROBLEM & SOLUTION */}
+                    {currentSection.id === 'section-problem' && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
+                            Abschnittsüberschrift
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.problemHeadline}
+                            onChange={(e) => setContentDraft({ ...contentDraft, problemHeadline: e.target.value })}
+                            className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-base font-spartan font-black uppercase text-[#242E05] bg-white"
                           />
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Teil 2: Problem & Lösung */}
-                  {cmsSection === 'problem' && (
-                    <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                          Abschnittsüberschrift
-                        </label>
-                        <input
-                          type="text"
-                          value={contentDraft.problemHeadline}
-                          onChange={(e) => setContentDraft({ ...contentDraft, problemHeadline: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/30 text-base font-spartan font-black uppercase text-[#242E05] bg-white"
-                        />
+                    {/* FEATURES */}
+                    {currentSection.id === 'section-features' && (
+                      <div className="space-y-4">
+                        <span className="font-spartan font-bold text-xs uppercase text-[#242E05] block">
+                          Funktions-Karten bearbeiten ({features.length} Karten hinterlegt):
+                        </span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {features.map((feat) => (
+                            <div key={feat.id} className="p-4 bg-white rounded-2xl border border-[#A09048]/30 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <input
+                                  type="text"
+                                  value={feat.title}
+                                  onChange={(e) => updateFeature(feat.id, { title: e.target.value })}
+                                  className="w-full px-2.5 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-200 rounded-lg mr-2"
+                                />
+                                <button
+                                  onClick={() => toggleFeatureVisibility(feat.id)}
+                                  className="p-1 text-stone-400 hover:text-[#384808]"
+                                  title={feat.visible ? 'Ausblenden' : 'Einblenden'}
+                                >
+                                  {feat.visible ? <Eye size={16} /> : <EyeOff size={16} />}
+                                </button>
+                              </div>
+                              <textarea
+                                rows={2}
+                                value={feat.text}
+                                onChange={(e) => updateFeature(feat.id, { text: e.target.value })}
+                                className="w-full px-2.5 py-1 text-xs text-[#585828] border border-stone-200 rounded-lg"
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Teil 4: Bausteine A & B */}
-                  {cmsSection === 'blocks' && (
-                    <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-6">
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* Block A */}
-                        <div className="p-6 bg-white rounded-3xl border border-[#A09048]/30 space-y-4 shadow-xs">
-                          <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#384808] block mb-2">
-                            FÜR DEINE MIETER
+                    {/* 2 BAUSTEINE */}
+                    {currentSection.id === 'section-blocks' && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                          <span className="font-spartan font-black text-xs uppercase text-[#384808] block">
+                            BAUSTEIN A: FÜR DEINE MIETER
                           </span>
                           <div>
-                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                              Titel Baustein A
-                            </label>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Titel Baustein A</label>
                             <input
                               type="text"
                               value={contentDraft.blockATitle}
                               onChange={(e) => setContentDraft({ ...contentDraft, blockATitle: e.target.value })}
-                              className="w-full px-4 py-2.5 rounded-2xl border border-[#A09048]/30 text-sm font-spartan font-bold text-[#242E05]"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-spartan font-bold"
                             />
                           </div>
                           <div>
-                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                              Beschreibung A
-                            </label>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Beschreibung A</label>
                             <textarea
                               rows={3}
                               value={contentDraft.blockAText}
                               onChange={(e) => setContentDraft({ ...contentDraft, blockAText: e.target.value })}
-                              className="w-full px-4 py-2.5 rounded-2xl border border-[#A09048]/30 text-xs sm:text-sm text-[#585828] leading-relaxed"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828]"
                             />
                           </div>
                           <div>
-                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                              Bildpfad A
-                            </label>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Bildpfad A</label>
                             <input
                               type="text"
                               value={contentDraft.blockAImage || ''}
                               onChange={(e) => setContentDraft({ ...contentDraft, blockAImage: e.target.value })}
-                              className="w-full px-4 py-2 rounded-xl border border-[#A09048]/30 text-xs font-mono"
+                              className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-mono"
                             />
                           </div>
                         </div>
 
-                        {/* Block B */}
-                        <div className="p-6 bg-white rounded-3xl border border-[#A09048]/30 space-y-4 shadow-xs">
-                          <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-2">
-                            FÜR DICH ALS VERMIETER
+                        <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                          <span className="font-spartan font-black text-xs uppercase text-[#A09048] block">
+                            BAUSTEIN B: FÜR DICH ALS VERMIETER
                           </span>
                           <div>
-                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                              Titel Baustein B
-                            </label>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Titel Baustein B</label>
                             <input
                               type="text"
                               value={contentDraft.blockBTitle}
                               onChange={(e) => setContentDraft({ ...contentDraft, blockBTitle: e.target.value })}
-                              className="w-full px-4 py-2.5 rounded-2xl border border-[#A09048]/30 text-sm font-spartan font-bold text-[#242E05]"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-spartan font-bold"
                             />
                           </div>
                           <div>
-                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                              Beschreibung B
-                            </label>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Beschreibung B</label>
                             <textarea
                               rows={3}
                               value={contentDraft.blockBText}
                               onChange={(e) => setContentDraft({ ...contentDraft, blockBText: e.target.value })}
-                              className="w-full px-4 py-2.5 rounded-2xl border border-[#A09048]/30 text-xs sm:text-sm text-[#585828] leading-relaxed"
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828]"
                             />
                           </div>
                           <div>
-                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                              Bildpfad B
-                            </label>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Bildpfad B</label>
                             <input
                               type="text"
                               value={contentDraft.blockBImage || ''}
                               onChange={(e) => setContentDraft({ ...contentDraft, blockBImage: e.target.value })}
-                              className="w-full px-4 py-2 rounded-xl border border-[#A09048]/30 text-xs font-mono"
+                              className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-mono"
                             />
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Teil 5: 4 Schritte */}
-                  {cmsSection === 'steps' && (
-                    <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-4">
+                    {/* 4 SCHRITTE */}
+                    {currentSection.id === 'section-steps' && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {steps.map((st) => (
-                          <div key={st.id} className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-2 shadow-xs">
-                            <div className="flex items-center gap-2.5">
-                              <span className="w-7 h-7 rounded-full bg-[#384808] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
+                          <div key={st.id} className="p-4 bg-white rounded-2xl border border-[#A09048]/30 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-full bg-[#384808] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
                                 {st.number}
                               </span>
                               <input
                                 type="text"
                                 value={st.title}
                                 onChange={(e) => updateStep(st.id, { title: e.target.value })}
-                                className="w-full px-3 py-1.5 text-xs font-spartan font-bold text-[#242E05] border border-stone-200 rounded-xl"
+                                className="w-full px-3 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-200 rounded-lg"
                               />
                             </div>
                             <textarea
                               rows={2}
                               value={st.text}
                               onChange={(e) => updateStep(st.id, { text: e.target.value })}
-                              className="w-full px-3 py-2 text-xs text-[#585828] border border-stone-200 rounded-xl leading-relaxed"
+                              className="w-full px-3 py-1.5 text-xs text-[#585828] border border-stone-200 rounded-lg"
                             />
                           </div>
                         ))}
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Teil 11: Über den CVB */}
-                  {cmsSection === 'about' && (
-                    <div className="p-7 rounded-[26px] border border-[#A09048]/30 bg-[#F4F2E6] space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1.5">
-                          Netzwerk-Beschreibung
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={contentDraft.aboutText}
-                          onChange={(e) => setContentDraft({ ...contentDraft, aboutText: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/30 text-sm text-[#242E05] bg-white leading-relaxed"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* PREISE & TARIFE */}
+                    {currentSection.id === 'section-prices' && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1.5">
-                            Gründer &amp; Zitatgeber
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Monatspreis netto pro Fahrzeug (€)
                           </label>
                           <input
-                            type="text"
-                            value={contentDraft.aboutFounder}
-                            onChange={(e) => setContentDraft({ ...contentDraft, aboutFounder: e.target.value })}
-                            className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/30 text-sm text-[#242E05] bg-white font-bold"
+                            type="number"
+                            step="0.01"
+                            value={priceDraft.monthlyNet}
+                            onChange={(e) => setPriceDraft({ ...priceDraft, monthlyNet: parseFloat(e.target.value) || 0 })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-base font-spartan font-black text-[#242E05] bg-white"
                           />
                         </div>
                         <div>
-                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1.5">
-                            Kennzahl / Fakt
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Jahrespreis netto pro Fahrzeug (€)
                           </label>
                           <input
-                            type="text"
-                            value={contentDraft.aboutFact}
-                            onChange={(e) => setContentDraft({ ...contentDraft, aboutFact: e.target.value })}
-                            className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/30 text-sm text-[#242E05] bg-white"
+                            type="number"
+                            step="0.01"
+                            value={priceDraft.yearlyNet}
+                            onChange={(e) => setPriceDraft({ ...priceDraft, yearlyNet: parseFloat(e.target.value) || 0 })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-base font-spartan font-black text-[#242E05] bg-white"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Hinweistext zur Abrechnung
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={priceDraft.noteText}
+                            onChange={(e) => setPriceDraft({ ...priceDraft, noteText: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
                           />
                         </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
 
-                {/* Save CTA */}
-                <div className="mt-8 flex justify-end">
-                  <button
-                    onClick={() => {
-                      updateContent(contentDraft);
-                      showSaveNotice('Alle Textänderungen erfolgreich live geschaltet.');
-                    }}
-                    className="tech-cta-primary h-12 text-xs"
-                  >
-                    <span>ÄNDERUNGEN SPEICHERN</span>
-                    <span className="tech-ci">
-                      <Save size={15} />
-                    </span>
-                  </button>
-                </div>
-              </div>
+                    {/* FORM */}
+                    {currentSection.id === 'section-form' && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Formular-Überschrift
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.formHeading || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, formHeading: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm font-spartan font-bold text-[#242E05] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Einleitungstext
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={contentDraft.formIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, formIntro: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
+                          />
+                        </div>
+                      </div>
+                    )}
 
-              {/* Feature Cards Manager */}
-              <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                  <div>
-                    <h3 className="font-spartan font-black text-xl sm:text-2xl uppercase tracking-tight text-[#242E05]">
-                      FUNKTIONS-KARTEN (FEATURES)
-                    </h3>
-                  </div>
-
-                  <button
-                    onClick={() => setShowAddFeature(!showAddFeature)}
-                    className="tech-cta-ghost h-10 text-xs px-4 self-start sm:self-auto"
-                  >
-                    <Plus size={15} className="text-[#A09048]" />
-                    <span>Neue Karte hinzufügen</span>
-                  </button>
-                </div>
-
-                {showAddFeature && (
-                  <div className="mb-6 p-6 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/35 space-y-3">
-                    <h4 className="font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05]">
-                      Neue Funktionskarte erstellen
-                    </h4>
-                    <input
-                      type="text"
-                      placeholder="Kartentitel (z. B. Automatisierte Kautionsabrechnung)"
-                      value={newFeatureTitle}
-                      onChange={(e) => setNewFeatureTitle(e.target.value)}
-                      className="w-full px-4 py-2.5 text-xs rounded-xl border border-[#A09048]/30 bg-white"
-                    />
-                    <textarea
-                      rows={2}
-                      placeholder="1-2 kurze Sätze Erklärung für Vermieter..."
-                      value={newFeatureText}
-                      onChange={(e) => setNewFeatureText(e.target.value)}
-                      className="w-full px-4 py-2.5 text-xs rounded-xl border border-[#A09048]/30 bg-white"
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          if (newFeatureTitle && newFeatureText) {
-                            addFeature({
-                              title: newFeatureTitle,
-                              text: newFeatureText,
-                              icon: 'Sparkles',
-                              visible: true,
-                            });
-                            setNewFeatureTitle('');
-                            setNewFeatureText('');
-                            setShowAddFeature(false);
-                            showSaveNotice('Neue Funktionskarte hinzugefügt.');
-                          }
-                        }}
-                        className="px-4 py-2 bg-[#384808] text-white text-xs font-spartan font-bold uppercase rounded-xl"
-                      >
-                        Hinzufügen
-                      </button>
-                      <button
-                        onClick={() => setShowAddFeature(false)}
-                        className="px-4 py-2 bg-stone-200 text-stone-700 text-xs font-bold rounded-xl"
-                      >
-                        Abbrechen
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {features.map((feat) => (
-                    <div
-                      key={feat.id}
-                      className={`p-6 rounded-[24px] border transition-all ${
-                        feat.visible
-                          ? 'border-[#A09048]/30 bg-white shadow-xs hover:border-[#889028]'
-                          : 'border-stone-200 bg-stone-50 opacity-60'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start gap-2 mb-2">
-                        <span className="font-spartan font-black text-sm uppercase text-[#242E05]">
-                          {feat.title}
+                    {/* FAQ */}
+                    {currentSection.id === 'section-faq' && (
+                      <div className="space-y-3">
+                        <span className="font-spartan font-bold text-xs uppercase text-[#242E05] block">
+                          FAQ Fragen anpassen ({faqs.length} Fragen im System):
                         </span>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <button
-                            onClick={() => toggleFeatureVisibility(feat.id)}
-                            className="p-1 text-stone-400 hover:text-[#384808]"
-                            title={feat.visible ? 'Ausblenden' : 'Einblenden'}
-                          >
-                            {feat.visible ? <Eye size={16} /> : <EyeOff size={16} />}
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (window.confirm('Diese Funktionskarte wirklich löschen?')) {
-                                deleteFeature(feat.id);
-                                showSaveNotice('Karte gelöscht.');
-                              }
-                            }}
-                            className="p-1 text-stone-400 hover:text-red-600"
-                            title="Löschen"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                        {faqs.map((f, i) => (
+                          <div key={f.id} className="p-4 bg-white rounded-2xl border border-[#A09048]/30 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-xs font-bold text-[#A09048]">Frage {i + 1}</span>
+                              <button
+                                onClick={() => toggleFaqVisibility(f.id)}
+                                className="p-1 text-stone-400 hover:text-[#384808]"
+                                title={f.visible ? 'Ausblenden' : 'Einblenden'}
+                              >
+                                {f.visible ? <Eye size={16} /> : <EyeOff size={16} />}
+                              </button>
+                            </div>
+                            <input
+                              type="text"
+                              value={f.question}
+                              onChange={(e) => updateFaq(f.id, { question: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs font-spartan font-bold text-[#242E05] border border-stone-200 rounded-lg"
+                            />
+                            <textarea
+                              rows={2}
+                              value={f.answer}
+                              onChange={(e) => updateFaq(f.id, { answer: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs text-[#585828] border border-stone-200 rounded-lg"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* ABOUT */}
+                    {currentSection.id === 'section-about' && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Netzwerk-Beschreibung
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.aboutText}
+                            onChange={(e) => setContentDraft({ ...contentDraft, aboutText: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm text-[#242E05] bg-white"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                              Gründer &amp; Zitatgeber
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.aboutFounder}
+                              onChange={(e) => setContentDraft({ ...contentDraft, aboutFounder: e.target.value })}
+                              className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm text-[#242E05] bg-white font-bold"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                              Kennzahl / Fakt
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.aboutFact}
+                              onChange={(e) => setContentDraft({ ...contentDraft, aboutFact: e.target.value })}
+                              className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm text-[#242E05] bg-white"
+                            />
+                          </div>
                         </div>
                       </div>
-                      <p className="text-xs text-[#585828] leading-relaxed font-body">{feat.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
+                    )}
 
-          {/* -----------------------------------------------------------------------
-              TAB 4: PRICES & TARIFE (AUTHENTIC HOME PRICE BOX PREVIEW)
-             ----------------------------------------------------------------------- */}
-          {activeTab === 'prices' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Form Settings (7 cols) */}
-              <div className="lg:col-span-7 bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs space-y-6">
-                <div>
-                  <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
-                    PREISE &amp; TARIFANGABEN
-                  </h2>
-                  <p className="text-xs sm:text-sm text-[#585828] mt-1">
-                    Änderungen an den Beiträgen werden sofort in der Preisbox und im Formular der Startseite synchronisiert.
-                  </p>
-                </div>
-
-                <div className="space-y-5 font-body">
-                  <div>
-                    <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                      Monatspreis netto pro Fahrzeug (€)
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={priceDraft.monthlyNet}
-                        onChange={(e) =>
-                          setPriceDraft({
-                            ...priceDraft,
-                            monthlyNet: parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        className="w-full px-5 py-3.5 rounded-2xl border border-[#A09048]/35 text-xl font-spartan font-black text-[#242E05] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#384808]/20 bg-white"
-                      />
-                      <span className="absolute right-5 top-3.5 text-stone-400 font-bold text-sm">
-                        € / Monat netto
-                      </span>
-                    </div>
+                    {/* FOOTER */}
+                    {currentSection.id === 'section-footer' && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Kontakt-E-Mail
+                          </label>
+                          <input
+                            type="email"
+                            value={contentDraft.contactEmail || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, contactEmail: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Technologiepartner Notiz
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.partnerNote || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, partnerNote: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm bg-white"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  <div>
-                    <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                      Jahrespreis netto pro Fahrzeug (€)
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={priceDraft.yearlyNet}
-                        onChange={(e) =>
-                          setPriceDraft({
-                            ...priceDraft,
-                            yearlyNet: parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        className="w-full px-5 py-3.5 rounded-2xl border border-[#A09048]/35 text-xl font-spartan font-black text-[#242E05] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#384808]/20 bg-white"
-                      />
-                      <span className="absolute right-5 top-3.5 text-stone-400 font-bold text-sm">
-                        € / Jahr netto
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-[#585828] mt-1.5 block">
-                      Wird jährlich gebündelt mit dem CVB-Jahresbeitrag abgerechnet.
-                    </span>
-                  </div>
-
-                  <div>
-                    <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                      Hinweistext zur Abrechnung
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={priceDraft.noteText}
-                      onChange={(e) => setPriceDraft({ ...priceDraft, noteText: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-xs sm:text-sm text-[#585828] leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#384808]/20 bg-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-4 border-t border-stone-100">
-                  <button
-                    onClick={() => {
-                      updatePriceSettings(priceDraft);
-                      showSaveNotice('Tarife & Preise erfolgreich synchronisiert.');
-                    }}
-                    className="tech-cta-primary h-12 text-xs"
-                  >
-                    <span>PREISE SPEICHERN</span>
-                    <span className="tech-ci">
-                      <Save size={15} />
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Exact Home Price Box Preview (5 cols) */}
-              <div className="lg:col-span-5 bg-[#242E05] text-white rounded-[32px] p-7 sm:p-9 border-2 border-[#A09048]/40 shadow-2xl space-y-6 sticky top-24">
-                <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                  <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048]">ECHTZEIT VORSCHAU</span>
-                  <span className="text-[10px] uppercase font-spartan font-black px-2.5 py-1 rounded-full bg-[#A09048] text-[#242E05]">
-                    LIVE-SYNC
-                  </span>
-                </div>
-
-                <div>
-                  <div className="text-xs font-spartan font-bold uppercase tracking-wider text-[#A09048]">
-                    EXKLUSIVPREIS FÜR CVB-MITGLIEDER
-                  </div>
-                  <div className="font-spartan font-black text-5xl sm:text-6xl tracking-tight text-white mt-1 tabular-nums">
-                    {priceDraft.monthlyNet.toFixed(2).replace('.', ',')} €
-                    <span className="text-base font-normal text-stone-300 block sm:inline"> / Monat netto</span>
-                  </div>
-                  <div className="text-xs text-stone-300 mt-2">
-                    Entspricht <strong>{priceDraft.yearlyNet.toFixed(2).replace('.', ',')} €</strong> netto pro Fahrzeug und Jahr.
-                  </div>
-                </div>
-
-                <div className="space-y-3 pt-2">
-                  {[
-                    'Voller Funktionsumfang für alle gemeldeten Fahrzeuge',
-                    'Digitale Vorab-Einweisung & Mieter-App inklusive',
-                    'DSGVO-konforme Serverinfrastruktur in Deutschland',
-                    '30 Tage kostenfreie Testphase zum Start',
-                  ].map((benefit, i) => (
-                    <div key={i} className="flex items-center gap-2.5 text-xs text-stone-200">
-                      <span className="w-5 h-5 rounded-full bg-[#A09048] text-[#242E05] flex items-center justify-center font-bold text-[11px] shrink-0">
-                        <Check size={13} />
-                      </span>
-                      <span>{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white/[0.06] border border-white/10 text-xs text-stone-200 leading-relaxed italic">
-                  „Ich bestätige, dass CVB-Office{' '}
-                  <strong className="text-white">{priceDraft.monthlyNet.toFixed(2).replace('.', ',')} €</strong> netto pro
-                  Fahrzeug und Monat kostet (
-                  <strong className="text-white">{priceDraft.yearlyNet.toFixed(2).replace('.', ',')} €</strong> netto pro
-                  Fahrzeug und Jahr) und dass dieser Betrag zusätzlich zur jährlichen CVB-Mitgliedsgebühr berechnet wird.“
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* -----------------------------------------------------------------------
-              TAB 5: FAQ WISSENSBASIS
-             ----------------------------------------------------------------------- */}
-          {activeTab === 'faq' && (
-            <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#A09048]/20">
-                <div>
-                  <h2 className="font-spartan font-black text-2xl sm:text-3xl uppercase tracking-tight text-[#242E05]">
-                    FAQ WISSENSBASIS
-                  </h2>
-                  <p className="text-xs sm:text-sm text-[#585828] mt-1">
-                    Aktuell {faqs.length} Fragen und Antworten für interessierte Vermieter hinterlegt.
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => setShowAddFaq(!showAddFaq)}
-                  className="tech-cta-ghost h-10 text-xs px-4 self-start sm:self-auto"
-                >
-                  <Plus size={15} className="text-[#A09048]" />
-                  <span>Neue Frage anlegen</span>
-                </button>
-              </div>
-
-              {showAddFaq && (
-                <div className="p-6 bg-[#F4F2E6] rounded-2xl border border-[#A09048]/35 space-y-3">
-                  <h4 className="font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05]">
-                    Neue Frage verfassen
-                  </h4>
-                  <input
-                    type="text"
-                    placeholder="Frage (z. B. Welche Voraussetzungen benötigt mein Fahrzeug?)"
-                    value={newFaqQ}
-                    onChange={(e) => setNewFaqQ(e.target.value)}
-                    className="w-full px-4 py-3 text-xs sm:text-sm rounded-xl border border-[#A09048]/30 bg-white"
-                  />
-                  <textarea
-                    rows={3}
-                    placeholder="Ausführliche, verständliche Antwort..."
-                    value={newFaqA}
-                    onChange={(e) => setNewFaqA(e.target.value)}
-                    className="w-full px-4 py-3 text-xs sm:text-sm rounded-xl border border-[#A09048]/30 bg-white"
-                  />
-                  <div className="flex gap-2">
+                  {/* Drawer Footer Actions */}
+                  <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#A09048]/25">
                     <button
-                      onClick={() => {
-                        if (newFaqQ && newFaqA) {
-                          addFaq({ question: newFaqQ, answer: newFaqA, visible: true });
-                          setNewFaqQ('');
-                          setNewFaqA('');
-                          setShowAddFaq(false);
-                          showSaveNotice('Neue FAQ-Frage erfolgreich angelegt.');
-                        }
-                      }}
-                      className="px-4 py-2 bg-[#384808] text-white text-xs font-spartan font-bold uppercase rounded-xl cursor-pointer"
-                    >
-                      Speichern
-                    </button>
-                    <button
-                      onClick={() => setShowAddFaq(false)}
-                      className="px-4 py-2 bg-stone-200 text-stone-700 text-xs font-bold rounded-xl cursor-pointer"
+                      onClick={() => setIsEditDrawerOpen(false)}
+                      className="px-5 py-2.5 bg-white text-stone-700 hover:bg-stone-100 rounded-xl text-xs font-bold border border-stone-300 cursor-pointer"
                     >
                       Abbrechen
+                    </button>
+                    <button
+                      onClick={() => handleUpdateAndApply(currentSection.label)}
+                      className="tech-cta-primary h-11 text-xs px-5 cursor-pointer"
+                    >
+                      <span>AKTUALISIEREN &amp; ANWENDEN</span>
+                      <span className="tech-ci w-7 h-7">
+                        <Save size={14} />
+                      </span>
                     </button>
                   </div>
                 </div>
               )}
 
-              <div className="space-y-4">
-                {faqs.map((f, i) => (
-                  <div
-                    key={f.id}
-                    className={`p-6 rounded-[24px] border transition-all ${
-                      f.visible
-                        ? 'border-[#A09048]/30 bg-white shadow-xs hover:border-[#889028]'
-                        : 'border-stone-200 bg-stone-50 opacity-60'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start gap-4 mb-2">
-                      <div className="flex items-center gap-3">
-                        <span className="w-7 h-7 rounded-full bg-[#F4F2E6] border border-[#A09048]/35 font-spartan font-black text-xs text-[#384808] flex items-center justify-center shrink-0">
-                          {i + 1}
-                        </span>
-                        <span className="font-spartan font-black text-base text-[#242E05]">
-                          {f.question}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          onClick={() => toggleFaqVisibility(f.id)}
-                          className="p-1.5 text-stone-400 hover:text-[#384808] rounded-lg hover:bg-stone-100"
-                          title={f.visible ? 'Ausblenden' : 'Einblenden'}
-                        >
-                          {f.visible ? <Eye size={17} /> : <EyeOff size={17} />}
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (window.confirm('Diese Frage wirklich löschen?')) {
-                              deleteFaq(f.id);
-                              showSaveNotice('Frage gelöscht.');
-                            }
-                          }}
-                          className="p-1.5 text-stone-400 hover:text-red-600 rounded-lg hover:bg-red-50"
-                          title="Löschen"
-                        >
-                          <Trash2 size={17} />
-                        </button>
-                      </div>
-                    </div>
-                    <p className="text-xs sm:text-sm text-[#585828] leading-relaxed font-body pl-10">
-                      {f.answer}
-                    </p>
+              {/* High-Fidelity Browser Mockup Frame (Live Home Component Render) */}
+              <div className="rounded-[32px] border-2 border-[#A09048]/35 shadow-2xl overflow-hidden bg-white">
+                {/* Mock Browser Header */}
+                <div className="bg-[#242E05] px-6 py-3.5 border-b border-[#A09048]/30 flex items-center justify-between text-xs text-white">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-red-400 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block" />
+                    <span className="ml-3 font-mono text-[11px] text-[#A09048] hidden sm:inline">
+                      https://cvb-office.de/#{currentSection.id.replace('section-', '')}
+                    </span>
                   </div>
-                ))}
+
+                  <div className="flex items-center gap-3">
+                    <span className="font-spartan font-bold text-[11px] uppercase tracking-wider text-[#A09048]">
+                      ORIGINAL HOMEPAGE DESIGN
+                    </span>
+                  </div>
+                </div>
+
+                {/* Live Component Render */}
+                <div className="relative">
+                  {currentSection.component}
+                </div>
               </div>
             </div>
           )}
 
           {/* -----------------------------------------------------------------------
-              TAB 6: SYSTEM EINSTELLUNGEN
+              TAB: SYSTEM EINSTELLUNGEN
              ----------------------------------------------------------------------- */}
           {activeTab === 'settings' && (
             <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs max-w-4xl space-y-6">
@@ -1920,7 +1779,7 @@ export const AdminPanel = () => {
           )}
 
           {/* -----------------------------------------------------------------------
-              TAB 7: MEIN ADMIN-KONTO
+              TAB: MEIN ADMIN-KONTO
              ----------------------------------------------------------------------- */}
           {activeTab === 'account' && (
             <div className="bg-white rounded-[32px] p-7 sm:p-10 border border-[#A09048]/30 shadow-xs max-w-2xl space-y-6">
