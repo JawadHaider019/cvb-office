@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useMemo } from 'react';
+import { MotionConfig } from 'motion/react';
 import { useApp } from '../context/AppContext';
 import {
   LayoutDashboard,
@@ -1127,51 +1128,53 @@ export const AdminPanel = () => {
             </div>
           </div>
 
-          {/* Full Continuous Homepage View */}
-          <div className="w-full bg-white divide-y-4 divide-[#F4F2E6]">
-            {homepageSections.map((sec) => (
-              <div
-                key={sec.id}
-                id={sec.anchorId}
-                className="relative group transition-all"
-              >
-                {/* Floating Admin Section Control Pill Banner */}
-                <div className="bg-[#242E05] border-y border-[#A09048]/30 px-4 sm:px-8 py-3 flex items-center justify-between shadow-xs sticky top-[114px] z-30 backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#A09048] text-[#172002]">
-                      TEIL {sec.num}
-                    </span>
-                    <h3 className="font-spartan font-black text-sm sm:text-base uppercase tracking-wider text-white">
-                      {sec.label}
-                    </h3>
+          {/* Full Continuous Homepage View (High-Performance Zero-Animation Mode) */}
+          <MotionConfig reducedMotion="always">
+            <div className="w-full bg-white divide-y-4 divide-[#F4F2E6] admin-no-animations">
+              {homepageSections.map((sec) => (
+                <div
+                  key={sec.id}
+                  id={sec.anchorId}
+                  className="relative group transition-all"
+                >
+                  {/* Floating Admin Section Control Pill Banner */}
+                  <div className="bg-[#242E05] border-y border-[#A09048]/30 px-4 sm:px-8 py-3 flex items-center justify-between shadow-xs sticky top-[114px] z-30 backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#A09048] text-[#172002]">
+                        TEIL {sec.num}
+                      </span>
+                      <h3 className="font-spartan font-black text-sm sm:text-base uppercase tracking-wider text-white">
+                        {sec.label}
+                      </h3>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setEditingSection(sec.id)}
+                        className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-spartan font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors border border-white/20"
+                      >
+                        <FileEdit size={13} className="text-[#A09048]" />
+                        <span>Sektion bearbeiten</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleUpdateAndApply(sec.label)}
+                        className="px-4 py-1.5 bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] rounded-xl text-xs font-spartan font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
+                      >
+                        <Check size={14} />
+                        <span>Aktualisieren &amp; Anwenden</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setEditingSection(sec.id)}
-                      className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-spartan font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors border border-white/20"
-                    >
-                      <FileEdit size={13} className="text-[#A09048]" />
-                      <span>Sektion bearbeiten</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleUpdateAndApply(sec.label)}
-                      className="px-4 py-1.5 bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] rounded-xl text-xs font-spartan font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
-                    >
-                      <Check size={14} />
-                      <span>Aktualisieren &amp; Anwenden</span>
-                    </button>
+                  {/* The Real Homepage Component Rendered With Live AppContext Binding */}
+                  <div className="relative">
+                    {sec.component}
                   </div>
                 </div>
-
-                {/* The Real Homepage Component Rendered With Live AppContext Binding */}
-                <div className="relative">
-                  {sec.component}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </MotionConfig>
 
           {/* Slide-out Edit Drawer For The Selected Section */}
           {editingSection && (
