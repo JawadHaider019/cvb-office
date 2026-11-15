@@ -378,13 +378,6 @@ export const AdminPanel = () => {
           >
             <Layers size={16} className={activeTab === 'content' ? 'text-[#A09048]' : 'text-[#585828]'} />
             <span>Content Management</span>
-            <span
-              className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${
-                activeTab === 'content' ? 'bg-[#A09048] text-[#172002]' : 'bg-[#A09048]/20 text-[#384808]'
-              }`}
-            >
-              Live Editor
-            </span>
           </button>
 
           {/* 4. Admin Profile */}
@@ -474,7 +467,7 @@ export const AdminPanel = () => {
               activeTab === 'content' ? 'bg-[#384808] text-white' : 'bg-white text-[#242E05]'
             }`}
           >
-            <span>Content Management (Live Editor)</span>
+            <span>Content Management</span>
             <Layers size={16} />
           </button>
 
