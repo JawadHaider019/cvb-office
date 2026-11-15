@@ -51,15 +51,6 @@
       scroll-behavior: auto !important;
     }
   }
-
-  /* Admin Performance Optimization: zero animations or transitions in live preview */
-  .admin-no-animations,
-  .admin-no-animations *,
-  .admin-no-animations *::before,
-  .admin-no-animations *::after {
-    animation: none !important;
-    transition: none !important;
-  }
 }
 
 /* Animations */
