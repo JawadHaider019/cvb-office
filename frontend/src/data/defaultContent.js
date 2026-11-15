@@ -1,4 +1,12 @@
 export const defaultSiteContent = {
+    tickerVisible: true,
+    tickerItems: [
+        'OFFIZIELLES DIGITALES VERMIET-OFFICE DES CARAVAN-VERMIETER-BUND (CVB)',
+        '14 TAGE VOLLSTÄNDIG KOSTENLOS TESTEN',
+        'NUR 8,33 € NETTO PRO FAHRZEUG & MONAT',
+        'SMARLPS GO! // 100 % DSGVO IN DEUTSCHLAND',
+    ],
+    navCtaText: '14 Tage kostenlos testen',
     heroHeadline: 'CVB-Office: Dein digitales Vermiet-Office',
     heroText: 'Anfrage, Buchung, Vertrag und Übergabe an einem Ort. Entwickelt für Wohnmobil- und Caravan-Vermieter im Caravan-Vermieter-Bund.',
     trustLine: 'Ein Angebot des Caravan-Vermieter-Bund',

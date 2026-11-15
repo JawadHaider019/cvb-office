@@ -139,6 +139,7 @@ export const AdminPanel = () => {
     } catch {}
     updateContent(contentDraft);
     updatePriceSettings(priceDraft);
+    updateGeneralSettings(settingsDraft);
     showSaveNotice(`${sectionName} erfolgreich aktualisiert und auf der Startseite angewendet!`);
     setEditingSection(null);
     setShowReloadDialog(true);
@@ -162,6 +163,7 @@ export const AdminPanel = () => {
 
   // Homepage sections registry
   const homepageSections = [
+    { id: 'section-header', anchorId: 'sec-header', num: '00', label: 'Navbar & Ticker', title: 'Teil 00: Navbar & Top Sliding Bar', component: <Header /> },
     { id: 'section-hero', anchorId: 'sec-hero', num: '01', label: 'Hero-Bereich', title: 'Teil 1: Hero-Bereich (Kopfzeile)', component: <Hero /> },
     { id: 'section-problem', anchorId: 'sec-problem', num: '02', label: 'Problem & Lösung', title: 'Teil 2: Problem & Lösung', component: <ProblemSolution /> },
     { id: 'section-features', anchorId: 'sec-features', num: '03', label: 'Funktions-Module', title: 'Teil 3: Die 6 Funktions-Module', component: <Features /> },
@@ -1150,6 +1152,138 @@ export const AdminPanel = () => {
 
                 {/* Drawer Form Body */}
                 <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6">
+                  {/* NAVBAR & TOP SLIDING TICKER BAR */}
+                  {editingSection === 'section-header' && (
+                    <div className="space-y-6">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <div className="flex items-center justify-between pb-3 border-b border-[#A09048]/20">
+                          <div>
+                            <span className="font-spartan font-black text-sm uppercase text-[#242E05] block">
+                              Top Sliding Bar (Laufband-Ankündigung)
+                            </span>
+                            <span className="text-xs text-[#585828]">
+                              Schlankes goldenes Laufband oberhalb der Navigationsleiste
+                            </span>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={contentDraft.tickerVisible !== false}
+                              onChange={(e) => setContentDraft({ ...contentDraft, tickerVisible: e.target.checked })}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#384808]"></div>
+                          </label>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05]">
+                              Laufband-Texte (Nachrichten im Ticker)
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const currentItems = contentDraft.tickerItems || [
+                                  'OFFIZIELLES DIGITALES VERMIET-OFFICE DES CARAVAN-VERMIETER-BUND (CVB)',
+                                  '14 TAGE VOLLSTÄNDIG KOSTENLOS TESTEN',
+                                  'NUR 8,33 € NETTO PRO FAHRZEUG & MONAT',
+                                  'SMARLPS GO! // 100 % DSGVO IN DEUTSCHLAND',
+                                ];
+                                setContentDraft({
+                                  ...contentDraft,
+                                  tickerItems: [...currentItems, 'NEUE ANKÜNDIGUNG EINGEBEN'],
+                                });
+                              }}
+                              className="text-xs font-spartan font-bold uppercase tracking-wider text-[#384808] hover:text-[#A09048] flex items-center gap-1 cursor-pointer"
+                            >
+                              + Text hinzufügen
+                            </button>
+                          </div>
+
+                          {(contentDraft.tickerItems || [
+                            'OFFIZIELLES DIGITALES VERMIET-OFFICE DES CARAVAN-VERMIETER-BUND (CVB)',
+                            '14 TAGE VOLLSTÄNDIG KOSTENLOS TESTEN',
+                            'NUR 8,33 € NETTO PRO FAHRZEUG & MONAT',
+                            'SMARLPS GO! // 100 % DSGVO IN DEUTSCHLAND',
+                          ]).map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-bold text-[#A09048] w-6 shrink-0">
+                                {idx + 1}.
+                              </span>
+                              <input
+                                type="text"
+                                value={item}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.tickerItems || [
+                                    'OFFIZIELLES DIGITALES VERMIET-OFFICE DES CARAVAN-VERMIETER-BUND (CVB)',
+                                    '14 TAGE VOLLSTÄNDIG KOSTENLOS TESTEN',
+                                    'NUR 8,33 € NETTO PRO FAHRZEUG & MONAT',
+                                    'SMARLPS GO! // 100 % DSGVO IN DEUTSCHLAND',
+                                  ])];
+                                  list[idx] = e.target.value;
+                                  setContentDraft({ ...contentDraft, tickerItems: list });
+                                }}
+                                className="flex-1 px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white focus:outline-none focus:border-[#384808]"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const list = [...(contentDraft.tickerItems || [
+                                    'OFFIZIELLES DIGITALES VERMIET-OFFICE DES CARAVAN-VERMIETER-BUND (CVB)',
+                                    '14 TAGE VOLLSTÄNDIG KOSTENLOS TESTEN',
+                                    'NUR 8,33 € NETTO PRO FAHRZEUG & MONAT',
+                                    'SMARLPS GO! // 100 % DSGVO IN DEUTSCHLAND',
+                                  ])];
+                                  if (list.length > 1) {
+                                    list.splice(idx, 1);
+                                    setContentDraft({ ...contentDraft, tickerItems: list });
+                                  } else {
+                                    alert('Mindestens eine Nachricht muss im Laufband verbleiben.');
+                                  }
+                                }}
+                                className="p-2 text-stone-400 hover:text-red-600 rounded-lg cursor-pointer"
+                                title="Nachricht entfernen"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-sm uppercase text-[#242E05] block pb-2 border-b border-[#A09048]/20">
+                          Navbar Buttons &amp; Verlinkungen
+                        </span>
+
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
+                            Button-Text für Testphase (Pill Button)
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.navCtaText || '14 Tage testen'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, navCtaText: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
+                            Smarlps Testphase Ziel-URL (Trial Link)
+                          </label>
+                          <input
+                            type="url"
+                            value={settingsDraft.trialLink}
+                            onChange={(e) => setSettingsDraft({ ...settingsDraft, trialLink: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-xs font-mono bg-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* HERO */}
                   {editingSection === 'section-hero' && (
                     <div className="space-y-4">

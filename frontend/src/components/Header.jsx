@@ -3,9 +3,22 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
 export const Header = () => {
-    const { generalSettings } = useApp();
+    const { content, generalSettings } = useApp();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+
+    const defaultTickerItems = [
+        'OFFIZIELLES DIGITALES VERMIET-OFFICE DES CARAVAN-VERMIETER-BUND (CVB)',
+        '14 TAGE VOLLSTÄNDIG KOSTENLOS TESTEN',
+        'NUR 8,33 € NETTO PRO FAHRZEUG & MONAT',
+        'SMARLPS GO! // 100 % DSGVO IN DEUTSCHLAND',
+    ];
+
+    const tickerVisible = content?.tickerVisible !== false;
+    const tickerItems = (content?.tickerItems && content.tickerItems.length > 0)
+        ? content.tickerItems
+        : defaultTickerItems;
+
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 30);
@@ -24,32 +37,30 @@ export const Header = () => {
     };
     return (<>
       {/* 1. TOP ANNOUNCEMENT TICKER (Slim Luxury Ribbon) */}
-      <div className="bg-[#384808] text-[#F4F2E6] overflow-hidden py-1.5 sm:py-2 px-4 font-spartan font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.12em] select-none border-b border-[#A09048]/35 relative z-50">
-        <div className="animate-marquee flex items-center gap-6 sm:gap-8 whitespace-nowrap">
-          <span className="flex items-center gap-6 sm:gap-8">
-            <span>OFFIZIELLES DIGITALES VERMIET-OFFICE DES CARAVAN-VERMIETER-BUND (CVB)</span>
-            <span className="text-[#A09048]">✦</span>
-            <span className="text-[#A09048]">14 TAGE VOLLSTÄNDIG KOSTENLOS TESTEN</span>
-            <span className="text-[#A09048]">✦</span>
-            <span>NUR 8,33 € NETTO PRO FAHRZEUG & MONAT</span>
-            <span className="text-[#A09048]">✦</span>
-            <span>SMARLPS GO! // 100 % DSGVO IN DEUTSCHLAND</span>
-            <span className="text-[#A09048]">✦</span>
-          </span>
+      {tickerVisible && (
+        <div className="bg-[#384808] text-[#F4F2E6] overflow-hidden py-1.5 sm:py-2 px-4 font-spartan font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.12em] select-none border-b border-[#A09048]/35 relative z-50">
+          <div className="animate-marquee flex items-center gap-6 sm:gap-8 whitespace-nowrap">
+            <span className="flex items-center gap-6 sm:gap-8">
+              {tickerItems.map((item, idx) => (
+                <React.Fragment key={`ticker-1-${idx}`}>
+                  <span>{item}</span>
+                  <span className="text-[#A09048]">✦</span>
+                </React.Fragment>
+              ))}
+            </span>
 
-          {/* Duplicate loop for continuous marquee */}
-          <span className="flex items-center gap-6 sm:gap-8" aria-hidden="true">
-            <span>OFFIZIELLES DIGITALES VERMIET-OFFICE DES CARAVAN-VERMIETER-BUND (CVB)</span>
-            <span className="text-[#A09048]">✦</span>
-            <span className="text-[#A09048]">14 TAGE VOLLSTÄNDIG KOSTENLOS TESTEN</span>
-            <span className="text-[#A09048]">✦</span>
-            <span>NUR 8,33 € NETTO PRO FAHRZEUG & MONAT</span>
-            <span className="text-[#A09048]">✦</span>
-            <span>SMARLPS GO! // 100 % DSGVO IN DEUTSCHLAND</span>
-            <span className="text-[#A09048]">✦</span>
-          </span>
+            {/* Duplicate loop for continuous marquee */}
+            <span className="flex items-center gap-6 sm:gap-8" aria-hidden="true">
+              {tickerItems.map((item, idx) => (
+                <React.Fragment key={`ticker-2-${idx}`}>
+                  <span>{item}</span>
+                  <span className="text-[#A09048]">✦</span>
+                </React.Fragment>
+              ))}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 2. SIMPLE & LUXURY NAVBAR (Flush Edge-to-Edge with Gold Hairline & Architectural Geometry) */}
       <header className={`sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b transition-all duration-300 ${isScrolled
@@ -100,7 +111,7 @@ export const Header = () => {
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-2 xl:gap-3 shrink-0">
             {/* Secondary Rounded Pill Button (Hero Style) */}
             <a href={generalSettings.trialLink} target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex items-center gap-1.5 xl:gap-2 px-5 lg:px-3.5 xl:px-5 h-[42px] lg:h-[38px] xl:h-[42px] rounded-full text-xs lg:text-[11px] xl:text-xs font-spartan font-extrabold uppercase tracking-[0.04em] text-[#384808] bg-white border-[1.5px] border-[#A09048] hover:bg-[#F4F2E6] hover:border-[#384808] transition-all cursor-pointer group shadow-xs whitespace-nowrap">
-              <span>14 Tage testen</span>
+              <span>{content?.navCtaText || '14 Tage testen'}</span>
               <ArrowUpRight size={14} className="text-[#889028] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"/>
             </a>
 
