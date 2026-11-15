@@ -44,7 +44,8 @@ import { ProblemSolution } from './ProblemSolution';
 import { Features } from './Features';
 import { BuildingBlocks } from './BuildingBlocks';
 import { HowItWorks } from './HowItWorks';
-import { BenefitsAudience } from './BenefitsAudience';
+import { Benefits } from './Benefits';
+import { Audience } from './Audience';
 import { PriceTrialBox } from './PriceTrialBox';
 import { SignUpForm } from './SignUpForm';
 import { FaqAccordion } from './FaqAccordion';
@@ -176,17 +177,18 @@ export const AdminPanel = () => {
   // Homepage sections registry
   const homepageSections = [
     { id: 'section-header', anchorId: 'sec-header', num: '00', label: 'Navbar & Ticker', title: 'Teil 00: Navbar & Top Sliding Bar', component: <Header /> },
-    { id: 'section-hero', anchorId: 'sec-hero', num: '01', label: 'Hero-Bereich', title: 'Teil 1: Hero-Bereich (Kopfzeile)', component: <Hero /> },
-    { id: 'section-problem', anchorId: 'sec-problem', num: '02', label: 'Problem & Lösung', title: 'Teil 2: Problem & Lösung', component: <ProblemSolution /> },
-    { id: 'section-features', anchorId: 'sec-features', num: '03', label: 'Funktions-Module', title: 'Teil 3: Die 6 Funktions-Module', component: <Features /> },
-    { id: 'section-blocks', anchorId: 'sec-blocks', num: '04', label: 'Die 2 Bausteine', title: 'Teil 4: Mieter-Einweisung & Cockpit', component: <BuildingBlocks /> },
-    { id: 'section-steps', anchorId: 'sec-steps', num: '05', label: '4-Schritte-Ablauf', title: 'Teil 5: Der Ablauf in 4 Schritten', component: <HowItWorks /> },
-    { id: 'section-audience', anchorId: 'sec-audience', num: '06', label: 'Vorteile & Zielgruppe', title: 'Teil 6 & 7: Zielgruppen & Vorteile', component: <BenefitsAudience /> },
-    { id: 'section-prices', anchorId: 'sec-prices', num: '07', label: 'Preise & Tarife', title: 'Teil 8: Preis- & Testphasen-Box', component: <PriceTrialBox /> },
-    { id: 'section-form', anchorId: 'sec-form', num: '08', label: 'Buchungsformular', title: 'Teil 9: Mietanfrage-Formular', component: <SignUpForm onOpenPrivacyModal={() => {}} /> },
-    { id: 'section-faq', anchorId: 'sec-faq', num: '09', label: 'FAQ Wissensbasis', title: 'Teil 10: Häufig gestellte Fragen (FAQ)', component: <FaqAccordion /> },
-    { id: 'section-about', anchorId: 'sec-about', num: '10', label: 'Über den CVB', title: 'Teil 11: Über den Caravan-Vermieter-Bund', component: <AboutCvb /> },
-    { id: 'section-footer', anchorId: 'sec-footer', num: '11', label: 'Footer & Kontakt', title: 'Teil 12: Footer & Abschluss', component: <Footer onOpenImpressum={() => {}} onOpenPrivacy={() => {}} /> },
+    { id: 'section-hero', anchorId: 'sec-hero', num: '01', label: 'Hero-Bereich', title: 'Teil 01: Hero-Bereich (Kopfzeile)', component: <Hero /> },
+    { id: 'section-problem', anchorId: 'sec-problem', num: '02', label: 'Problem & Lösung', title: 'Teil 02: Problem & Lösung', component: <ProblemSolution /> },
+    { id: 'section-features', anchorId: 'sec-features', num: '03', label: 'Funktions-Module', title: 'Teil 03: Die 6 Funktions-Module', component: <Features /> },
+    { id: 'section-blocks', anchorId: 'sec-blocks', num: '04', label: 'Die 2 Bausteine', title: 'Teil 04: Mieter-Einweisung & Cockpit', component: <BuildingBlocks /> },
+    { id: 'section-steps', anchorId: 'sec-steps', num: '05', label: '4-Schritte-Ablauf', title: 'Teil 05: Der Ablauf in 4 Schritten', component: <HowItWorks /> },
+    { id: 'section-benefits', anchorId: 'sec-benefits', num: '06', label: 'Vorteile', title: 'Teil 06: Vorteile für Vermieter', component: <Benefits /> },
+    { id: 'section-audience', anchorId: 'sec-audience', num: '07', label: 'Zielgruppen & Stimmen', title: 'Teil 07: Zielgruppen & Praxis-Stimmen', component: <Audience /> },
+    { id: 'section-prices', anchorId: 'sec-prices', num: '08', label: 'Preise & Tarife', title: 'Teil 08: Preis- & Testphasen-Box', component: <PriceTrialBox /> },
+    { id: 'section-form', anchorId: 'sec-form', num: '09', label: 'Buchungsformular', title: 'Teil 09: Mietanfrage-Formular', component: <SignUpForm onOpenPrivacyModal={() => {}} /> },
+    { id: 'section-faq', anchorId: 'sec-faq', num: '10', label: 'FAQ Wissensbasis', title: 'Teil 10: Häufig gestellte Fragen (FAQ)', component: <FaqAccordion /> },
+    { id: 'section-about', anchorId: 'sec-about', num: '11', label: 'Über den CVB', title: 'Teil 11: Über den Caravan-Vermieter-Bund', component: <AboutCvb /> },
+    { id: 'section-footer', anchorId: 'sec-footer', num: '12', label: 'Footer & Kontakt', title: 'Teil 12: Footer & Abschluss', component: <Footer onOpenImpressum={() => {}} onOpenPrivacy={() => {}} /> },
   ];
 
   // If not logged in, show Executive Login Screen
@@ -2008,17 +2010,6 @@ export const AdminPanel = () => {
                           />
                         </div>
 
-                        {/* Image & Alt */}
-                        <ImageUploadField
-                          label="Baustein B Hauptbild"
-                          helperText="Visualisierung Vermieter-Office / Flottenansicht"
-                          value={contentDraft.blockBImage || ''}
-                          onChange={(newImg) => setContentDraft({ ...contentDraft, blockBImage: newImg })}
-                          altValue={contentDraft.blockBImageAlt || ''}
-                          onAltChange={(newAlt) => setContentDraft({ ...contentDraft, blockBImageAlt: newAlt })}
-                          altPlaceholder="z.B. Vermieter Software Dashboard"
-                        />
-
                         {/* 3 Sub-Features */}
                         <div className="space-y-2 pt-2">
                           <label className="block font-spartan font-bold text-xs uppercase text-[#242E05]">
@@ -2165,13 +2156,12 @@ export const AdminPanel = () => {
                     </div>
                   )}
 
-                  {/* VORTEILE & ZIELGRUPPE */}
-                  {editingSection === 'section-audience' && (
+                  {/* TEIL 06: VORTEILE FÜR VERMIETER */}
+                  {editingSection === 'section-benefits' && (
                     <div className="space-y-5">
-                      {/* Vorteile */}
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
                         <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
-                          Teil 1: Vorteile für Vermieter (Band 1)
+                          Vorteile für Vermieter (Kopfbereich &amp; CTA)
                         </span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
@@ -2269,11 +2259,16 @@ export const AdminPanel = () => {
                           ))}
                         </div>
                       </div>
+                    </div>
+                  )}
 
+                  {/* TEIL 07: ZIELGRUPPEN & PRAXIS-STIMMEN */}
+                  {editingSection === 'section-audience' && (
+                    <div className="space-y-5">
                       {/* 3 Testimonials */}
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
                         <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
-                          Teil 2: Stimmen aus der Praxis (Testimonials)
+                          Stimmen aus der Praxis (Testimonials)
                         </span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
@@ -2358,7 +2353,7 @@ export const AdminPanel = () => {
                       {/* Zielgruppen Banner */}
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
                         <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
-                          Teil 3: Zielgruppen &amp; Flotten (Banner)
+                          Zielgruppen &amp; Flotten (Banner)
                         </span>
                         <div>
                           <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Tag</label>

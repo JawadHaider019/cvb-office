@@ -8,7 +8,8 @@ import { ProblemSolution } from './components/ProblemSolution';
 import { Features } from './components/Features';
 import { BuildingBlocks } from './components/BuildingBlocks';
 import { HowItWorks } from './components/HowItWorks';
-import { BenefitsAudience } from './components/BenefitsAudience';
+import { Benefits } from './components/Benefits';
+import { Audience } from './components/Audience';
 import { PriceTrialBox } from './components/PriceTrialBox';
 import { SignUpForm } from './components/SignUpForm';
 import { FaqAccordion } from './components/FaqAccordion';
@@ -54,8 +55,11 @@ const MainLayout = () => {
         {/* Part 5: How It Works */}
         <HowItWorks />
 
-        {/* Part 6 + 7: Benefits and Audience */}
-        <BenefitsAudience />
+        {/* Part 6: Benefits */}
+        <Benefits />
+
+        {/* Part 7: Audience & Testimonials */}
+        <Audience />
 
         {/* Part 8: Price and Trial Box */}
         <PriceTrialBox />
