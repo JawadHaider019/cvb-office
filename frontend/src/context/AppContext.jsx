@@ -1,7 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { defaultSiteContent, defaultPriceSettings, defaultGeneralSettings, defaultFeatures, defaultSteps, defaultFaqs, sampleInitialRequests, } from '../data/defaultContent';
-/** Resolve backend API base URL; returns null on non-local origins when NEXT_PUBLIC_API_URL / VITE_API_URL is unset so browsers never prompt for local network access. */
+/** Resolve backend API base URL; returns empty string for relative same-origin proxy via Next.js rewrites. */
 const getApiBaseUrl = () => {
     const envUrl = (typeof process !== 'undefined' &&
         (process.env.NEXT_PUBLIC_API_URL || process.env.VITE_API_URL)) ||
@@ -10,21 +10,33 @@ const getApiBaseUrl = () => {
     if (configured) {
         return configured.replace(/\/+$/, '');
     }
-    if (typeof window !== 'undefined' &&
-        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-        return 'http://localhost:5000';
-    }
-    return null;
+    return '';
 };
 const API_BASE_URL = getApiBaseUrl();
+
+/** Safe API fetch helper that handles timeouts and network unreachability without throwing unhandled Console TypeError */
+const safeApiFetch = async (url, options = {}, timeoutMs = 3500) => {
+    if (typeof window === 'undefined') return null;
+    try {
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+        const res = await fetch(url, {
+            ...options,
+            signal: controller ? controller.signal : undefined,
+        }).catch(() => null);
+        if (timer) clearTimeout(timer);
+        return res;
+    } catch {
+        return null;
+    }
+};
+
 const syncContentPatch = (payload) => {
-    if (!API_BASE_URL)
-        return;
-    fetch(`${API_BASE_URL}/api/content`, {
+    safeApiFetch(`${API_BASE_URL}/api/content`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-    }).catch(() => { });
+    });
 };
 const AppContext = createContext(undefined);
 const STORAGE_KEYS = {
@@ -109,22 +121,20 @@ export const AppProvider = ({ children }) => {
         }
     }, []);
 
-    // Sync from backend on mount if API backend is configured/local
+    // Sync from backend on mount
     useEffect(() => {
-        if (!API_BASE_URL)
-            return;
-        fetch(`${API_BASE_URL}/api/requests`)
-            .then((res) => (res.ok ? res.json() : null))
+        safeApiFetch(`${API_BASE_URL}/api/requests`)
+            .then((res) => (res && res.ok ? res.json() : null))
             .then((serverRequests) => {
-            if (Array.isArray(serverRequests) && serverRequests.length > 0) {
-                setRequests((prev) => {
-                    const map = new Map();
-                    serverRequests.forEach((r) => map.set(r.id, r));
-                    prev.forEach((r) => map.set(r.id, r));
-                    return Array.from(map.values());
-                });
-            }
-        })
+                if (Array.isArray(serverRequests) && serverRequests.length > 0) {
+                    setRequests((prev) => {
+                        const map = new Map();
+                        serverRequests.forEach((r) => map.set(r.id, r));
+                        prev.forEach((r) => map.set(r.id, r));
+                        return Array.from(map.values());
+                    });
+                }
+            })
             .catch(() => { });
     }, []);
 
@@ -303,80 +313,61 @@ export const AppProvider = ({ children }) => {
             email_sent: true,
         };
         // Attempt backend sync when API backend is available
-        if (API_BASE_URL) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/requests`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: trimmedEmail,
-                        vehicleCount,
-                        priceConsent,
-                        privacyConsent,
-                        honeypot: honeypotValue,
-                        formOpenedAt,
-                        priceConsentText: currentPriceText,
-                        contact_name: contactName,
-                        phone,
-                    }),
-                });
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => null);
-                    if (errorData && errorData.error) {
-                        return { success: false, error: errorData.error };
-                    }
+        try {
+            const response = await safeApiFetch(`${API_BASE_URL}/api/requests`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: trimmedEmail,
+                    vehicleCount,
+                    priceConsent,
+                    privacyConsent,
+                    honeypot: honeypotValue,
+                    formOpenedAt,
+                    priceConsentText: currentPriceText,
+                    contact_name: contactName,
+                    phone,
+                }),
+            }, 6000);
+            if (response && !response.ok) {
+                const errorData = await response.json().catch(() => null);
+                if (errorData && errorData.error) {
+                    return { success: false, error: errorData.error };
                 }
-                else {
-                    const resData = await response.json().catch(() => null);
-                    if (resData && resData.data) {
-                        setRequests((prev) => [resData.data, ...prev.filter((r) => r.id !== resData.data.id)]);
-                        return { success: true };
-                    }
+            } else if (response) {
+                const resData = await response.json().catch(() => null);
+                if (resData && resData.data) {
+                    setRequests((prev) => [resData.data, ...prev.filter((r) => r.id !== resData.data.id)]);
+                    return { success: true };
                 }
             }
-            catch {
-                // Offline fallback: store locally
-            }
+        } catch {
+            // Offline fallback: store locally
         }
         setRequests((prev) => [newRequest, ...prev]);
         return { success: true };
     };
     const updateRequestStatus = (id, status) => {
         setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
-        if (!API_BASE_URL)
-            return;
-        try {
-            fetch(`${API_BASE_URL}/api/requests/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status }),
-            }).catch(() => { });
-        }
-        catch { }
+        safeApiFetch(`${API_BASE_URL}/api/requests/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status }),
+        });
     };
     const updateRequestNote = (id, notes) => {
         setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, notes } : r)));
-        if (!API_BASE_URL)
-            return;
-        try {
-            fetch(`${API_BASE_URL}/api/requests/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ notes }),
-            }).catch(() => { });
-        }
-        catch { }
+        safeApiFetch(`${API_BASE_URL}/api/requests/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notes }),
+        });
     };
     const deleteRequest = (id) => {
         setRequests((prev) => prev.filter((r) => r.id !== id));
-        if (!API_BASE_URL)
-            return;
-        try {
-            fetch(`${API_BASE_URL}/api/requests/${id}`, {
-                method: 'DELETE',
-            }).catch(() => { });
-        }
-        catch { }
+        safeApiFetch(`${API_BASE_URL}/api/requests/${id}`, {
+            method: 'DELETE',
+        });
     };
     // CSV export with semicolon for German Excel
     const exportRequestsCsv = () => {
