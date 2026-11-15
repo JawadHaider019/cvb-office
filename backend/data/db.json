@@ -163,7 +163,9 @@
     "aboutImage": "/images/luxury_cockpit_tablet.jpg",
     "aboutImageAlt": "Caravan-Vermieter-Bund Netzwerk",
     "tickerVisible": false,
-    "test": 1
+    "test": 1,
+    "audienceTag": "ZIELGRUPPEN & FLOTTEN",
+    "testimonialsTag": " STIMMEN AUS DER VERMIETPRAXIS"
   },
   "priceSettings": {
     "monthlyNet": 8.33,

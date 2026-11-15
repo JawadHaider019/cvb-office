@@ -50,7 +50,9 @@ export const FleetVisualizer3D = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
             <div>
               <div className="tech-tag mb-3 bg-[#2D3A06] border-white/20 text-white">
-                <span className="tech-tagn bg-[#A09048] text-white">✦</span>
+                <span className="tech-tagn bg-[#A09048] text-white">
+                  <Sparkles size={13} strokeWidth={2.5} />
+                </span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-white">
                   DIGITALER FLOTTEN-ZWILLING
                 </span>

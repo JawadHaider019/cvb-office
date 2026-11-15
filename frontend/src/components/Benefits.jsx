@@ -2,7 +2,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { defaultBenefits } from '../data/defaultContent';
-import { Clock, Zap, Eye, ShieldCheck, Layers, Sparkles, ArrowRight } from 'lucide-react';
+import { Clock, Zap, Eye, ShieldCheck, Layers, Sparkles, ArrowRight, TrendingUp } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
 import { motion } from 'motion/react';
 
@@ -35,7 +35,9 @@ export const Benefits = () => {
           <div className="lg:col-span-5 space-y-6">
             <ScrollReveal>
               <div className="tech-tag mb-4">
-                <span className="tech-tagn">✦</span>
+                <span className="tech-tagn">
+                  <TrendingUp size={13} strokeWidth={2.5} />
+                </span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
                   {content.benefitsTag || 'VORTEILE FÜR VERMIETER'}
                 </span>

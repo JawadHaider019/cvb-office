@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { MapPin, Mail, Copy, Check, ArrowRight, ArrowUpRight, Truck, Scale, Users, ShieldCheck, } from 'lucide-react';
+import { MapPin, Mail, Copy, Check, ArrowRight, ArrowUpRight, Truck, Scale, Users, ShieldCheck, Building2 } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
 import { motion } from 'motion/react';
 export const AboutCvb = () => {
@@ -27,7 +27,9 @@ export const AboutCvb = () => {
         <ScrollReveal>
           <div className="mb-6 sm:mb-12 lg:mb-16">
             <div className="tech-tag mb-2 sm:mb-4">
-              <span className="tech-tagn">✦</span>
+              <span className="tech-tagn">
+                <Building2 size={13} strokeWidth={2.5} />
+              </span>
               <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
                 {content.aboutTag || 'ÜBER DAS CVB-NETZWERK'}
               </span>

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { QrCode, Video, Sparkles, LayoutDashboard, FileCheck2, MapPin } from 'lucide-react';
+import { QrCode, Video, Sparkles, LayoutDashboard, FileCheck2, MapPin, Boxes } from 'lucide-react';
 import { IMAGES } from '../assets/images';
 import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';
 import { motion } from 'motion/react';
@@ -14,7 +14,9 @@ export const BuildingBlocks = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-end mb-10 sm:mb-14 pb-6 sm:pb-8 border-b border-[#A09048]/20">
             <div className="lg:col-span-7 xl:col-span-8">
               <div className="tech-tag mb-4">
-                <span className="tech-tagn">✦</span>
+                <span className="tech-tagn">
+                  <Boxes size={13} strokeWidth={2.5} />
+                </span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
                   {content.blocksTag || 'DIE ZWEI BAUSTEINE'}
                 </span>

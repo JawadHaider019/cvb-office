@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Check, ArrowRight, ArrowUpRight, Calculator, TrendingUp, ShieldCheck } from 'lucide-react';
+import { Check, ArrowRight, ArrowUpRight, Calculator, TrendingUp, ShieldCheck, BadgePercent } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 export const PriceTrialBox = () => {
@@ -40,7 +40,9 @@ export const PriceTrialBox = () => {
             {/* Left Column: Tag & Main Title */}
             <div className="lg:col-span-7 xl:col-span-8">
               <div className="tech-tag mb-4">
-                <span className="tech-tagn">✦</span>
+                <span className="tech-tagn">
+                  <BadgePercent size={13} strokeWidth={2.5} />
+                </span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
                   {content.pricesTag || 'TARIFE & EXKLUSIVKONDITIONEN'}
                 </span>

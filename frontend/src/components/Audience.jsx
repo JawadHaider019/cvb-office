@@ -11,6 +11,8 @@ import {
   Laptop,
   MapPin,
   ArrowRight,
+  MessageSquareQuote,
+  Users,
 } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
 import { motion } from 'motion/react';
@@ -67,9 +69,14 @@ export const Audience = () => {
       <div className="relative max-w-[1280px] mx-auto px-4 sm:px-10 lg:px-14">
         <ScrollReveal>
           <div className="text-center max-w-2xl mx-auto mb-9 sm:mb-12">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-[0.24em] text-[#A09048] block mb-3">
-              {content.testimonialsTag || '★ STIMMEN AUS DER VERMIETPRAXIS'}
-            </span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.08] border border-[#A09048]/30 mb-4 backdrop-blur-md">
+              <span className="w-5 h-5 rounded-full bg-[#889028] text-white flex items-center justify-center">
+                <MessageSquareQuote size={12} strokeWidth={2.5} />
+              </span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#F4F2E6]">
+                {(content.testimonialsTag || 'STIMMEN AUS DER VERMIETPRAXIS').replace(/^[★✦\s]+/, '')}
+              </span>
+            </div>
             <h2 className="font-spartan text-[26px] sm:text-4xl lg:text-[46px] font-black uppercase text-white tracking-tight leading-[1.06] sm:leading-[1.04]">
               {content.testimonialsHeadline || 'WAS VERMIETER AN CVB-OFFICE SCHÄTZEN.'}
             </h2>
@@ -124,9 +131,14 @@ export const Audience = () => {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_center,rgba(160,144,72,0.22),transparent_62%)] pointer-events-none" />
 
             <div className="relative z-10 max-w-3xl mx-auto">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-[0.22em] text-[#F4F2E6]/80 block mb-3">
-                {content.audienceTag || '✦ ZIELGRUPPEN & FLOTTEN'}
-              </span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.1] border border-white/20 mb-4 backdrop-blur-md">
+                <span className="w-5 h-5 rounded-full bg-[#889028] text-white flex items-center justify-center">
+                  <Users size={12} strokeWidth={2.5} />
+                </span>
+                <span className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#F4F2E6]">
+                  {(content.audienceTag || 'ZIELGRUPPEN & FLOTTEN').replace(/^[★✦\s]+/, '')}
+                </span>
+              </div>
 
               <h3 className="font-spartan text-[23px] sm:text-4xl lg:text-[46px] font-black uppercase tracking-tight leading-[1.08] sm:leading-[1.06] mb-4">
                 <span className="text-white block">

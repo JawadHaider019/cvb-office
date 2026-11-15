@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { ArrowUpRight, ChevronLeft, ChevronRight, Calendar, Globe, Tag, CheckCircle2, FileSignature, FileText, Users, Truck, } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Calendar, Globe, Tag, CheckCircle2, FileSignature, FileText, Users, Truck, Layers, Cpu } from 'lucide-react';
 import { IMAGES } from '../assets/images';
 import { ScrollReveal } from './ScrollReveal';
 import { motion } from 'motion/react';
@@ -83,7 +83,9 @@ export const Features = () => {
             <ScrollReveal>
               <div>
                 <div className="tech-tag mb-4">
-                  <span className="tech-tagn">✦</span>
+                  <span className="tech-tagn">
+                    <Layers size={13} strokeWidth={2.5} />
+                  </span>
                   <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
                     {content.featuresTag || 'HAUPTFUNKTIONEN & SYSTEM'}
                   </span>
@@ -146,7 +148,9 @@ export const Features = () => {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 sm:gap-6 mb-8 sm:mb-10">
               <div>
                 <div className="tech-tag mb-4">
-                  <span className="tech-tagn">✦</span>
+                  <span className="tech-tagn">
+                    <Cpu size={13} strokeWidth={2.5} />
+                  </span>
                   <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
                     {content.featuresCarouselTag || 'WEITERE SYSTEMLEISTUNGEN'}
                   </span>

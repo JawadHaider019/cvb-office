@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
-import { CheckCircle2, AlertCircle, Loader2, ArrowRight, ArrowUpRight, ShieldCheck, Check, X } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, ArrowRight, ArrowUpRight, ShieldCheck, Check, X, CalendarCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 export const SignUpForm = ({ onOpenPrivacyModal, }) => {
@@ -149,7 +149,9 @@ export const SignUpForm = ({ onOpenPrivacyModal, }) => {
               <div className="lg:col-span-5 flex flex-col gap-6 sm:gap-7 lg:pr-4">
                 <div>
                   <div className="tech-tag mb-4 sm:mb-5 bg-[#384808] border-[#A09048] text-white">
-                    <span className="tech-tagn bg-[#A09048] text-white">✦</span>
+                    <span className="tech-tagn bg-[#A09048] text-white">
+                      <CalendarCheck size={13} strokeWidth={2.5} />
+                    </span>
                     <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#283505]">
                       {content.formTag || 'JETZT STARTEN'}
                     </span>

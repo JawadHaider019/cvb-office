@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { LayoutGrid, Layers, CreditCard, Globe, ShieldCheck, Plus, ArrowRight, ArrowUpRight, } from 'lucide-react';
+import { LayoutGrid, Layers, CreditCard, Globe, ShieldCheck, Plus, ArrowRight, ArrowUpRight, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 export const FaqAccordion = () => {
@@ -85,7 +85,9 @@ export const FaqAccordion = () => {
             {/* Left Column: Tag & Main Title */}
             <div className="lg:col-span-7 xl:col-span-8">
               <div className="tech-tag mb-4">
-                <span className="tech-tagn">✦</span>
+                <span className="tech-tagn">
+                  <HelpCircle size={13} strokeWidth={2.5} />
+                </span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
                   {content.faqTag || 'HÄUFIG GESTELLTE FRAGEN'}
                 </span>

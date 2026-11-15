@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight, ArrowRight, Sparkles } from 'lucide-react';
 export const Header = () => {
     const { content, generalSettings } = useApp();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -44,7 +44,7 @@ export const Header = () => {
               {tickerItems.map((item, idx) => (
                 <React.Fragment key={`ticker-1-${idx}`}>
                   <span>{item}</span>
-                  <span className="text-[#A09048]">✦</span>
+                  <Sparkles size={11} className="text-[#A09048] shrink-0 inline-block" />
                 </React.Fragment>
               ))}
             </span>
@@ -54,7 +54,7 @@ export const Header = () => {
               {tickerItems.map((item, idx) => (
                 <React.Fragment key={`ticker-2-${idx}`}>
                   <span>{item}</span>
-                  <span className="text-[#A09048]">✦</span>
+                  <Sparkles size={11} className="text-[#A09048] shrink-0 inline-block" />
                 </React.Fragment>
               ))}
             </span>

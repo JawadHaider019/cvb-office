@@ -192,7 +192,7 @@ export const defaultSiteContent = {
             icon: 'Sparkles',
         },
     ],
-    testimonialsTag: '★ STIMMEN AUS DER VERMIETPRAXIS',
+    testimonialsTag: 'STIMMEN AUS DER VERMIETPRAXIS',
     testimonialsHeadline: 'WAS VERMIETER AN CVB-OFFICE SCHÄTZEN.',
     testimonials: [
         {
@@ -214,7 +214,7 @@ export const defaultSiteContent = {
             quote: '„Die CVB Mietverträge und die digitale Unterschrift auf dem Tablet oder Smartphone geben uns und unseren Mietern absolute Sicherheit.“',
         },
     ],
-    audienceTag: '✦ ZIELGRUPPEN & FLOTTEN',
+    audienceTag: 'ZIELGRUPPEN & FLOTTEN',
     audienceHeadline: 'FÜR JEDE VERMIETUNG GEBAUT. VOM EINZELCAMPER BIS ZUR FLOTTE.',
     audienceIntro: 'Ob Wohnmobile, Wohnwagen, Anhänger oder Dachzelte – konzipiert für digitale Direktbuchungen und einen oder mehrere Standorte mit klarer Rechtestruktur.',
     audienceList: [

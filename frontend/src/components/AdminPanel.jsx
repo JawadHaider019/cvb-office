@@ -34,6 +34,16 @@ import {
   Settings,
   Image as ImageIcon,
   Plus,
+  Scale,
+  Boxes,
+  Workflow,
+  Users,
+  BadgePercent,
+  CalendarCheck,
+  HelpCircle,
+  Building2,
+  Compass,
+  MessageSquareQuote,
 } from 'lucide-react';
 
 // Live Homepage Section Components
@@ -176,19 +186,19 @@ export const AdminPanel = () => {
 
   // Homepage sections registry
   const homepageSections = [
-    { id: 'section-header', anchorId: 'sec-header', num: '00', label: 'Navbar & Ticker', title: 'Teil 00: Navbar & Top Sliding Bar', component: <Header /> },
-    { id: 'section-hero', anchorId: 'sec-hero', num: '01', label: 'Hero-Bereich', title: 'Teil 01: Hero-Bereich (Kopfzeile)', component: <Hero /> },
-    { id: 'section-problem', anchorId: 'sec-problem', num: '02', label: 'Problem & Lösung', title: 'Teil 02: Problem & Lösung', component: <ProblemSolution /> },
-    { id: 'section-features', anchorId: 'sec-features', num: '03', label: 'Funktions-Module', title: 'Teil 03: Die 6 Funktions-Module', component: <Features /> },
-    { id: 'section-blocks', anchorId: 'sec-blocks', num: '04', label: 'Die 2 Bausteine', title: 'Teil 04: Mieter-Einweisung & Cockpit', component: <BuildingBlocks /> },
-    { id: 'section-steps', anchorId: 'sec-steps', num: '05', label: '4-Schritte-Ablauf', title: 'Teil 05: Der Ablauf in 4 Schritten', component: <HowItWorks /> },
-    { id: 'section-benefits', anchorId: 'sec-benefits', num: '06', label: 'Vorteile', title: 'Teil 06: Vorteile für Vermieter', component: <Benefits /> },
-    { id: 'section-audience', anchorId: 'sec-audience', num: '07', label: 'Zielgruppen & Stimmen', title: 'Teil 07: Zielgruppen & Praxis-Stimmen', component: <Audience /> },
-    { id: 'section-prices', anchorId: 'sec-prices', num: '08', label: 'Preise & Tarife', title: 'Teil 08: Preis- & Testphasen-Box', component: <PriceTrialBox /> },
-    { id: 'section-form', anchorId: 'sec-form', num: '09', label: 'Buchungsformular', title: 'Teil 09: Mietanfrage-Formular', component: <SignUpForm onOpenPrivacyModal={() => {}} /> },
-    { id: 'section-faq', anchorId: 'sec-faq', num: '10', label: 'FAQ Wissensbasis', title: 'Teil 10: Häufig gestellte Fragen (FAQ)', component: <FaqAccordion /> },
-    { id: 'section-about', anchorId: 'sec-about', num: '11', label: 'Über den CVB', title: 'Teil 11: Über den Caravan-Vermieter-Bund', component: <AboutCvb /> },
-    { id: 'section-footer', anchorId: 'sec-footer', num: '12', label: 'Footer & Kontakt', title: 'Teil 12: Footer & Abschluss', component: <Footer onOpenImpressum={() => {}} onOpenPrivacy={() => {}} /> },
+    { id: 'section-header', anchorId: 'sec-header', num: '00', label: 'Navbar & Ticker', title: 'Teil 00: Navbar & Top Sliding Bar', icon: Sliders, component: <Header /> },
+    { id: 'section-hero', anchorId: 'sec-hero', num: '01', label: 'Hero-Bereich', title: 'Teil 01: Hero-Bereich (Kopfzeile)', icon: Sparkles, component: <Hero /> },
+    { id: 'section-problem', anchorId: 'sec-problem', num: '02', label: 'Problem & Lösung', title: 'Teil 02: Problem & Lösung', icon: Scale, component: <ProblemSolution /> },
+    { id: 'section-features', anchorId: 'sec-features', num: '03', label: 'Funktions-Module', title: 'Teil 03: Die 6 Funktions-Module', icon: Layers, component: <Features /> },
+    { id: 'section-blocks', anchorId: 'sec-blocks', num: '04', label: 'Die 2 Bausteine', title: 'Teil 04: Mieter-Einweisung & Cockpit', icon: Boxes, component: <BuildingBlocks /> },
+    { id: 'section-steps', anchorId: 'sec-steps', num: '05', label: '4-Schritte-Ablauf', title: 'Teil 05: Der Ablauf in 4 Schritten', icon: Workflow, component: <HowItWorks /> },
+    { id: 'section-benefits', anchorId: 'sec-benefits', num: '06', label: 'Vorteile', title: 'Teil 06: Vorteile für Vermieter', icon: TrendingUp, component: <Benefits /> },
+    { id: 'section-audience', anchorId: 'sec-audience', num: '07', label: 'Zielgruppen & Stimmen', title: 'Teil 07: Zielgruppen & Praxis-Stimmen', icon: Users, component: <Audience /> },
+    { id: 'section-prices', anchorId: 'sec-prices', num: '08', label: 'Preise & Tarife', title: 'Teil 08: Preis- & Testphasen-Box', icon: BadgePercent, component: <PriceTrialBox /> },
+    { id: 'section-form', anchorId: 'sec-form', num: '09', label: 'Buchungsformular', title: 'Teil 09: Mietanfrage-Formular', icon: CalendarCheck, component: <SignUpForm onOpenPrivacyModal={() => {}} /> },
+    { id: 'section-faq', anchorId: 'sec-faq', num: '10', label: 'FAQ Wissensbasis', title: 'Teil 10: Häufig gestellte Fragen (FAQ)', icon: HelpCircle, component: <FaqAccordion /> },
+    { id: 'section-about', anchorId: 'sec-about', num: '11', label: 'Über den CVB', title: 'Teil 11: Über den Caravan-Vermieter-Bund', icon: Building2, component: <AboutCvb /> },
+    { id: 'section-footer', anchorId: 'sec-footer', num: '12', label: 'Footer & Kontakt', title: 'Teil 12: Footer & Abschluss', icon: Compass, component: <Footer onOpenImpressum={() => {}} onOpenPrivacy={() => {}} /> },
   ];
 
   // If not logged in, show Executive Login Screen
@@ -1065,10 +1075,12 @@ export const AdminPanel = () => {
                   <button
                     type="button"
                     onClick={() => setEditingSection(sec.id)}
-                    className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#242E05]/95 hover:bg-[#384808] text-white hover:text-[#F4F2E6] border border-[#A09048] shadow-2xl backdrop-blur-md font-spartan font-black text-[11px] sm:text-xs uppercase tracking-wider transition-all duration-200 hover:scale-105 cursor-pointer group/btn"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-[#242E05]/95 hover:bg-[#384808] text-white hover:text-[#F4F2E6] border border-[#A09048] shadow-2xl backdrop-blur-md font-spartan font-black text-[11px] sm:text-xs uppercase tracking-wider transition-all duration-200 hover:scale-105 cursor-pointer group/btn"
                     title={`${sec.label} bearbeiten`}
                   >
-                    <FileEdit size={13} className="text-[#A09048] group-hover/btn:rotate-12 transition-transform" />
+                    <span className="w-5 h-5 rounded-full bg-[#889028] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      {sec.icon ? <sec.icon size={11} strokeWidth={2.5} /> : <FileEdit size={11} />}
+                    </span>
                     <span>Bearbeiten</span>
                   </button>
                 </div>
@@ -1088,9 +1100,20 @@ export const AdminPanel = () => {
                 {/* Drawer Header with Update and Close Actions */}
                 <div className="p-6 bg-[#242E05] text-white flex items-center justify-between border-b border-[#A09048]/30">
                   <div>
-                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-1">
-                      SEKTION BEARBEITEN
-                    </span>
+                    <div className="flex items-center gap-2 mb-1">
+                      {(() => {
+                        const sec = homepageSections.find((s) => s.id === editingSection);
+                        const SecIcon = sec?.icon || Sparkles;
+                        return (
+                          <span className="w-5 h-5 rounded-full bg-[#889028] text-white flex items-center justify-center shrink-0 shadow-xs">
+                            <SecIcon size={12} strokeWidth={2.5} />
+                          </span>
+                        );
+                      })()}
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048]">
+                        SEKTION BEARBEITEN
+                      </span>
+                    </div>
                     <h3 className="font-spartan font-black text-xl uppercase tracking-tight text-white">
                       {homepageSections.find((s) => s.id === editingSection)?.title}
                     </h3>
@@ -2275,7 +2298,7 @@ export const AdminPanel = () => {
                             <label className="block text-xs font-bold text-[#242E05] mb-1">Testimonials Tag</label>
                             <input
                               type="text"
-                              value={contentDraft.testimonialsTag || '★ STIMMEN AUS DER VERMIETPRAXIS'}
+                              value={contentDraft.testimonialsTag || 'STIMMEN AUS DER VERMIETPRAXIS'}
                               onChange={(e) => setContentDraft({ ...contentDraft, testimonialsTag: e.target.value })}
                               className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
                             />
@@ -2359,7 +2382,7 @@ export const AdminPanel = () => {
                           <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Tag</label>
                           <input
                             type="text"
-                            value={contentDraft.audienceTag || '✦ ZIELGRUPPEN & FLOTTEN'}
+                            value={contentDraft.audienceTag || 'ZIELGRUPPEN & FLOTTEN'}
                             onChange={(e) => setContentDraft({ ...contentDraft, audienceTag: e.target.value })}
                             className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
                           />
