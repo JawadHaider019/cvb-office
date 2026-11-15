@@ -29,7 +29,7 @@ export const AboutCvb = () => {
             <div className="tech-tag mb-2 sm:mb-4">
               <span className="tech-tagn">✦</span>
               <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                ÜBER DAS CVB-NETZWERK
+                {content.aboutTag || 'ÜBER DAS CVB-NETZWERK'}
               </span>
             </div>
 
@@ -44,31 +44,25 @@ export const AboutCvb = () => {
           <motion.div initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.55 }} className="lg:col-span-5 flex flex-col justify-between space-y-4 lg:space-y-2">
 
             <h2 className="font-spartan text-[26px] sm:text-4xl lg:text-5xl font-black uppercase text-[#384808] leading-[1.06] sm:leading-[1.02] tracking-tight ">
-              MIT WEITSICHT GEGRÜNDET. {" "}
-              <span className="text-[#889028]">
-                FÜR VERMIETER GEBAUT<span className="text-[#A09048]">.</span>
-              </span>
+              {content.aboutHeadline || 'MIT WEITSICHT GEGRÜNDET. FÜR VERMIETER GEBAUT.'}
             </h2>
             {/* Explanatory Paragraph */}
             <p className="text-sm sm:text-lg text-[#585828] font-normal leading-relaxed font-body">
-              Der Caravan-Vermieter-Bund (CVB) stärkt unabhängige Vermieter mit Praxiswissen, Spezialversicherungen und einem starken Netzwerk von über 1.000 betreuten Fahrzeugen in ganz Deutschland.
+              {content.aboutText}
             </p>
 
             {/* Feature Pills */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#fff] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
-                <Truck size={14} className="text-[#889028]"/>
-                <span>1.000+ Fahrzeuge</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#fff] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
-                <Scale size={14} className="text-[#889028]"/>
-                <span>BGB-Musterverträge</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#fff] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
-                <Users size={14} className="text-[#889028]"/>
-                <span>Starkes Netzwerk</span>
-              </div>
-
+              {(content.aboutPills || ['1.000+ Fahrzeuge', 'BGB-Musterverträge', 'Starkes Netzwerk']).map((pill, pIdx) => {
+                const icons = [Truck, Scale, Users];
+                const Icon = icons[pIdx % icons.length] || Truck;
+                return (
+                  <div key={pIdx} className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#fff] border border-[#A09048]/30 text-xs font-spartan font-bold text-[#384808]">
+                    <Icon size={14} className="text-[#889028]"/>
+                    <span>{pill}</span>
+                  </div>
+                );
+              })}
             </div>
 
             <div>
@@ -104,12 +98,12 @@ export const AboutCvb = () => {
                   </div>
 
                   <h3 className="font-spartan font-black text-lg sm:text-xl text-white uppercase tracking-tight leading-snug">
-                    Caravan-Vermieter-Bund (CVB)
+                    {content.aboutCompany || 'Caravan-Vermieter-Bund (CVB)'}
                   </h3>
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-[#F4F2E6]/85 font-mono mt-3 pt-2.5 border-t border-white/10">
-                  <span>DS-Caravaning GmbH, Detlef Scheer · Niederkrüchten</span>
+                  <span>{content.aboutLocation || 'DS-Caravaning GmbH, Detlef Scheer · Niederkrüchten'}</span>
                   <span className="w-2.5 h-2.5 rounded-full bg-[#A09048] animate-pulse shrink-0 ml-2"/>
                 </div>
               </motion.div>
@@ -162,12 +156,12 @@ export const AboutCvb = () => {
                   <ShieldCheck size={20}/>
                 </div>
                 <h3 className="font-spartan font-black text-lg sm:text-2xl text-white uppercase tracking-tight">
-                  Offizielles Vermieter-Office
+                  {content.aboutBannerTitle || 'Offizielles Vermieter-Office'}
                 </h3>
               </div>
 
               <p className="text-xs sm:text-sm text-[#F4F2E6]/90 font-normal leading-relaxed mb-5 sm:mb-6 max-w-xl font-sans">
-                Gemeinsam stark im Netzwerk – wir geben unabhängigen Wohnmobil- und Caravan-Vermietern die besten Werkzeuge an die Hand. 100 % DSGVO-konform, faire Konditionen und 0 % Buchungsprovision.
+                {content.aboutBannerText || 'Gemeinsam stark im Netzwerk – wir geben unabhängigen Wohnmobil- und Caravan-Vermietern die besten Werkzeuge an die Hand. 100 % DSGVO-konform, faire Konditionen und 0 % Buchungsprovision.'}
               </p>
 
               {/* Action Buttons */}

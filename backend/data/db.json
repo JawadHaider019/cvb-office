@@ -161,7 +161,9 @@
     "blockBImage": "/images/camper_digital_cockpit.jpg",
     "blockBImageAlt": "Digitales Vermiet-Cockpit",
     "aboutImage": "/images/luxury_cockpit_tablet.jpg",
-    "aboutImageAlt": "Caravan-Vermieter-Bund Netzwerk"
+    "aboutImageAlt": "Caravan-Vermieter-Bund Netzwerk",
+    "tickerVisible": false,
+    "test": 1
   },
   "priceSettings": {
     "monthlyNet": 8.33,

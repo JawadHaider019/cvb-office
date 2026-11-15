@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   LayoutDashboard,
@@ -32,6 +32,8 @@ import {
   ChevronDown,
   Sliders,
   Settings,
+  Image as ImageIcon,
+  Plus,
 } from 'lucide-react';
 
 // Live Homepage Section Components
@@ -101,6 +103,15 @@ export const AdminPanel = () => {
   const [contentDraft, setContentDraft] = useState(content);
   const [priceDraft, setPriceDraft] = useState(priceSettings);
   const [settingsDraft, setSettingsDraft] = useState(generalSettings);
+
+  // Sync drafts whenever drawer opens
+  useEffect(() => {
+    if (editingSection) {
+      setContentDraft(content);
+      setPriceDraft(priceSettings);
+      setSettingsDraft(generalSettings);
+    }
+  }, [editingSection, content, priceSettings, generalSettings]);
 
   // Mobile navigation drawer toggle
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1279,113 +1290,221 @@ export const AdminPanel = () => {
 
                   {/* HERO */}
                   {editingSection === 'section-hero' && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                          Hauptüberschrift (H1)
-                        </label>
-                        <input
-                          type="text"
-                          value={contentDraft.heroHeadline}
-                          onChange={(e) => setContentDraft({ ...contentDraft, heroHeadline: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-base font-spartan font-black uppercase text-[#242E05] bg-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                          Einführungstext (Subheadline)
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={contentDraft.heroText}
-                          onChange={(e) => setContentDraft({ ...contentDraft, heroText: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-body text-[#242E05] bg-white leading-relaxed"
-                        />
-                      </div>
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                          Vertrauenszeile (Kicker über dem Titel)
-                        </label>
-                        <input
-                          type="text"
-                          value={contentDraft.trustLine}
-                          onChange={(e) => setContentDraft({ ...contentDraft, trustLine: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-body text-[#242E05] bg-white"
-                        />
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-5">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Titelzeilen &amp; Hauptkicker
+                        </span>
                         <div>
-                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                            Hero-Bildpfad
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Vertrauenszeile (Kicker über dem Titel)
                           </label>
                           <input
                             type="text"
-                            value={contentDraft.heroImage || ''}
-                            onChange={(e) => setContentDraft({ ...contentDraft, heroImage: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-xl border border-[#A09048]/35 text-xs font-mono bg-white"
+                            value={contentDraft.trustLine || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, trustLine: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs font-semibold text-[#242E05] bg-white"
                           />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                              Titel Präfix
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.heroTitlePrefix || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, heroTitlePrefix: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-bold text-[#242E05] bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                              Titel Highlight (Gold)
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.heroTitleHighlight || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, heroTitleHighlight: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-bold text-[#A09048] bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                              Titel Suffix
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.heroTitleSuffix || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, heroTitleSuffix: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-bold text-[#242E05] bg-white"
+                            />
+                          </div>
                         </div>
                         <div>
-                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                            Alt-Text für SEO
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Einführungstext (Subheadline)
                           </label>
-                          <input
-                            type="text"
-                            value={contentDraft.heroImageAlt || ''}
-                            onChange={(e) => setContentDraft({ ...contentDraft, heroImageAlt: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-xl border border-[#A09048]/35 text-xs bg-white"
+                          <textarea
+                            rows={3}
+                            value={contentDraft.heroText || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, heroText: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-body text-[#242E05] bg-white leading-relaxed"
                           />
                         </div>
                       </div>
-                    </div>
-                  )}
 
-                  {/* PROBLEM & SOLUTION */}
-                  {editingSection === 'section-problem' && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                          Abschnittsüberschrift
-                        </label>
-                        <input
-                          type="text"
-                          value={contentDraft.problemHeadline}
-                          onChange={(e) => setContentDraft({ ...contentDraft, problemHeadline: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-base font-spartan font-black uppercase text-[#242E05] bg-white"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* FEATURES */}
-                  {editingSection === 'section-features' && (
-                    <div className="space-y-4">
-                      <span className="font-spartan font-bold text-xs uppercase text-[#242E05] block">
-                        Funktions-Karten bearbeiten ({features.length} Karten im System):
-                      </span>
-                      <div className="space-y-3">
-                        {features.map((feat) => (
-                          <div key={feat.id} className="p-4 bg-white rounded-2xl border border-[#A09048]/30 space-y-2">
-                            <div className="flex items-center justify-between">
+                      {/* Hero Image & Alt Text with Thumbnail Preview */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Hero Hintergrundbild &amp; SEO Alt-Text
+                        </span>
+                        <div className="flex items-center gap-4">
+                          <div className="w-20 h-20 rounded-xl bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center shadow-xs">
+                            {contentDraft.heroImage ? (
+                              <img src={contentDraft.heroImage} alt={contentDraft.heroImageAlt || 'Vorschau'} className="w-full h-full object-cover" />
+                            ) : (
+                              <ImageIcon size={24} className="text-stone-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 space-y-2">
+                            <div>
+                              <label className="block font-spartan font-bold text-[11px] uppercase tracking-wider text-[#242E05] mb-1">
+                                Bildpfad (URL oder /images/...)
+                              </label>
                               <input
                                 type="text"
-                                value={feat.title}
-                                onChange={(e) => updateFeature(feat.id, { title: e.target.value })}
-                                className="w-full px-2.5 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-200 rounded-lg mr-2"
+                                value={contentDraft.heroImage || ''}
+                                onChange={(e) => setContentDraft({ ...contentDraft, heroImage: e.target.value })}
+                                className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-mono bg-white"
                               />
-                              <button
-                                onClick={() => toggleFeatureVisibility(feat.id)}
-                                className="p-1 text-stone-400 hover:text-[#384808]"
-                                title={feat.visible ? 'Ausblenden' : 'Einblenden'}
-                              >
-                                {feat.visible ? <Eye size={16} /> : <EyeOff size={16} />}
-                              </button>
                             </div>
-                            <textarea
-                              rows={2}
-                              value={feat.text}
-                              onChange={(e) => updateFeature(feat.id, { text: e.target.value })}
-                              className="w-full px-2.5 py-1 text-xs text-[#585828] border border-stone-200 rounded-lg"
+                            <div>
+                              <label className="block font-spartan font-bold text-[11px] uppercase tracking-wider text-[#242E05] mb-1">
+                                SEO Alt-Text (Barrierefreiheit &amp; Google)
+                              </label>
+                              <input
+                                type="text"
+                                value={contentDraft.heroImageAlt || ''}
+                                onChange={(e) => setContentDraft({ ...contentDraft, heroImageAlt: e.target.value })}
+                                className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs bg-white"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 3 Check Badges */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          3 Feature-Badges unter dem Intro
+                        </span>
+                        {(contentDraft.heroBadges || [
+                          'Website-Buchungswidget',
+                          'Digitale Verträge als PDF',
+                          'Vorab-Einweisung per QR & Video',
+                        ]).map((badge, bIdx) => (
+                          <div key={bIdx} className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-full bg-[#384808] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
+                              ✓
+                            </span>
+                            <input
+                              type="text"
+                              value={badge}
+                              onChange={(e) => {
+                                const list = [...(contentDraft.heroBadges || [
+                                  'Website-Buchungswidget',
+                                  'Digitale Verträge als PDF',
+                                  'Vorab-Einweisung per QR & Video',
+                                ])];
+                                list[bIdx] = e.target.value;
+                                setContentDraft({ ...contentDraft, heroBadges: list });
+                              }}
+                              className="flex-1 px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-semibold text-[#242E05] bg-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* CTAs */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Buttons &amp; Call-to-Action
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                              Haupt-Button (Primary CTA)
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.heroCtaPrimary || 'CVB-Office anfragen'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, heroCtaPrimary: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                              Zweit-Button (Secondary CTA)
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.heroCtaSecondary || '14 Tage kostenlos testen'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, heroCtaSecondary: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 4 Trust Items */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          4 Sicherheits- &amp; Vertrauenspunkte (Trust Bar)
+                        </span>
+                        {(contentDraft.heroTrustItems || [
+                          { title: 'Serverstandort Deutschland', subtitle: 'Hosting in Frankfurt am Main · Höchste Ausfallsicherheit' },
+                          { title: '100 % DSGVO-konform', subtitle: 'Keine Datenweitergabe · Verschlüsselte Übertragung' },
+                          { title: 'Rechtssichere BGB-Muster', subtitle: 'Speziell für Reisemobil- & Caravan-Vermietung' },
+                          { title: 'Offizieller CVB-Standard', subtitle: 'Entwickelt von Vermietern für Vermieter' },
+                        ]).map((item, tIdx) => (
+                          <div key={tIdx} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-bold text-[#A09048] w-6 shrink-0">
+                                0{tIdx + 1}.
+                              </span>
+                              <input
+                                type="text"
+                                value={item.title}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.heroTrustItems || [
+                                    { title: 'Serverstandort Deutschland', subtitle: 'Hosting in Frankfurt am Main · Höchste Ausfallsicherheit' },
+                                    { title: '100 % DSGVO-konform', subtitle: 'Keine Datenweitergabe · Verschlüsselte Übertragung' },
+                                    { title: 'Rechtssichere BGB-Muster', subtitle: 'Speziell für Reisemobil- & Caravan-Vermietung' },
+                                    { title: 'Offizieller CVB-Standard', subtitle: 'Entwickelt von Vermietern für Vermieter' },
+                                  ])];
+                                  list[tIdx] = { ...list[tIdx], title: e.target.value };
+                                  setContentDraft({ ...contentDraft, heroTrustItems: list });
+                                }}
+                                placeholder="Titel"
+                                className="flex-1 px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                              />
+                            </div>
+                            <input
+                              type="text"
+                              value={item.subtitle}
+                              onChange={(e) => {
+                                const list = [...(contentDraft.heroTrustItems || [
+                                  { title: 'Serverstandort Deutschland', subtitle: 'Hosting in Frankfurt am Main · Höchste Ausfallsicherheit' },
+                                  { title: '100 % DSGVO-konform', subtitle: 'Keine Datenweitergabe · Verschlüsselte Übertragung' },
+                                  { title: 'Rechtssichere BGB-Muster', subtitle: 'Speziell für Reisemobil- & Caravan-Vermietung' },
+                                  { title: 'Offizieller CVB-Standard', subtitle: 'Entwickelt von Vermietern für Vermieter' },
+                                ])];
+                                list[tIdx] = { ...list[tIdx], subtitle: e.target.value };
+                                setContentDraft({ ...contentDraft, heroTrustItems: list });
+                              }}
+                              placeholder="Untertitel / Beschreibung"
+                              className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs text-[#585828] bg-white"
                             />
                           </div>
                         ))}
@@ -1393,72 +1512,648 @@ export const AdminPanel = () => {
                     </div>
                   )}
 
-                  {/* 2 BAUSTEINE */}
-                  {editingSection === 'section-blocks' && (
+                  {/* PROBLEM & SOLUTION */}
+                  {editingSection === 'section-problem' && (
                     <div className="space-y-5">
-                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
-                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block">
-                          BAUSTEIN A: FÜR DEINE MIETER
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Kopfbereich &amp; Texte
                         </span>
                         <div>
-                          <label className="block text-xs font-bold text-[#242E05] mb-1">Titel Baustein A</label>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Sektions-Tag
+                          </label>
                           <input
                             type="text"
-                            value={contentDraft.blockATitle}
-                            onChange={(e) => setContentDraft({ ...contentDraft, blockATitle: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-spartan font-bold"
+                            value={contentDraft.problemTag || 'HERAUSFORDERUNG & LÖSUNG'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, problemTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
                           />
                         </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                              Hauptüberschrift Zeile 1
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.problemHeadline || 'Vermietung kostet Zeit.'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, problemHeadline: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase text-[#242E05] bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                              Unterzeile (Gold)
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.problemSubheadline || 'CVB-Office gibt sie Dir zurück.'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, problemSubheadline: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase text-[#889028] bg-white"
+                            />
+                          </div>
+                        </div>
                         <div>
-                          <label className="block text-xs font-bold text-[#242E05] mb-1">Beschreibung A</label>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Einführungstext (Rechte Spalte)
+                          </label>
                           <textarea
                             rows={3}
-                            value={contentDraft.blockAText}
-                            onChange={(e) => setContentDraft({ ...contentDraft, blockAText: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828]"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-bold text-[#242E05] mb-1">Bildpfad A</label>
-                          <input
-                            type="text"
-                            value={contentDraft.blockAImage || ''}
-                            onChange={(e) => setContentDraft({ ...contentDraft, blockAImage: e.target.value })}
-                            className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-mono"
+                            value={contentDraft.problemIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, problemIntro: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
                           />
                         </div>
                       </div>
 
-                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
-                        <span className="font-spartan font-black text-xs uppercase text-[#A09048] block">
-                          BAUSTEIN B: FÜR DICH ALS VERMIETER
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Spalten-Titel
                         </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-red-600 mb-1">
+                              Linke Spalte (Problem)
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.problemColLeft || 'BISHERIGE VERMIETPRAXIS'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, problemColLeft: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#889028] mb-1">
+                              Rechte Spalte (Lösung)
+                            </label>
+                            <input
+                              type="text"
+                              value={contentDraft.problemColRight || 'MIT DEM CVB-OFFICE'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, problemColRight: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 1-to-1 Problem & Solution Items */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <div className="flex items-center justify-between pb-2 border-b border-[#A09048]/20">
+                          <span className="font-spartan font-black text-xs uppercase text-[#384808]">
+                            1-zu-1 Problem &amp; Lösungs-Paare ({(contentDraft.problems || []).length} Paare)
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const p = [...(contentDraft.problems || [])];
+                              const s = [...(contentDraft.solutions || [])];
+                              p.push('Neues Praxisproblem eingeben');
+                              s.push('Passende digitale CVB-Lösung eingeben');
+                              setContentDraft({ ...contentDraft, problems: p, solutions: s });
+                            }}
+                            className="text-xs font-spartan font-bold uppercase text-[#384808] hover:text-[#A09048] flex items-center gap-1 cursor-pointer"
+                          >
+                            + Paar hinzufügen
+                          </button>
+                        </div>
+
+                        {(contentDraft.problems || []).map((prob, idx) => (
+                          <div key={idx} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-xs font-bold text-[#A09048]">Paar {idx + 1}</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const p = [...(contentDraft.problems || [])];
+                                  const s = [...(contentDraft.solutions || [])];
+                                  if (p.length > 1) {
+                                    p.splice(idx, 1);
+                                    s.splice(idx, 1);
+                                    setContentDraft({ ...contentDraft, problems: p, solutions: s });
+                                  } else {
+                                    alert('Mindestens ein Problem-Lösungs-Paar muss erhalten bleiben.');
+                                  }
+                                }}
+                                className="text-stone-400 hover:text-red-600 p-1 cursor-pointer"
+                                title="Paar entfernen"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-bold text-red-600 mb-0.5">Problem (Rot):</label>
+                              <input
+                                type="text"
+                                value={prob}
+                                onChange={(e) => {
+                                  const p = [...(contentDraft.problems || [])];
+                                  p[idx] = e.target.value;
+                                  setContentDraft({ ...contentDraft, problems: p });
+                                }}
+                                className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs bg-white text-[#585828]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-bold text-[#384808] mb-0.5">Lösung (Grün):</label>
+                              <input
+                                type="text"
+                                value={(contentDraft.solutions || [])[idx] || ''}
+                                onChange={(e) => {
+                                  const s = [...(contentDraft.solutions || [])];
+                                  s[idx] = e.target.value;
+                                  setContentDraft({ ...contentDraft, solutions: s });
+                                }}
+                                className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs bg-white text-[#242E05] font-semibold"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Bottom Note & CTA */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Abschlusszeile &amp; Button
+                        </span>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Hinweistext unten
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.problemBottomNote || 'Alle Abläufe von der ersten Anfrage bis zur Übergabe in einem zentralen System.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, problemBottomNote: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-semibold text-[#242E05] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Button-Text
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.problemBottomCta || 'Jetzt umsteigen'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, problemBottomCta: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* FEATURES */}
+                  {editingSection === 'section-features' && (
+                    <div className="space-y-5">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Kopfbereich &amp; Texte
+                        </span>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Sektions-Tag
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.featuresTag || 'HAUPTFUNKTIONEN & SYSTEM'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, featuresTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Hauptüberschrift
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.featuresHeadline || 'DIE KOMPLETTLÖSUNG FÜR VERMIETER IM BUND.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, featuresHeadline: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase text-[#242E05] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            Einführungstext
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.featuresIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, featuresIntro: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1">
+                            CTA-Button Text
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.featuresCta || 'CVB-Office anfragen'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, featuresCta: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      {/* 3 Spotlight Photo Cards */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          3 Spotlight Fotokarten (Obere Reihe)
+                        </span>
+                        {(contentDraft.featuresSpotlightModules || [
+                          { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
+                          { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
+                          { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
+                        ]).map((mod, mIdx) => (
+                          <div key={mIdx} className="p-4 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-3">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-full bg-[#384808] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
+                                {mIdx + 1}
+                              </span>
+                              <input
+                                type="text"
+                                value={mod.title}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.featuresSpotlightModules || [
+                                    { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
+                                    { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
+                                    { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
+                                  ])];
+                                  list[mIdx] = { ...list[mIdx], title: e.target.value };
+                                  setContentDraft({ ...contentDraft, featuresSpotlightModules: list });
+                                }}
+                                className="flex-1 px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-spartan font-bold text-[#242E05] bg-white"
+                              />
+                            </div>
+                            <textarea
+                              rows={2}
+                              value={mod.desc}
+                              onChange={(e) => {
+                                const list = [...(contentDraft.featuresSpotlightModules || [
+                                  { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
+                                  { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
+                                  { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
+                                ])];
+                                list[mIdx] = { ...list[mIdx], desc: e.target.value };
+                                setContentDraft({ ...contentDraft, featuresSpotlightModules: list });
+                              }}
+                              className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs text-[#585828] bg-white"
+                            />
+                            <div className="flex items-center gap-3">
+                              <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
+                                {mod.image ? (
+                                  <img src={mod.image} alt={mod.imageAlt || mod.title} className="w-full h-full object-cover" />
+                                ) : (
+                                  <ImageIcon size={18} className="text-stone-400" />
+                                )}
+                              </div>
+                              <div className="flex-1 space-y-1.5">
+                                <input
+                                  type="text"
+                                  value={mod.image || ''}
+                                  onChange={(e) => {
+                                    const list = [...(contentDraft.featuresSpotlightModules || [
+                                      { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
+                                      { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
+                                      { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
+                                    ])];
+                                    list[mIdx] = { ...list[mIdx], image: e.target.value };
+                                    setContentDraft({ ...contentDraft, featuresSpotlightModules: list });
+                                  }}
+                                  placeholder="Bildpfad (/images/...)"
+                                  className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
+                                />
+                                <input
+                                  type="text"
+                                  value={mod.imageAlt || ''}
+                                  onChange={(e) => {
+                                    const list = [...(contentDraft.featuresSpotlightModules || [
+                                      { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
+                                      { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
+                                      { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
+                                    ])];
+                                    list[mIdx] = { ...list[mIdx], imageAlt: e.target.value };
+                                    setContentDraft({ ...contentDraft, featuresSpotlightModules: list });
+                                  }}
+                                  placeholder="Bild Alt-Text"
+                                  className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Carousel Features */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Karussell Systemkarten ({features.length} Karten)
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                          <div>
+                            <label className="block text-[11px] font-bold text-[#242E05] mb-1">Karussell Tag</label>
+                            <input
+                              type="text"
+                              value={contentDraft.featuresCarouselTag || 'WEITERE SYSTEMLEISTUNGEN'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, featuresCarouselTag: e.target.value })}
+                              className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-bold text-[#242E05] mb-1">Karussell Titel</label>
+                            <input
+                              type="text"
+                              value={contentDraft.featuresCarouselHeadline || 'ALLE SYSTEMFUNKTIONEN IM ÜBERBLICK.'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, featuresCarouselHeadline: e.target.value })}
+                              className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          {features.map((feat) => (
+                            <div key={feat.id} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <input
+                                  type="text"
+                                  value={feat.title}
+                                  onChange={(e) => updateFeature(feat.id, { title: e.target.value })}
+                                  className="w-full px-2.5 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-300 rounded mr-2 bg-white"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => toggleFeatureVisibility(feat.id)}
+                                  className="p-1 text-stone-400 hover:text-[#384808] cursor-pointer"
+                                  title={feat.visible ? 'Ausblenden' : 'Einblenden'}
+                                >
+                                  {feat.visible ? <Eye size={16} /> : <EyeOff size={16} />}
+                                </button>
+                              </div>
+                              <textarea
+                                rows={2}
+                                value={feat.text}
+                                onChange={(e) => updateFeature(feat.id, { text: e.target.value })}
+                                className="w-full px-2.5 py-1 text-xs text-[#585828] border border-stone-300 rounded bg-white"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 2 BAUSTEINE */}
+                  {editingSection === 'section-blocks' && (
+                    <div className="space-y-5">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Sektions-Kopf
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Sektions-Tag</label>
+                          <input
+                            type="text"
+                            value={contentDraft.blocksTag || 'DIE ZWEI BAUSTEINE'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, blocksTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Hauptüberschrift</label>
+                          <input
+                            type="text"
+                            value={contentDraft.blocksHeadline || 'Digitale Vorab-Einweisung & zentrales Vermiet-Cockpit.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, blocksHeadline: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Einführungstext</label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.blocksIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, blocksIntro: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+                      </div>
+
+                      {/* BAUSTEIN A */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          BAUSTEIN A: FÜR DEINE MIETER (Vorab-Einweisung)
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Tag Baustein A</label>
+                            <input
+                              type="text"
+                              value={contentDraft.blockATag || 'FÜR DEINE MIETER'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, blockATag: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Bild-Badge unten</label>
+                            <input
+                              type="text"
+                              value={contentDraft.blockABadge || 'Vorab per Smartphone & QR-Code'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, blockABadge: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Titel Baustein A</label>
+                          <input
+                            type="text"
+                            value={contentDraft.blockATitle || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, blockATitle: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-spartan font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Beschreibung Baustein A</label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.blockAText || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, blockAText: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
+                          />
+                        </div>
+
+                        {/* Image & Alt */}
+                        <div className="flex items-center gap-3 p-3 bg-[#F9F8F3] rounded-xl border border-stone-200">
+                          <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
+                            {contentDraft.blockAImage ? (
+                              <img src={contentDraft.blockAImage} alt={contentDraft.blockAImageAlt || 'A'} className="w-full h-full object-cover" />
+                            ) : (
+                              <ImageIcon size={18} className="text-stone-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 space-y-1.5">
+                            <input
+                              type="text"
+                              value={contentDraft.blockAImage || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, blockAImage: e.target.value })}
+                              placeholder="Bildpfad A (/images/...)"
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={contentDraft.blockAImageAlt || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, blockAImageAlt: e.target.value })}
+                              placeholder="Alt-Text A"
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        {/* 3 Sub-Features */}
+                        <div className="space-y-2 pt-2">
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05]">
+                            3 Unterpunkte Baustein A
+                          </label>
+                          {(contentDraft.blockAFeatures || [
+                            { num: '01', title: 'Kurze Videos auf dem Smartphone', text: 'Deine Mieter sehen sich die wichtigsten Funktionen bereits vor der Übergabe an.' },
+                            { num: '02', title: 'QR-Codes im Fahrzeug', text: 'Direkt im Camper scannen und unterwegs sofort die passende Anleitung finden.' },
+                            { num: '03', title: 'Digitaler KI-Assistent', text: 'Beantwortet Mieterfragen rund um das gemietete Fahrzeug jederzeit direkt.' },
+                          ]).map((fItem, fIdx) => (
+                            <div key={fIdx} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-1.5">
+                              <input
+                                type="text"
+                                value={fItem.title}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.blockAFeatures || [
+                                    { num: '01', title: 'Kurze Videos auf dem Smartphone', text: 'Deine Mieter sehen sich die wichtigsten Funktionen bereits vor der Übergabe an.' },
+                                    { num: '02', title: 'QR-Codes im Fahrzeug', text: 'Direkt im Camper scannen und unterwegs sofort die passende Anleitung finden.' },
+                                    { num: '03', title: 'Digitaler KI-Assistent', text: 'Beantwortet Mieterfragen rund um das gemietete Fahrzeug jederzeit direkt.' },
+                                  ])];
+                                  list[fIdx] = { ...list[fIdx], title: e.target.value };
+                                  setContentDraft({ ...contentDraft, blockAFeatures: list });
+                                }}
+                                className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                              />
+                              <input
+                                type="text"
+                                value={fItem.text}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.blockAFeatures || [
+                                    { num: '01', title: 'Kurze Videos auf dem Smartphone', text: 'Deine Mieter sehen sich die wichtigsten Funktionen bereits vor der Übergabe an.' },
+                                    { num: '02', title: 'QR-Codes im Fahrzeug', text: 'Direkt im Camper scannen und unterwegs sofort die passende Anleitung finden.' },
+                                    { num: '03', title: 'Digitaler KI-Assistent', text: 'Beantwortet Mieterfragen rund um das gemietete Fahrzeug jederzeit direkt.' },
+                                  ])];
+                                  list[fIdx] = { ...list[fIdx], text: e.target.value };
+                                  setContentDraft({ ...contentDraft, blockAFeatures: list });
+                                }}
+                                className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs text-[#585828] bg-white"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* BAUSTEIN B */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#A09048] block pb-2 border-b border-[#A09048]/20">
+                          BAUSTEIN B: FÜR DICH ALS VERMIETER (Vermiet-Office)
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Tag Baustein B</label>
+                          <input
+                            type="text"
+                            value={contentDraft.blockBTag || 'FÜR DICH ALS VERMIETER'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, blockBTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
                         <div>
                           <label className="block text-xs font-bold text-[#242E05] mb-1">Titel Baustein B</label>
                           <input
                             type="text"
-                            value={contentDraft.blockBTitle}
+                            value={contentDraft.blockBTitle || ''}
                             onChange={(e) => setContentDraft({ ...contentDraft, blockBTitle: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-spartan font-bold"
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-spartan font-bold bg-white"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-[#242E05] mb-1">Beschreibung B</label>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Beschreibung Baustein B</label>
                           <textarea
                             rows={3}
-                            value={contentDraft.blockBText}
+                            value={contentDraft.blockBText || ''}
                             onChange={(e) => setContentDraft({ ...contentDraft, blockBText: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828]"
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
                           />
                         </div>
-                        <div>
-                          <label className="block text-xs font-bold text-[#242E05] mb-1">Bildpfad B</label>
-                          <input
-                            type="text"
-                            value={contentDraft.blockBImage || ''}
-                            onChange={(e) => setContentDraft({ ...contentDraft, blockBImage: e.target.value })}
-                            className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-mono"
-                          />
+
+                        {/* Image & Alt */}
+                        <div className="flex items-center gap-3 p-3 bg-[#F9F8F3] rounded-xl border border-stone-200">
+                          <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
+                            {contentDraft.blockBImage ? (
+                              <img src={contentDraft.blockBImage} alt={contentDraft.blockBImageAlt || 'B'} className="w-full h-full object-cover" />
+                            ) : (
+                              <ImageIcon size={18} className="text-stone-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 space-y-1.5">
+                            <input
+                              type="text"
+                              value={contentDraft.blockBImage || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, blockBImage: e.target.value })}
+                              placeholder="Bildpfad B (/images/...)"
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={contentDraft.blockBImageAlt || ''}
+                              onChange={(e) => setContentDraft({ ...contentDraft, blockBImageAlt: e.target.value })}
+                              placeholder="Alt-Text B"
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        {/* 3 Sub-Features */}
+                        <div className="space-y-2 pt-2">
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05]">
+                            3 Unterpunkte Baustein B
+                          </label>
+                          {(contentDraft.blockBFeatures || [
+                            { num: '01', title: 'Zentrales Cockpit', text: 'Alle Termine, Verträge und Fahrzeugstatus in Echtzeit auf einen Blick.' },
+                            { num: '02', title: 'Digitale Verträge', text: 'Rechtssichere Mietverträge, Protokolle und Rechnungen sekundenschnell als PDF.' },
+                            { num: '03', title: 'Standorte & Partnerflotten', text: 'Mehrere Übergabestationen oder Partnerflotten mit klarer Trennung verwalten.' },
+                          ]).map((fItem, fIdx) => (
+                            <div key={fIdx} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-1.5">
+                              <input
+                                type="text"
+                                value={fItem.title}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.blockBFeatures || [
+                                    { num: '01', title: 'Zentrales Cockpit', text: 'Alle Termine, Verträge und Fahrzeugstatus in Echtzeit auf einen Blick.' },
+                                    { num: '02', title: 'Digitale Verträge', text: 'Rechtssichere Mietverträge, Protokolle und Rechnungen sekundenschnell als PDF.' },
+                                    { num: '03', title: 'Standorte & Partnerflotten', text: 'Mehrere Übergabestationen oder Partnerflotten mit klarer Trennung verwalten.' },
+                                  ])];
+                                  list[fIdx] = { ...list[fIdx], title: e.target.value };
+                                  setContentDraft({ ...contentDraft, blockBFeatures: list });
+                                }}
+                                className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                              />
+                              <input
+                                type="text"
+                                value={fItem.text}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.blockBFeatures || [
+                                    { num: '01', title: 'Zentrales Cockpit', text: 'Alle Termine, Verträge und Fahrzeugstatus in Echtzeit auf einen Blick.' },
+                                    { num: '02', title: 'Digitale Verträge', text: 'Rechtssichere Mietverträge, Protokolle und Rechnungen sekundenschnell als PDF.' },
+                                    { num: '03', title: 'Standorte & Partnerflotten', text: 'Mehrere Übergabestationen oder Partnerflotten mit klarer Trennung verwalten.' },
+                                  ])];
+                                  list[fIdx] = { ...list[fIdx], text: e.target.value };
+                                  setContentDraft({ ...contentDraft, blockBFeatures: list });
+                                }}
+                                className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs text-[#585828] bg-white"
+                              />
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -1466,170 +2161,978 @@ export const AdminPanel = () => {
 
                   {/* 4 SCHRITTE */}
                   {editingSection === 'section-steps' && (
-                    <div className="space-y-3">
-                      {steps.map((st) => (
-                        <div key={st.id} className="p-4 bg-white rounded-2xl border border-[#A09048]/30 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="w-6 h-6 rounded-full bg-[#384808] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
-                              {st.number}
-                            </span>
-                            <input
-                              type="text"
-                              value={st.title}
-                              onChange={(e) => updateStep(st.id, { title: e.target.value })}
-                              className="w-full px-3 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-200 rounded-lg"
-                            />
-                          </div>
-                          <textarea
-                            rows={2}
-                            value={st.text}
-                            onChange={(e) => updateStep(st.id, { text: e.target.value })}
-                            className="w-full px-3 py-1.5 text-xs text-[#585828] border border-stone-200 rounded-lg"
+                    <div className="space-y-5">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Kopfbereich &amp; Texte
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Sektions-Tag</label>
+                          <input
+                            type="text"
+                            value={contentDraft.stepsTag || 'DER VERMIETPROZESS'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, stepsTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
                           />
                         </div>
-                      ))}
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Hauptüberschrift</label>
+                          <input
+                            type="text"
+                            value={contentDraft.stepsHeadline || 'IN 4 SCHRITTEN VON DER ANFRAGE ZUR ÜBERGABE.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, stepsHeadline: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Einführungstext</label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.stepsIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, stepsIntro: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+                      </div>
+
+                      {/* 4 Schritte */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Die 4 Prozess-Schritte
+                        </span>
+                        {steps.map((st) => (
+                          <div key={st.id} className="p-4 bg-[#F9F8F3] rounded-2xl border border-stone-200 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-full bg-[#384808] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
+                                {st.number}
+                              </span>
+                              <input
+                                type="text"
+                                value={st.title}
+                                onChange={(e) => updateStep(st.id, { title: e.target.value })}
+                                className="w-full px-3 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-300 rounded-lg bg-white"
+                              />
+                            </div>
+                            <textarea
+                              rows={2}
+                              value={st.text}
+                              onChange={(e) => updateStep(st.id, { text: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs text-[#585828] border border-stone-300 rounded-lg bg-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Callout Box Unten */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Workflow-Banner unter den Schritten
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Titel</label>
+                          <input
+                            type="text"
+                            value={contentDraft.stepsCalloutTitle || 'KEIN SYSTEMBRUCH MEHR:'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, stepsCalloutTitle: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Beschreibung</label>
+                          <input
+                            type="text"
+                            value={contentDraft.stepsCalloutText || 'Alle Schritte von der ersten Buchungsanfrage bis zum unterschriebenen Übergabeprotokoll greifen nahtlos ineinander.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, stepsCalloutText: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Button</label>
+                          <input
+                            type="text"
+                            value={contentDraft.stepsCalloutCta || 'Jetzt Prozess digitalisieren'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, stepsCalloutCta: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* VORTEILE & ZIELGRUPPE */}
+                  {editingSection === 'section-audience' && (
+                    <div className="space-y-5">
+                      {/* Vorteile */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Teil 1: Vorteile für Vermieter (Band 1)
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Vorteile Tag</label>
+                            <input
+                              type="text"
+                              value={contentDraft.benefitsTag || 'VORTEILE FÜR VERMIETER'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, benefitsTag: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Vorteile Button</label>
+                            <input
+                              type="text"
+                              value={contentDraft.benefitsCta || 'Jetzt starten'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, benefitsCta: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Vorteile Überschrift</label>
+                          <input
+                            type="text"
+                            value={contentDraft.benefitsHeadline || 'WARUM SICH CVB-OFFICE FÜR DEINEN BETRIEB AUSZAHLT.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, benefitsHeadline: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Vorteile Beschreibung</label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.benefitsIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, benefitsIntro: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+
+                        {/* 6 Vorteile List */}
+                        <div className="space-y-2 pt-2">
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05]">
+                            6 durchnummerierte Vorteile
+                          </label>
+                          {(contentDraft.benefitsList || [
+                            { title: 'Weniger Aufwand', text: 'Keine Zettelwirtschaft mehr. Automatisierte Workflows sparen wertvolle Stunden pro Vermietung.' },
+                            { title: 'Schnellere Bearbeitung', text: 'Vom ersten Kundenkontakt bis zum unterschriebenen Vertrag in Minuten statt Tagen.' },
+                            { title: 'Volle Transparenz', text: 'Jederzeit exakter Überblick über Flottenauslastung, Umsätze und anstehende Übergaben.' },
+                            { title: 'Professioneller Auftritt', text: 'Modernes Buchungserlebnis für Deine Mieter und saubere, ansprechende PDF-Dokumente.' },
+                            { title: 'Keine Medienbrüche', text: 'Alle Schritte von der Buchung bis zur Schadensdokumentation in einem nahtlosen System.' },
+                            { title: 'Einfacher Einstieg', text: 'Keine komplexe IT-Installation. Sofort im Browser einsatzbereit mit persönlichem CVB-Support.' },
+                          ]).map((bItem, bIdx) => (
+                            <div key={bIdx} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-xs font-bold text-[#889028] w-6 shrink-0">
+                                  0{bIdx + 1}.
+                                </span>
+                                <input
+                                  type="text"
+                                  value={bItem.title}
+                                  onChange={(e) => {
+                                    const list = [...(contentDraft.benefitsList || [
+                                      { title: 'Weniger Aufwand', text: 'Keine Zettelwirtschaft mehr. Automatisierte Workflows sparen wertvolle Stunden pro Vermietung.' },
+                                      { title: 'Schnellere Bearbeitung', text: 'Vom ersten Kundenkontakt bis zum unterschriebenen Vertrag in Minuten statt Tagen.' },
+                                      { title: 'Volle Transparenz', text: 'Jederzeit exakter Überblick über Flottenauslastung, Umsätze und anstehende Übergaben.' },
+                                      { title: 'Professioneller Auftritt', text: 'Modernes Buchungserlebnis für Deine Mieter und saubere, ansprechende PDF-Dokumente.' },
+                                      { title: 'Keine Medienbrüche', text: 'Alle Schritte von der Buchung bis zur Schadensdokumentation in einem nahtlosen System.' },
+                                      { title: 'Einfacher Einstieg', text: 'Keine komplexe IT-Installation. Sofort im Browser einsatzbereit mit persönlichem CVB-Support.' },
+                                    ])];
+                                    list[bIdx] = { ...list[bIdx], title: e.target.value };
+                                    setContentDraft({ ...contentDraft, benefitsList: list });
+                                  }}
+                                  className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                                />
+                              </div>
+                              <input
+                                type="text"
+                                value={bItem.text}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.benefitsList || [
+                                    { title: 'Weniger Aufwand', text: 'Keine Zettelwirtschaft mehr. Automatisierte Workflows sparen wertvolle Stunden pro Vermietung.' },
+                                    { title: 'Schnellere Bearbeitung', text: 'Vom ersten Kundenkontakt bis zum unterschriebenen Vertrag in Minuten statt Tagen.' },
+                                    { title: 'Volle Transparenz', text: 'Jederzeit exakter Überblick über Flottenauslastung, Umsätze und anstehende Übergaben.' },
+                                    { title: 'Professioneller Auftritt', text: 'Modernes Buchungserlebnis für Deine Mieter und saubere, ansprechende PDF-Dokumente.' },
+                                    { title: 'Keine Medienbrüche', text: 'Alle Schritte von der Buchung bis zur Schadensdokumentation in einem nahtlosen System.' },
+                                    { title: 'Einfacher Einstieg', text: 'Keine komplexe IT-Installation. Sofort im Browser einsatzbereit mit persönlichem CVB-Support.' },
+                                  ])];
+                                  list[bIdx] = { ...list[bIdx], text: e.target.value };
+                                  setContentDraft({ ...contentDraft, benefitsList: list });
+                                }}
+                                className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs text-[#585828] bg-white"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* 3 Testimonials */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Teil 2: Stimmen aus der Praxis (Testimonials)
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Testimonials Tag</label>
+                            <input
+                              type="text"
+                              value={contentDraft.testimonialsTag || '★ STIMMEN AUS DER VERMIETPRAXIS'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, testimonialsTag: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Testimonials Überschrift</label>
+                            <input
+                              type="text"
+                              value={contentDraft.testimonialsHeadline || 'WAS VERMIETER AN CVB-OFFICE SCHÄTZEN.'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, testimonialsHeadline: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        {(contentDraft.testimonials || [
+                          { num: '01', title: 'Familienbetrieb (6 Fahrzeuge)', region: 'Bayern · 50 % Zeitersparnis', quote: '„Die Video-Einweisung vorab spart uns Samstags pro Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren.“' },
+                          { num: '02', title: 'Wohnmobilvermietung (14 Mobile)', region: 'NRW · 0 % Provision', quote: '„Mit dem 1-Zeilen-Kalender auf unserer Website buchen Kunden direkt bei uns statt über teure Vermittlungsportale. 0 % Provision ab Tag eins.“' },
+                          { num: '03', title: 'Camper-Station (3 Vans)', region: 'Norddeutschland · Rechtssicher', quote: '„Die CVB Mietverträge und die digitale Unterschrift auf dem Tablet oder Smartphone geben uns und unseren Mietern absolute Sicherheit.“' },
+                        ]).map((testi, tIdx) => (
+                          <div key={tIdx} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-bold text-[#A09048] w-6 shrink-0">
+                                0{tIdx + 1}.
+                              </span>
+                              <input
+                                type="text"
+                                value={testi.title}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.testimonials || [
+                                    { num: '01', title: 'Familienbetrieb (6 Fahrzeuge)', region: 'Bayern · 50 % Zeitersparnis', quote: '„Die Video-Einweisung vorab spart uns Samstags pro Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren.“' },
+                                    { num: '02', title: 'Wohnmobilvermietung (14 Mobile)', region: 'NRW · 0 % Provision', quote: '„Mit dem 1-Zeilen-Kalender auf unserer Website buchen Kunden direkt bei uns statt über teure Vermittlungsportale. 0 % Provision ab Tag eins.“' },
+                                    { num: '03', title: 'Camper-Station (3 Vans)', region: 'Norddeutschland · Rechtssicher', quote: '„Die CVB Mietverträge und die digitale Unterschrift auf dem Tablet oder Smartphone geben uns und unseren Mietern absolute Sicherheit.“' },
+                                  ])];
+                                  list[tIdx] = { ...list[tIdx], title: e.target.value };
+                                  setContentDraft({ ...contentDraft, testimonials: list });
+                                }}
+                                placeholder="Betrieb / Name"
+                                className="flex-1 px-2.5 py-1 rounded border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                              />
+                              <input
+                                type="text"
+                                value={testi.region}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.testimonials || [
+                                    { num: '01', title: 'Familienbetrieb (6 Fahrzeuge)', region: 'Bayern · 50 % Zeitersparnis', quote: '„Die Video-Einweisung vorab spart uns Samstags pro Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren.“' },
+                                    { num: '02', title: 'Wohnmobilvermietung (14 Mobile)', region: 'NRW · 0 % Provision', quote: '„Mit dem 1-Zeilen-Kalender auf unserer Website buchen Kunden direkt bei uns statt über teure Vermittlungsportale. 0 % Provision ab Tag eins.“' },
+                                    { num: '03', title: 'Camper-Station (3 Vans)', region: 'Norddeutschland · Rechtssicher', quote: '„Die CVB Mietverträge und die digitale Unterschrift auf dem Tablet oder Smartphone geben uns und unseren Mietern absolute Sicherheit.“' },
+                                  ])];
+                                  list[tIdx] = { ...list[tIdx], region: e.target.value };
+                                  setContentDraft({ ...contentDraft, testimonials: list });
+                                }}
+                                placeholder="Region / Kennzahl"
+                                className="w-1/3 px-2.5 py-1 rounded border border-stone-300 text-xs font-mono text-[#889028] bg-white"
+                              />
+                            </div>
+                            <textarea
+                              rows={2}
+                              value={testi.quote}
+                              onChange={(e) => {
+                                const list = [...(contentDraft.testimonials || [
+                                  { num: '01', title: 'Familienbetrieb (6 Fahrzeuge)', region: 'Bayern · 50 % Zeitersparnis', quote: '„Die Video-Einweisung vorab spart uns Samstags pro Übergabe mindestens 30 Minuten. Die Mieter wissen bereits, wie Toilette und Gas funktionieren.“' },
+                                  { num: '02', title: 'Wohnmobilvermietung (14 Mobile)', region: 'NRW · 0 % Provision', quote: '„Mit dem 1-Zeilen-Kalender auf unserer Website buchen Kunden direkt bei uns statt über teure Vermittlungsportale. 0 % Provision ab Tag eins.“' },
+                                  { num: '03', title: 'Camper-Station (3 Vans)', region: 'Norddeutschland · Rechtssicher', quote: '„Die CVB Mietverträge und die digitale Unterschrift auf dem Tablet oder Smartphone geben uns und unseren Mietern absolute Sicherheit.“' },
+                                ])];
+                                list[tIdx] = { ...list[tIdx], quote: e.target.value };
+                                setContentDraft({ ...contentDraft, testimonials: list });
+                              }}
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Zielgruppen Banner */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Teil 3: Zielgruppen &amp; Flotten (Banner)
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Tag</label>
+                          <input
+                            type="text"
+                            value={contentDraft.audienceTag || '✦ ZIELGRUPPEN & FLOTTEN'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, audienceTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Überschrift</label>
+                          <input
+                            type="text"
+                            value={contentDraft.audienceHeadline || 'FÜR JEDE VERMIETUNG GEBAUT. VOM EINZELCAMPER BIS ZUR FLOTTE.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, audienceHeadline: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Beschreibung</label>
+                          <textarea
+                            rows={2}
+                            value={contentDraft.audienceIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, audienceIntro: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Haupt-Button (Primary CTA)</label>
+                            <input
+                              type="text"
+                              value={contentDraft.audienceCtaPrimary || 'Jetzt anfragen'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, audienceCtaPrimary: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Zweit-Button (Secondary CTA)</label>
+                            <input
+                              type="text"
+                              value={contentDraft.audienceCtaSecondary || '14 Tage kostenlos testen'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, audienceCtaSecondary: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        {/* 4 Audience Pills */}
+                        <div className="space-y-2 pt-2">
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05]">
+                            4 Zielgruppen-Pills
+                          </label>
+                          {(contentDraft.audienceList || [
+                            { title: 'Wohnmobil- und Camper-Vermieter', text: 'Kleine und mittelgroße Betreiber sowie ambitionierte private Vermieter mit 1 bis 50+ Fahrzeugen.' },
+                            { title: 'Vermieter von Fahrzeugen & Objekten', text: 'Auch ideal geeignet für Wohnwagen, Anhänger, Camping-Equipment, Dachzelte und Zubehör.' },
+                            { title: 'Betriebe mit digitalen Buchungsprozessen', text: 'Vermieter, die ihren Kunden moderne Online-Buchung und direkte Verfügbarkeitsabfrage bieten wollen.' },
+                            { title: 'Mehrere Standorte und Flotten', text: 'Unternehmen mit mehreren Übergabestationen oder Vermiet-Partnerschaften mit klarer Rechtestruktur.' },
+                          ]).map((aud, aIdx) => (
+                            <div key={aIdx} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-1">
+                              <input
+                                type="text"
+                                value={aud.title}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.audienceList || [
+                                    { title: 'Wohnmobil- und Camper-Vermieter', text: 'Kleine und mittelgroße Betreiber sowie ambitionierte private Vermieter mit 1 bis 50+ Fahrzeugen.' },
+                                    { title: 'Vermieter von Fahrzeugen & Objekten', text: 'Auch ideal geeignet für Wohnwagen, Anhänger, Camping-Equipment, Dachzelte und Zubehör.' },
+                                    { title: 'Betriebe mit digitalen Buchungsprozessen', text: 'Vermieter, die ihren Kunden moderne Online-Buchung und direkte Verfügbarkeitsabfrage bieten wollen.' },
+                                    { title: 'Mehrere Standorte und Flotten', text: 'Unternehmen mit mehreren Übergabestationen oder Vermiet-Partnerschaften mit klarer Rechtestruktur.' },
+                                  ])];
+                                  list[aIdx] = { ...list[aIdx], title: e.target.value };
+                                  setContentDraft({ ...contentDraft, audienceList: list });
+                                }}
+                                className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   )}
 
                   {/* PREISE & TARIFE */}
                   {editingSection === 'section-prices' && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                          Monatspreis netto pro Fahrzeug (€)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={priceDraft.monthlyNet}
-                          onChange={(e) => setPriceDraft({ ...priceDraft, monthlyNet: parseFloat(e.target.value) || 0 })}
-                          className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-base font-spartan font-black text-[#242E05] bg-white"
-                        />
+                    <div className="space-y-5">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Sektions-Kopf &amp; Tarife
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Sektions-Tag</label>
+                          <input
+                            type="text"
+                            value={contentDraft.pricesTag || 'TARIFE & EXKLUSIVKONDITIONEN'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, pricesTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Hauptüberschrift</label>
+                          <input
+                            type="text"
+                            value={contentDraft.pricesHeadline || 'EINFACHE, TRANSPARENTE PREISSTRUKTUR FÜR CVB-MITGLIEDER.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, pricesHeadline: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Einführungstext</label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.pricesIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, pricesIntro: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Tarif-Badge</label>
+                            <input
+                              type="text"
+                              value={contentDraft.pricesBadge || 'CVB-MITGLIEDSTARIF'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, pricesBadge: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Einheit-Text</label>
+                            <input
+                              type="text"
+                              value={contentDraft.pricesUnit || 'netto / Fahrzeug / Monat'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, pricesUnit: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                          Jahrespreis netto pro Fahrzeug (€)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={priceDraft.yearlyNet}
-                          onChange={(e) => setPriceDraft({ ...priceDraft, yearlyNet: parseFloat(e.target.value) || 0 })}
-                          className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-base font-spartan font-black text-[#242E05] bg-white"
-                        />
+
+                      {/* Preiswerte & Abrechnung */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Preiseinstellungen &amp; Berechnungslogik
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                              Monatspreis netto pro Fahrzeug (€)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={priceDraft.monthlyNet}
+                              onChange={(e) => setPriceDraft({ ...priceDraft, monthlyNet: parseFloat(e.target.value) || 0 })}
+                              className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-base font-spartan font-black text-[#242E05] bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                              Jahrespreis netto pro Fahrzeug (€)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={priceDraft.yearlyNet}
+                              onChange={(e) => setPriceDraft({ ...priceDraft, yearlyNet: parseFloat(e.target.value) || 0 })}
+                              className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-base font-spartan font-black text-[#242E05] bg-white"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Hinweistext zur Abrechnung
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={priceDraft.noteText}
+                            onChange={(e) => setPriceDraft({ ...priceDraft, noteText: e.target.value })}
+                            className="w-full px-4 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                          Hinweistext zur Abrechnung
-                        </label>
-                        <textarea
-                          rows={2}
-                          value={priceDraft.noteText}
-                          onChange={(e) => setPriceDraft({ ...priceDraft, noteText: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
-                        />
+
+                      {/* 4 Checklist Items */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Checklisten-Punkte in der Preis-Box
+                        </span>
+                        {(contentDraft.pricesChecklist || [
+                          'Voller Funktionsumfang & Website-Buchungswidget',
+                          'Digitale Vorab-Einweisung per QR-Code & Video',
+                          'Unbegrenzte Buchungen, Verträge und Mieterdaten',
+                          '14 Tage kostenlos testen, keine automatische Verlängerung',
+                        ]).map((chk, cIdx) => (
+                          <div key={cIdx} className="flex items-center gap-2">
+                            <span className="w-5 h-5 rounded-full bg-[#A09048] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
+                              ✓
+                            </span>
+                            <input
+                              type="text"
+                              value={chk}
+                              onChange={(e) => {
+                                const list = [...(contentDraft.pricesChecklist || [
+                                  'Voller Funktionsumfang & Website-Buchungswidget',
+                                  'Digitale Vorab-Einweisung per QR-Code & Video',
+                                  'Unbegrenzte Buchungen, Verträge und Mieterdaten',
+                                  '14 Tage kostenlos testen, keine automatische Verlängerung',
+                                ])];
+                                list[cIdx] = e.target.value;
+                                setContentDraft({ ...contentDraft, pricesChecklist: list });
+                              }}
+                              className="flex-1 px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-medium text-[#242E05] bg-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* CVB Membership Notice Box */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          CVB-Mitgliedschaft Hinweiskasten
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Hinweis Titel</label>
+                          <input
+                            type="text"
+                            value={contentDraft.membershipTitle || 'Voraussetzung: CVB-Mitgliedschaft'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, membershipTitle: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Hinweis Text</label>
+                          <textarea
+                            rows={2}
+                            value={contentDraft.membershipText || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, membershipText: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Link-Text</label>
+                            <input
+                              type="text"
+                              value={contentDraft.membershipLinkText || 'Jetzt Mitglied werden'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, membershipLinkText: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Link-URL</label>
+                            <input
+                              type="url"
+                              value={contentDraft.membershipLinkUrl || 'https://caravan-vermieter-bund.de/mitglied-werden'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, membershipLinkUrl: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* CTAs & Calculator Title */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Buttons &amp; Rechner-Titel
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Haupt-Button (Primary)</label>
+                            <input
+                              type="text"
+                              value={contentDraft.pricesCtaPrimary || 'CVB-Office unverbindlich anfragen'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, pricesCtaPrimary: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Zweit-Button (Secondary)</label>
+                            <input
+                              type="text"
+                              value={contentDraft.pricesCtaSecondary || '14 Tage kostenlos testen'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, pricesCtaSecondary: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Rechner Kasten-Titel</label>
+                          <input
+                            type="text"
+                            value={contentDraft.calcTitle || 'FLOTTEN-RECHNER & ROI'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, calcTitle: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
 
-                  {/* FORM */}
+                  {/* BUCHUNGSFORMULAR */}
                   {editingSection === 'section-form' && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                          Formular-Überschrift
-                        </label>
-                        <input
-                          type="text"
-                          value={contentDraft.formHeading || ''}
-                          onChange={(e) => setContentDraft({ ...contentDraft, formHeading: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm font-spartan font-bold text-[#242E05] bg-white"
-                        />
+                    <div className="space-y-5">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Formular-Kopf &amp; Texte
+                        </span>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Sektions-Tag
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.formTag || 'JETZT STARTEN'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, formTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Formular-Überschrift (H2)
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.formHeading || 'DEIN DIGITALES OFFICE WARTET.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, formHeading: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm font-spartan font-bold text-[#242E05] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Einleitungstext
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.formIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, formIntro: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
+                            Absende-Button Text
+                          </label>
+                          <input
+                            type="text"
+                            value={contentDraft.formSubmitButton || '14 Tage kostenlos testen & anfragen'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, formSubmitButton: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                          Einleitungstext
-                        </label>
-                        <textarea
-                          rows={2}
-                          value={contentDraft.formIntro || ''}
-                          onChange={(e) => setContentDraft({ ...contentDraft, formIntro: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
-                        />
+
+                      {/* Logo & Alt Text */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Formular Logo &amp; Bild
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
+                            {contentDraft.formLogo ? (
+                              <img src={contentDraft.formLogo} alt={contentDraft.formLogoAlt || 'Logo'} className="w-full h-full object-contain p-1" />
+                            ) : (
+                              <ImageIcon size={18} className="text-stone-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 space-y-1.5">
+                            <input
+                              type="text"
+                              value={contentDraft.formLogo || '/images/cvb_office_logo.png'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, formLogo: e.target.value })}
+                              placeholder="Logo Pfad"
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={contentDraft.formLogoAlt || 'CVB-Office Logo'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, formLogoAlt: e.target.value })}
+                              placeholder="Alt-Text"
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 3 Trust Checklist Points */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          3 Vertrauenspunkte (Checkliste)
+                        </span>
+                        {(contentDraft.formTrustPoints || [
+                          '14 Tage kostenlose Testphase',
+                          'Keine Einrichtungsgebühr',
+                          'Persönliche Betreuung durch das CVB-Team',
+                        ]).map((pt, pIdx) => (
+                          <div key={pIdx} className="flex items-center gap-2">
+                            <span className="w-5 h-5 rounded-full bg-[#A09048] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
+                              ✓
+                            </span>
+                            <input
+                              type="text"
+                              value={pt}
+                              onChange={(e) => {
+                                const list = [...(contentDraft.formTrustPoints || [
+                                  '14 Tage kostenlose Testphase',
+                                  'Keine Einrichtungsgebühr',
+                                  'Persönliche Betreuung durch das CVB-Team',
+                                ])];
+                                list[pIdx] = e.target.value;
+                                setContentDraft({ ...contentDraft, formTrustPoints: list });
+                              }}
+                              className="flex-1 px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-medium text-[#242E05] bg-white"
+                            />
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
 
                   {/* FAQ */}
                   {editingSection === 'section-faq' && (
-                    <div className="space-y-3">
-                      <span className="font-spartan font-bold text-xs uppercase text-[#242E05] block">
-                        FAQ Fragen anpassen ({faqs.length} Fragen):
-                      </span>
-                      {faqs.map((f, i) => (
-                        <div key={f.id} className="p-4 bg-white rounded-2xl border border-[#A09048]/30 space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="font-mono text-xs font-bold text-[#A09048]">Frage {i + 1}</span>
-                            <button
-                              onClick={() => toggleFaqVisibility(f.id)}
-                              className="p-1 text-stone-400 hover:text-[#384808]"
-                              title={f.visible ? 'Ausblenden' : 'Einblenden'}
-                            >
-                              {f.visible ? <Eye size={16} /> : <EyeOff size={16} />}
-                            </button>
-                          </div>
+                    <div className="space-y-5">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Sektions-Kopf &amp; Texte
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Sektions-Tag</label>
                           <input
                             type="text"
-                            value={f.question}
-                            onChange={(e) => updateFaq(f.id, { question: e.target.value })}
-                            className="w-full px-3 py-1.5 text-xs font-spartan font-bold text-[#242E05] border border-stone-200 rounded-lg"
-                          />
-                          <textarea
-                            rows={2}
-                            value={f.answer}
-                            onChange={(e) => updateFaq(f.id, { answer: e.target.value })}
-                            className="w-full px-3 py-1.5 text-xs text-[#585828] border border-stone-200 rounded-lg"
+                            value={contentDraft.faqTag || 'HÄUFIG GESTELLTE FRAGEN'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, faqTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
                           />
                         </div>
-                      ))}
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Hauptüberschrift</label>
+                          <input
+                            type="text"
+                            value={contentDraft.faqHeadline || 'ALLES, WAS DU ZU CVB-OFFICE WISSEN MUSST.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, faqHeadline: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Einführungstext</label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.faqIntro || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, faqIntro: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Sidebar Box */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Support-Kasten ("Noch Fragen offen?")
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Kasten Titel</label>
+                          <input
+                            type="text"
+                            value={contentDraft.faqBoxTitle || 'Noch Fragen offen?'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, faqBoxTitle: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Kasten Text</label>
+                          <textarea
+                            rows={2}
+                            value={contentDraft.faqBoxText || 'Unser CVB-Team hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, faqBoxText: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Kasten Button-Text</label>
+                          <input
+                            type="text"
+                            value={contentDraft.faqBoxCta || 'Team kontaktieren'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, faqBoxCta: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      {/* All FAQs */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <div className="flex items-center justify-between pb-2 border-b border-[#A09048]/20">
+                          <span className="font-spartan font-black text-xs uppercase text-[#242E05]">
+                            FAQ Fragen anpassen ({faqs.length} Fragen):
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newId = `faq_${Date.now()}`;
+                              addFaq({
+                                id: newId,
+                                question: 'Neue Frage hier eingeben?',
+                                answer: 'Antwort auf die Frage hier eingeben.',
+                                visible: true,
+                              });
+                            }}
+                            className="text-xs font-spartan font-bold uppercase text-[#384808] hover:text-[#A09048] flex items-center gap-1 cursor-pointer"
+                          >
+                            + Neue FAQ hinzufügen
+                          </button>
+                        </div>
+                        {faqs.map((f, i) => (
+                          <div key={f.id} className="p-4 bg-[#F9F8F3] rounded-2xl border border-stone-200 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-xs font-bold text-[#A09048]">Frage {i + 1}</span>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleFaqVisibility(f.id)}
+                                  className="p-1 text-stone-400 hover:text-[#384808] cursor-pointer"
+                                  title={f.visible ? 'Ausblenden' : 'Einblenden'}
+                                >
+                                  {f.visible ? <Eye size={16} /> : <EyeOff size={16} />}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => deleteFaq(f.id)}
+                                  className="p-1 text-stone-400 hover:text-red-600 cursor-pointer"
+                                  title="Frage löschen"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </div>
+                            <input
+                              type="text"
+                              value={f.question}
+                              onChange={(e) => updateFaq(f.id, { question: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs font-spartan font-bold text-[#242E05] border border-stone-300 rounded-lg bg-white"
+                            />
+                            <textarea
+                              rows={2}
+                              value={f.answer}
+                              onChange={(e) => updateFaq(f.id, { answer: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs text-[#585828] border border-stone-300 rounded-lg bg-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
 
                   {/* ABOUT */}
                   {editingSection === 'section-about' && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                          Netzwerk-Beschreibung
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={contentDraft.aboutText}
-                          onChange={(e) => setContentDraft({ ...contentDraft, aboutText: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm text-[#242E05] bg-white"
-                        />
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-5">
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Sektions-Kopf &amp; Narrative
+                        </span>
                         <div>
-                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                            Gründer &amp; Zitatgeber
-                          </label>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Sektions-Tag</label>
                           <input
                             type="text"
-                            value={contentDraft.aboutFounder}
-                            onChange={(e) => setContentDraft({ ...contentDraft, aboutFounder: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm text-[#242E05] bg-white font-bold"
+                            value={contentDraft.aboutTag || 'ÜBER DAS CVB-NETZWERK'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, aboutTag: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
                           />
                         </div>
                         <div>
-                          <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                            Kennzahl / Fakt
-                          </label>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Hauptüberschrift</label>
                           <input
                             type="text"
-                            value={contentDraft.aboutFact}
-                            onChange={(e) => setContentDraft({ ...contentDraft, aboutFact: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm text-[#242E05] bg-white"
+                            value={contentDraft.aboutHeadline || 'MIT WEITSICHT GEGRÜNDET. FÜR VERMIETER GEBAUT.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, aboutHeadline: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-spartan font-black uppercase bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Netzwerk-Beschreibung</label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.aboutText || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, aboutText: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+                      </div>
+
+                      {/* 3 Pills */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          3 Feature-Pills
+                        </span>
+                        {(contentDraft.aboutPills || ['1.000+ Fahrzeuge', 'BGB-Musterverträge', 'Starkes Netzwerk']).map((pill, pIdx) => (
+                          <div key={pIdx} className="flex items-center gap-2">
+                            <span className="w-5 h-5 rounded-full bg-[#889028] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
+                              ✓
+                            </span>
+                            <input
+                              type="text"
+                              value={pill}
+                              onChange={(e) => {
+                                const list = [...(contentDraft.aboutPills || ['1.000+ Fahrzeuge', 'BGB-Musterverträge', 'Starkes Netzwerk'])];
+                                list[pIdx] = e.target.value;
+                                setContentDraft({ ...contentDraft, aboutPills: list });
+                              }}
+                              className="flex-1 px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-bold text-[#242E05] bg-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Link & Firmendetails */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Unternehmenssitz &amp; CVB-Website
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Button-Text</label>
+                            <input
+                              type="text"
+                              value={contentDraft.aboutLinkText || 'Mehr über den CVB erfahren'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, aboutLinkText: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">CVB Website-URL</label>
+                            <input
+                              type="url"
+                              value={settingsDraft.cvbWebsiteLink}
+                              onChange={(e) => setSettingsDraft({ ...settingsDraft, cvbWebsiteLink: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono bg-white"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Organisation</label>
+                            <input
+                              type="text"
+                              value={contentDraft.aboutCompany || 'Caravan-Vermieter-Bund (CVB)'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, aboutCompany: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Standort / GF</label>
+                            <input
+                              type="text"
+                              value={contentDraft.aboutLocation || 'DS-Caravaning GmbH, Detlef Scheer · Niederkrüchten'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, aboutLocation: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Wide Banner */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Grosser Netzwerk-Banner (Unten)
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Titel</label>
+                          <input
+                            type="text"
+                            value={contentDraft.aboutBannerTitle || 'Offizielles Vermieter-Office'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, aboutBannerTitle: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Banner Text</label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.aboutBannerText || 'Gemeinsam stark im Netzwerk – wir geben unabhängigen Wohnmobil- und Caravan-Vermietern die besten Werkzeuge an die Hand. 100 % DSGVO-konform, faire Konditionen und 0 % Buchungsprovision.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, aboutBannerText: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
                           />
                         </div>
                       </div>
@@ -1638,28 +3141,161 @@ export const AdminPanel = () => {
 
                   {/* FOOTER */}
                   {editingSection === 'section-footer' && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                          Kontakt-E-Mail
-                        </label>
-                        <input
-                          type="email"
-                          value={contentDraft.contactEmail || ''}
-                          onChange={(e) => setContentDraft({ ...contentDraft, contactEmail: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm bg-white"
-                        />
+                    <div className="space-y-5">
+                      {/* Logo & Alt */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Footer Logo &amp; Bild
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
+                            {contentDraft.footerLogo ? (
+                              <img src={contentDraft.footerLogo} alt={contentDraft.footerLogoAlt || 'Logo'} className="w-full h-full object-contain p-1" />
+                            ) : (
+                              <ImageIcon size={18} className="text-stone-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 space-y-1.5">
+                            <input
+                              type="text"
+                              value={contentDraft.footerLogo || '/images/cvb_office_logo.png'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, footerLogo: e.target.value })}
+                              placeholder="Logo Pfad"
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={contentDraft.footerLogoAlt || 'CVB-Office Logo'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, footerLogoAlt: e.target.value })}
+                              placeholder="Alt-Text"
+                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label className="block font-spartan font-bold text-xs uppercase text-[#242E05] mb-1">
-                          Technologiepartner Notiz
-                        </label>
-                        <input
-                          type="text"
-                          value={contentDraft.partnerNote || ''}
-                          onChange={(e) => setContentDraft({ ...contentDraft, partnerNote: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm bg-white"
-                        />
+
+                      {/* Spalte 1: Beschreibung & Partner */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Beschreibung &amp; Technologiepartner
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">
+                            Footer Beschreibungstext
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={contentDraft.footerDescription || ''}
+                            onChange={(e) => setContentDraft({ ...contentDraft, footerDescription: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-[#585828] bg-white leading-relaxed"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Technologiepartner Notiz</label>
+                            <input
+                              type="text"
+                              value={contentDraft.partnerNote || 'Technologiepartner: Smarlps'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, partnerNote: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Serverstandort</label>
+                            <input
+                              type="text"
+                              value={contentDraft.footerServerLocation || 'Frankfurt am Main'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, footerServerLocation: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-white font-bold"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Kontakt & Support */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Kontakt &amp; Buttons
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Kontakt Name</label>
+                            <input
+                              type="text"
+                              value={contentDraft.footerContactName || 'Caravan-Vermieter-Bund'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, footerContactName: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-white font-bold"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Kontakt Rolle</label>
+                            <input
+                              type="text"
+                              value={contentDraft.footerContactRole || 'Detlef Scheer (Vorstand)'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, footerContactRole: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-white"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Kontakt-E-Mail</label>
+                            <input
+                              type="email"
+                              value={contentDraft.contactEmail || settingsDraft.contactEmail || ''}
+                              onChange={(e) => {
+                                setContentDraft({ ...contentDraft, contactEmail: e.target.value });
+                                setSettingsDraft({ ...settingsDraft, contactEmail: e.target.value });
+                              }}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#242E05] mb-1">Button-Text Testphase</label>
+                            <input
+                              type="text"
+                              value={contentDraft.footerCtaText || '14 Tage testen'}
+                              onChange={(e) => setContentDraft({ ...contentDraft, footerCtaText: e.target.value })}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Copyright & Badges */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
+                          Copyright &amp; Compliance Badges
+                        </span>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Copyright Zeile</label>
+                          <input
+                            type="text"
+                            value={contentDraft.footerCopyright || 'CARAVAN-VERMIETER-BUND (CVB). ALLE RECHTE VORBEHALTEN.'}
+                            onChange={(e) => setContentDraft({ ...contentDraft, footerCopyright: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#242E05] mb-1">Compliance Badges (3 Badges)</label>
+                          {(contentDraft.footerBadges || ['100 % DSGVO-KONFORM', 'HOSTING IN DEUTSCHLAND', '0 % PROVISION']).map((badge, bIdx) => (
+                            <div key={bIdx} className="flex items-center gap-2 mb-2">
+                              <span className="font-mono text-xs font-bold text-[#889028] w-6 shrink-0">
+                                0{bIdx + 1}.
+                              </span>
+                              <input
+                                type="text"
+                                value={badge}
+                                onChange={(e) => {
+                                  const list = [...(contentDraft.footerBadges || ['100 % DSGVO-KONFORM', 'HOSTING IN DEUTSCHLAND', '0 % PROVISION'])];
+                                  list[bIdx] = e.target.value;
+                                  setContentDraft({ ...contentDraft, footerBadges: list });
+                                }}
+                                className="flex-1 px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-bold text-[#242E05] bg-white font-mono"
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )}

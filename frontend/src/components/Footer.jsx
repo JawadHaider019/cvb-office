@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import { ArrowUpRight, Mail } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
 export const Footer = ({ onOpenImpressum, onOpenPrivacy }) => {
-    const { generalSettings } = useApp();
+    const { generalSettings, content } = useApp();
     const scrollToSection = (id) => {
         const el = document.getElementById(id);
         if (el) {
@@ -26,7 +26,7 @@ export const Footer = ({ onOpenImpressum, onOpenPrivacy }) => {
           {/* Column 1 (5 cols): Brand Identity, Mission & Logo */}
           <div className="sm:col-span-2 md:col-span-1 lg:col-span-5 space-y-5">
             <div className="flex items-center gap-3.5">
-              <img src="/images/cvb_office_logo.png" alt="CVB-Office Logo" className="w-11 h-11 object-contain drop-shadow-md rounded-xl"/>
+              <img src={content.footerLogo || "/images/cvb_office_logo.png"} alt={content.footerLogoAlt || "CVB-Office Logo"} className="w-11 h-11 object-contain drop-shadow-md rounded-xl"/>
               <div className="flex flex-col">
                 <span className="font-spartan text-2xl font-black tracking-tight text-white leading-none">
                   CVB-OFFICE<span className="text-[#A09048]">.</span>
@@ -38,13 +38,13 @@ export const Footer = ({ onOpenImpressum, onOpenPrivacy }) => {
             </div>
 
             <p className="text-xs sm:text-sm text-[#F4F2E6]/80 leading-relaxed font-sans max-w-md">
-              Das offizielle digitale Vermiet-Office des Caravan-Vermieter-Bund (CVB). Entwickelt für unabhängige Wohnmobil- und Caravan-Vermieter in ganz Deutschland: rechtssichere BGB-Musterverträge, digitale Vorab-Einweisung per QR & Video, Website-Widget und zentrales Cockpit.
+              {content.footerDescription || 'Das offizielle digitale Vermiet-Office des Caravan-Vermieter-Bund (CVB). Entwickelt für unabhängige Wohnmobil- und Caravan-Vermieter in ganz Deutschland: rechtssichere BGB-Musterverträge, digitale Vorab-Einweisung per QR & Video, Website-Widget und zentrales Cockpit.'}
             </p>
 
             {/* Partnership Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-[#F4F2E6]/85">
               <span className="w-1.5 h-1.5 rounded-full bg-[#A09048] animate-pulse"/>
-              <span>Technologiepartner: <strong className="text-white font-bold">Smarlps</strong></span>
+              <span>{content.partnerNote || 'Technologiepartner: Smarlps'}</span>
             </div>
           </div>
 
@@ -111,7 +111,7 @@ export const Footer = ({ onOpenImpressum, onOpenPrivacy }) => {
               </li>
               <li className="pt-2 text-[11px] font-mono text-[#F4F2E6]/75 leading-snug">
                 🇩🇪 Serverstandort:<br />
-                <span className="text-white">Frankfurt am Main</span>
+                <span className="text-white">{content.footerServerLocation || 'Frankfurt am Main'}</span>
               </li>
             </ul>
           </div>
@@ -123,8 +123,8 @@ export const Footer = ({ onOpenImpressum, onOpenPrivacy }) => {
             </h4>
 
             <div className="space-y-2 text-xs text-[#F4F2E6]/90">
-              <div className="font-bold text-white">Caravan-Vermieter-Bund</div>
-              <div className="text-[11px] text-[#F4F2E6]/80">Detlef Scheer (Vorstand)</div>
+              <div className="font-bold text-white">{content.footerContactName || 'Caravan-Vermieter-Bund'}</div>
+              <div className="text-[11px] text-[#F4F2E6]/80">{content.footerContactRole || 'Detlef Scheer (Vorstand)'}</div>
 
               <a href={`mailto:${generalSettings.contactEmail}`} className="inline-flex items-center gap-1.5 text-xs text-[#A09048] hover:text-white underline font-mono break-all pt-1">
                 <Mail size={13} className="shrink-0"/>
@@ -134,7 +134,7 @@ export const Footer = ({ onOpenImpressum, onOpenPrivacy }) => {
 
             <div className="pt-2">
               <a href={generalSettings.trialLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto lg:w-full px-4 py-2.5 sm:py-2 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-colors shadow-sm">
-                <span>14 Tage testen</span>
+                <span>{content.footerCtaText || '14 Tage testen'}</span>
                 <ArrowUpRight size={13}/>
               </a>
             </div>
@@ -148,15 +148,16 @@ export const Footer = ({ onOpenImpressum, onOpenPrivacy }) => {
           <div className="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 text-[10.5px] sm:text-[11px] font-mono text-[#F4F2E6]/70">
             <div className="flex items-center justify-center md:justify-start gap-2 text-center md:text-left">
               <span className="w-2 h-2 rounded-full bg-[#A09048] shrink-0"/>
-              <span>© {new Date().getFullYear()} CARAVAN-VERMIETER-BUND (CVB). ALLE RECHTE VORBEHALTEN.</span>
+              <span>© {new Date().getFullYear()} {content.footerCopyright || 'CARAVAN-VERMIETER-BUND (CVB). ALLE RECHTE VORBEHALTEN.'}</span>
             </div>
 
             <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-3 sm:gap-x-4 gap-y-1 text-center md:text-right">
-              <span>100 % DSGVO-KONFORM</span>
-              <span aria-hidden="true">·</span>
-              <span>HOSTING IN DEUTSCHLAND</span>
-              <span aria-hidden="true">·</span>
-              <span>0 % PROVISION</span>
+              {(content.footerBadges || ['100 % DSGVO-KONFORM', 'HOSTING IN DEUTSCHLAND', '0 % PROVISION']).map((badge, bIdx) => (
+                <React.Fragment key={bIdx}>
+                  {bIdx > 0 && <span aria-hidden="true">·</span>}
+                  <span>{badge}</span>
+                </React.Fragment>
+              ))}
             </div>
           </div>
         </ScrollReveal>

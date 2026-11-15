@@ -42,22 +42,19 @@ export const PriceTrialBox = () => {
               <div className="tech-tag mb-4">
                 <span className="tech-tagn">✦</span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                  TARIFE & EXKLUSIVKONDITIONEN
+                  {content.pricesTag || 'TARIFE & EXKLUSIVKONDITIONEN'}
                 </span>
               </div>
 
               <h2 className="font-spartan text-[22px] sm:text-5xl lg:text-[42px] xl:text-6xl font-black uppercase text-[#384808] leading-[1.06] sm:leading-[1.02] tracking-tight break-words">
-                EINFACHE, TRANSPARENTE PREISSTRUKTUR FÜR{' '}
-                <span className="text-[#889028]">
-                  CVB-MITGLIEDER<span className="text-[#A09048]">.</span>
-                </span>
+                {content.pricesHeadline || 'EINFACHE, TRANSPARENTE PREISSTRUKTUR FÜR CVB-MITGLIEDER.'}
               </h2>
             </div>
 
             {/* Right Column: Editorial Paragraph */}
             <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-end">
               <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body">
-                Fair kalkuliert pro Fahrzeug und Monat – ohne Einrichtungsgebühr, ohne Buchungsprovisionen und 14 Tage unverbindlich testbar. Der volle Funktionsumfang gilt von Anfang an für jede Flottengröße und lässt sich jederzeit flexibel anpassen.
+                {content.pricesIntro || 'Fair kalkuliert pro Fahrzeug und Monat – ohne Einrichtungsgebühr, ohne Buchungsprovisionen und 14 Tage unverbindlich testbar. Der volle Funktionsumfang gilt von Anfang an für jede Flottengröße und lässt sich jederzeit flexibel anpassen.'}
               </p>
             </div>
           </div>
@@ -75,7 +72,7 @@ export const PriceTrialBox = () => {
                 <div>
                   <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-[#A09048]/40 text-[#F4F2E6] text-[11px] font-mono font-bold uppercase tracking-widest mb-5 sm:mb-6">
                     <span className="w-2 h-2 rounded-full bg-[#A09048]"/>
-                    <span>CVB-MITGLIEDSTARIF</span>
+                    <span>{content.pricesBadge || 'CVB-MITGLIEDSTARIF'}</span>
                   </div>
 
                   {/* Hero Price Lockup */}
@@ -85,7 +82,7 @@ export const PriceTrialBox = () => {
                         {formattedMonthly} €
                       </span>
                       <span className="text-xs sm:text-base font-bold uppercase tracking-wider text-[#F4F2E6]/90">
-                        netto / Fahrzeug / Monat
+                        {content.pricesUnit || 'netto / Fahrzeug / Monat'}
                       </span>
                     </div>
 
@@ -100,30 +97,19 @@ export const PriceTrialBox = () => {
 
                   {/* Feature Checklist */}
                   <ul className="space-y-3 sm:space-y-3.5 text-sm text-white/95 font-medium mb-6">
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 shadow-sm">
-                        <Check size={12} strokeWidth={3}/>
-                      </div>
-                      <span>Voller Funktionsumfang & Website-Buchungswidget</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 shadow-sm">
-                        <Check size={12} strokeWidth={3}/>
-                      </div>
-                      <span>Digitale Vorab-Einweisung per QR-Code & Video</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 shadow-sm">
-                        <Check size={12} strokeWidth={3}/>
-                      </div>
-                      <span>Unbegrenzte Buchungen, Verträge und Mieterdaten</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 shadow-sm">
-                        <Check size={12} strokeWidth={3}/>
-                      </div>
-                      <span>{content.trialPromiseLine}</span>
-                    </li>
+                    {(content.pricesChecklist || [
+                      'Voller Funktionsumfang & Website-Buchungswidget',
+                      'Digitale Vorab-Einweisung per QR-Code & Video',
+                      'Unbegrenzte Buchungen, Verträge und Mieterdaten',
+                      '14 Tage kostenlos testen, keine automatische Verlängerung',
+                    ]).map((item, cIdx) => (
+                      <li key={cIdx} className="flex items-center gap-3">
+                        <div className="w-5 h-5 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 shadow-sm">
+                          <Check size={12} strokeWidth={3}/>
+                        </div>
+                        <span>{item}</span>
+                      </li>
+                    ))}
                   </ul>
 
                   {/* Exclusive CVB Membership Notice Callout */}
@@ -135,15 +121,15 @@ export const PriceTrialBox = () => {
                       <div className="space-y-2">
                         <div>
                           <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#F4F2E6]">
-                            Voraussetzung: CVB-Mitgliedschaft
+                            {content.membershipTitle || 'Voraussetzung: CVB-Mitgliedschaft'}
                           </div>
                           <p className="text-xs sm:text-sm text-white/95 leading-relaxed mt-0.5">
-                            <strong>CVB-Office gibt es exklusiv für CVB-Mitglieder.</strong> Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.
+                            {content.membershipText || 'CVB-Office gibt es exklusiv für CVB-Mitglieder. Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.'}
                           </p>
                         </div>
                         <div>
-                          <a href="https://caravan-vermieter-bund.de/mitglied-werden" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-all shadow-xs hover:-translate-y-0.5 group">
-                            <span>Jetzt Mitglied werden</span>
+                          <a href={content.membershipLinkUrl || 'https://caravan-vermieter-bund.de/mitglied-werden'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-all shadow-xs hover:-translate-y-0.5 group">
+                            <span>{content.membershipLinkText || 'Jetzt Mitglied werden'}</span>
                             <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"/>
                           </a>
                         </div>
@@ -155,14 +141,14 @@ export const PriceTrialBox = () => {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap xl:flex-nowrap gap-3 sm:gap-3.5 pt-2">
                   <button onClick={scrollToForm} className="inline-flex items-center justify-center gap-2.5 sm:gap-3 min-h-[48px] px-4 sm:px-6 py-2.5 sm:py-0 rounded-full bg-white text-[#283505] hover:bg-[#F4F2E6] font-spartan font-extrabold text-xs sm:text-sm tracking-tight transition-all cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-0.5 sm:whitespace-nowrap text-center">
-                    <span>CVB-Office unverbindlich anfragen</span>
+                    <span>{content.pricesCtaPrimary || 'CVB-Office unverbindlich anfragen'}</span>
                     <span className="w-6 h-6 rounded-full bg-[#384808] text-white flex items-center justify-center shrink-0">
                       <ArrowRight size={13}/>
                     </span>
                   </button>
 
                   <a href={generalSettings.trialLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2.5 sm:gap-3 min-h-[48px] px-4 sm:px-6 py-2.5 sm:py-0 rounded-full bg-white/[0.06] border border-white/25 text-white hover:bg-white/15 hover:border-white/50 font-sans font-bold text-xs sm:text-sm transition-all sm:whitespace-nowrap group text-center">
-                    <span>14 Tage kostenlos testen</span>
+                    <span>{content.pricesCtaSecondary || '14 Tage kostenlos testen'}</span>
                     <span className="w-6 h-6 rounded-full bg-white text-[#283505] flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
                       <ArrowUpRight size={13} strokeWidth={2.5}/>
                     </span>
@@ -179,7 +165,7 @@ export const PriceTrialBox = () => {
                       <Calculator size={16}/>
                     </div>
                     <span className="font-spartan font-black text-sm sm:text-base uppercase tracking-wider text-[#384808]">
-                      FLOTTEN-RECHNER & ROI
+                      {content.calcTitle || 'FLOTTEN-RECHNER & ROI'}
                     </span>
                   </div>
 

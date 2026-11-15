@@ -6,11 +6,13 @@ import { motion } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 export const ProblemSolution = () => {
     const { content } = useApp();
-    const rowCount = Math.max(content.problems.length, content.solutions.length);
+    const problemsList = content.problems || [];
+    const solutionsList = content.solutions || [];
+    const rowCount = Math.max(problemsList.length, solutionsList.length);
     const pairs = Array.from({ length: rowCount }, (_, idx) => ({
         num: String(idx + 1).padStart(2, '0'),
-        problem: content.problems[idx] || '',
-        solution: content.solutions[idx] || '',
+        problem: problemsList[idx] || '',
+        solution: solutionsList[idx] || '',
     })).filter((p) => p.problem || p.solution);
     const scrollToForm = () => {
         const el = document.getElementById('buchen');
@@ -30,21 +32,21 @@ export const ProblemSolution = () => {
               <div className="tech-tag mb-4">
                 <span className="tech-tagn">✦</span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                  HERAUSFORDERUNG & LÖSUNG
+                  {content.problemTag || 'HERAUSFORDERUNG & LÖSUNG'}
                 </span>
               </div>
 
               <h2 className="font-spartan font-black text-[26px] sm:text-5xl lg:text-[54px] leading-[1.04] sm:leading-[1.02] uppercase tracking-tight text-[#384808]">
-                Vermietung kostet Zeit.<br />
+                {content.problemHeadline || 'Vermietung kostet Zeit.'}<br />
                 <span className="text-[#889028]">
-                  CVB-Office gibt sie Dir zurück<span className="text-[#A09048]">.</span>
+                  {content.problemSubheadline || 'CVB-Office gibt sie Dir zurück.'}
                 </span>
               </h2>
             </div>
 
             <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-end">
               <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body">
-                Schluss mit Zettelwirtschaft, unklaren Preisen und langen Erklärungen vor Ort – jede tägliche Hürde wird durch einen klaren digitalen Ablauf ersetzt.
+                {content.problemIntro || 'Schluss mit Zettelwirtschaft, unklaren Preisen und langen Erklärungen vor Ort – jede tägliche Hürde wird durch einen klaren digitalen Ablauf ersetzt.'}
               </p>
             </div>
           </div>
@@ -55,12 +57,12 @@ export const ProblemSolution = () => {
           <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-4 mb-4 px-2">
             <div className="md:col-span-1 lg:col-span-5 flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-widest text-[#585828]">
               <span className="w-2 h-2 rounded-full bg-red-500/80"/>
-              <span>BISHERIGE VERMIETPRAXIS</span>
+              <span>{content.problemColLeft || 'BISHERIGE VERMIETPRAXIS'}</span>
             </div>
             <div className="hidden lg:block lg:col-span-1"/>
             <div className="md:col-span-1 lg:col-span-6 flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-widest text-[#384808]">
               <span className="w-2 h-2 rounded-full bg-[#889028]"/>
-              <span>MIT DEM CVB-OFFICE</span>
+              <span>{content.problemColRight || 'MIT DEM CVB-OFFICE'}</span>
             </div>
           </div>
         </ScrollReveal>
@@ -109,11 +111,11 @@ export const ProblemSolution = () => {
         <ScrollReveal delay={0.15}>
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 sm:pt-8 border-t border-[#A09048]/20">
             <p className="text-xs sm:text-sm font-medium text-[#585828] text-center sm:text-left">
-              Alle Abläufe von der ersten Anfrage bis zur Übergabe in einem zentralen System.
+              {content.problemBottomNote || 'Alle Abläufe von der ersten Anfrage bis zur Übergabe in einem zentralen System.'}
             </p>
 
             <button type="button" onClick={scrollToForm} className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#242E05] hover:bg-[#384808] text-white font-spartan font-extrabold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer shrink-0 group">
-              <span>Jetzt umsteigen</span>
+              <span>{content.problemBottomCta || 'Jetzt umsteigen'}</span>
               <span className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center font-black transition-transform group-hover:translate-x-0.5">
                 <ArrowRight size={13} strokeWidth={3}/>
               </span>

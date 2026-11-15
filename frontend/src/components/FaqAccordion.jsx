@@ -5,7 +5,7 @@ import { LayoutGrid, Layers, CreditCard, Globe, ShieldCheck, Plus, ArrowRight, A
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 export const FaqAccordion = () => {
-    const { faqs, generalSettings } = useApp();
+    const { faqs, generalSettings, content } = useApp();
     const visibleFaqs = faqs.filter((f) => f.visible);
     const categories = [
         { id: 'all', name: 'Alle Fragen', icon: LayoutGrid },
@@ -87,22 +87,19 @@ export const FaqAccordion = () => {
               <div className="tech-tag mb-4">
                 <span className="tech-tagn">✦</span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                  HÄUFIG GESTELLTE FRAGEN
+                  {content.faqTag || 'HÄUFIG GESTELLTE FRAGEN'}
                 </span>
               </div>
 
               <h2 className="font-spartan text-[28px] sm:text-5xl lg:text-6xl font-black uppercase text-[#384808] leading-[1.05] sm:leading-[1.02] tracking-tight">
-                ALLES, WAS DU ZU CVB-OFFICE WISSEN{' '}
-                <span className="text-[#889028]">
-                  MUSST<span className="text-[#A09048]">.</span>
-                </span>
+                {content.faqHeadline || 'ALLES, WAS DU ZU CVB-OFFICE WISSEN MUSST.'}
               </h2>
             </div>
 
             {/* Right Column: Editorial Paragraph */}
             <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-end">
               <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body">
-                Hier findest Du verlässliche Antworten auf die wichtigsten Fragen rund um die Einführung, Mitgliedstarife, die digitale Vorab-Einweisung und die rechtssichere Digitalisierung Deiner Vermietung.
+                {content.faqIntro || 'Hier findest Du verlässliche Antworten auf die wichtigsten Fragen rund um die Einführung, Mitgliedstarife, die digitale Vorab-Einweisung und die rechtssichere Digitalisierung Deiner Vermietung.'}
               </p>
             </div>
           </div>
@@ -148,10 +145,10 @@ export const FaqAccordion = () => {
 
               <div className="relative z-10">
                 <h3 className="font-spartan font-black text-xl text-white uppercase tracking-tight mb-2">
-                  Noch Fragen offen?
+                  {content.faqBoxTitle || 'Noch Fragen offen?'}
                 </h3>
                 <p className="text-xs text-[#F4F2E6]/85 leading-relaxed mb-5 font-sans">
-                  Unser CVB-Team hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.
+                  {content.faqBoxText || 'Unser CVB-Team hilft Dir gerne bei Fragen zu Funktionen, Preisen und der Umstellung Deiner Vermietung.'}
                 </p>
 
                 <div className="text-xs font-mono text-[#F4F2E6] font-bold mb-6 break-all">
@@ -159,7 +156,7 @@ export const FaqAccordion = () => {
                 </div>
 
                 <button onClick={scrollToForm} className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-white text-[#384808] hover:bg-[#F4F2E6] font-spartan font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-md group">
-                  <span>Team kontaktieren</span>
+                  <span>{content.faqBoxCta || 'Team kontaktieren'}</span>
                   <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform text-[#889028]"/>
                 </button>
               </div>

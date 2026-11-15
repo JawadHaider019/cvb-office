@@ -11,7 +11,7 @@ const iconMap = {
     ClipboardCheck,
 };
 export const HowItWorks = () => {
-    const { steps } = useApp();
+    const { steps, content } = useApp();
     const visibleSteps = steps.filter((s) => s.visible);
     const [activeStepHover, setActiveStepHover] = useState(null);
     const scrollToForm = () => {
@@ -32,21 +32,18 @@ export const HowItWorks = () => {
               <div className="tech-tag mb-4">
                 <span className="tech-tagn">✦</span>
                 <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                  DER VERMIETPROZESS
+                  {content.stepsTag || 'DER VERMIETPROZESS'}
                 </span>
               </div>
 
               <h2 className="font-spartan text-[26px] sm:text-5xl lg:text-6xl font-black uppercase text-[#384808] leading-[1.05] sm:leading-[1.02] tracking-tight">
-                IN 4 SCHRITTEN VON DER ANFRAGE ZUR{' '}
-                <span className="text-[#889028]">
-                  ÜBERGABE<span className="text-[#A09048]">.</span>
-                </span>
+                {content.stepsHeadline || 'IN 4 SCHRITTEN VON DER ANFRAGE ZUR ÜBERGABE.'}
               </h2>
             </div>
 
             <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-end">
               <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body">
-                Von der ersten Buchungsanfrage über den rechtssicheren Mietvertrag bis zum digitalen Übergabeprotokoll greifen alle Schritte nahtlos ineinander – ohne Zettelwirtschaft und Medienbrüche.
+                {content.stepsIntro || 'Von der ersten Buchungsanfrage über den rechtssicheren Mietvertrag bis zum digitalen Übergabeprotokoll greifen alle Schritte nahtlos ineinander – ohne Zettelwirtschaft und Medienbrüche.'}
               </p>
             </div>
           </div>
@@ -98,16 +95,16 @@ export const HowItWorks = () => {
               </div>
               <div>
                 <strong className="font-spartan text-base sm:text-lg font-black uppercase text-[#384808] block">
-                  KEIN SYSTEMBRUCH MEHR:
+                  {content.stepsCalloutTitle || 'KEIN SYSTEMBRUCH MEHR:'}
                 </strong>
                 <span className="text-xs sm:text-sm text-[#585828] font-medium">
-                  Alle Schritte von der ersten Buchungsanfrage bis zum unterschriebenen Übergabeprotokoll greifen nahtlos ineinander.
+                  {content.stepsCalloutText || 'Alle Schritte von der ersten Buchungsanfrage bis zum unterschriebenen Übergabeprotokoll greifen nahtlos ineinander.'}
                 </span>
               </div>
             </div>
 
             <button onClick={scrollToForm} className="tech-cta-primary cursor-pointer shrink-0 w-full md:w-auto justify-between sm:justify-center">
-              <span>Jetzt Prozess digitalisieren</span>
+              <span>{content.stepsCalloutCta || 'Jetzt Prozess digitalisieren'}</span>
               <div className="tech-ci">
                 <ArrowRight size={14}/>
               </div>

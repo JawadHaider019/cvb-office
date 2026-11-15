@@ -151,15 +151,12 @@ export const SignUpForm = ({ onOpenPrivacyModal, }) => {
                   <div className="tech-tag mb-4 sm:mb-5 bg-[#384808] border-[#A09048] text-white">
                     <span className="tech-tagn bg-[#A09048] text-white">✦</span>
                     <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#283505]">
-                      JETZT STARTEN
+                      {content.formTag || 'JETZT STARTEN'}
                     </span>
                   </div>
 
                   <h2 className="font-spartan text-[30px] sm:text-5xl lg:text-[54px] font-black uppercase text-white leading-[1.04] sm:leading-[1.03] tracking-tight mb-4 sm:mb-5">
-                    DEIN DIGITALES{' '}
-                    <span className="text-[#A09048]">
-                      OFFICE WARTET.
-                    </span>
+                    {content.formHeading || 'DEIN DIGITALES OFFICE WARTET.'}
                   </h2>
 
                   <p className="text-sm sm:text-lg text-[#F4F2E6]/90 font-normal leading-relaxed mb-6 sm:mb-7 max-w-lg">
@@ -168,24 +165,18 @@ export const SignUpForm = ({ onOpenPrivacyModal, }) => {
 
                   {/* Conversion Trust Stack */}
                   <div className="space-y-3 sm:space-y-3.5 text-sm sm:text-base font-semibold text-white">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
-                        <Check size={14} strokeWidth={3}/>
+                    {(content.formTrustPoints || [
+                      '14 Tage kostenlose Testphase',
+                      'Keine Einrichtungsgebühr',
+                      'Persönliche Betreuung durch das CVB-Team',
+                    ]).map((point, ptIdx) => (
+                      <div key={ptIdx} className="flex items-center gap-3.5">
+                        <div className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
+                          <Check size={14} strokeWidth={3}/>
+                        </div>
+                        <span>{point}</span>
                       </div>
-                      <span>14 Tage kostenlose Testphase</span>
-                    </div>
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
-                        <Check size={14} strokeWidth={3}/>
-                      </div>
-                      <span>Keine Einrichtungsgebühr</span>
-                    </div>
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-6 h-6 rounded-full bg-[#A09048] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
-                        <Check size={14} strokeWidth={3}/>
-                      </div>
-                      <span>Persönliche Betreuung durch das CVB-Team</span>
-                    </div>
+                    ))}
                   </div>
                 </div>
 
@@ -200,10 +191,10 @@ export const SignUpForm = ({ onOpenPrivacyModal, }) => {
                     </span>
                   </div>
                   <p className="text-xs sm:text-sm text-[#F4F2E6]/95 leading-relaxed">
-                    CVB-Office gibt es exklusiv für CVB-Mitglieder. Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.
+                    {content.membershipText || 'CVB-Office gibt es exklusiv für CVB-Mitglieder. Noch kein Mitglied? CVB-Mitglied wirst Du schon ab 249 € netto pro Fahrzeug und Jahr.'}
                   </p>
                   <div>
-                    <a href="https://caravan-vermieter-bund.de/mitglied-werden" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-all shadow-md group">
+                    <a href={content.membershipLinkUrl || 'https://caravan-vermieter-bund.de/mitglied-werden'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#A09048] hover:bg-[#889028] text-white font-spartan font-bold text-xs uppercase tracking-wider transition-all shadow-md group">
                       <span>Jetzt Mitglied werden</span>
                       <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"/>
                     </a>
@@ -213,7 +204,7 @@ export const SignUpForm = ({ onOpenPrivacyModal, }) => {
                 {/* Integrated Brand & Contact Info Card */}
                 <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }} className="bg-white/[0.05] backdrop-blur-md rounded-[22px] sm:rounded-[26px] border border-[#A09048]/30 hover:border-[#A09048]/55 p-5 sm:p-7 shadow-xl space-y-4 sm:space-y-5 transition-colors">
                   <div className="flex items-center gap-3.5 pb-4 border-b border-white/10">
-                    <img src="/images/cvb_office_logo.png" alt="CVB-Office Logo" className="w-11 h-11 object-contain drop-shadow-md rounded-xl shrink-0"/>
+                    <img src={content.formLogo || "/images/cvb_office_logo.png"} alt={content.formLogoAlt || "CVB-Office Logo"} className="w-11 h-11 object-contain drop-shadow-md rounded-xl shrink-0"/>
                     <div>
                       <div className="font-spartan text-xl sm:text-2xl font-black tracking-wider text-white uppercase leading-none">
                         CVB-OFFICE
@@ -404,7 +395,7 @@ export const SignUpForm = ({ onOpenPrivacyModal, }) => {
                           {isSubmitting ? (<>
                               <Loader2 size={16} className="animate-spin text-white"/>
                               <span>Wird übermittelt...</span>
-                            </>) : (<span>14 Tage kostenlos testen & anfragen</span>)}
+                            </>) : (<span>{content.formSubmitButton || '14 Tage kostenlos testen & anfragen'}</span>)}
                         </span>
                         <span className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#A09048] group-hover:bg-[#889028] text-white flex items-center justify-center shrink-0 transition-all group-hover:-rotate-45 shadow-sm">
                           <ArrowRight size={16}/>

@@ -16,7 +16,7 @@ const featureIconMap = {
     Truck,
 };
 export const Features = () => {
-    const { features } = useApp();
+    const { features, content } = useApp();
     const visibleFeatures = features.filter((f) => f.visible);
     const carouselRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -50,24 +50,27 @@ export const Features = () => {
         setActiveIndex(idx);
     };
     // Top 3 spotlight modules
-    const spotlightModules = [
+    const spotlightModules = content.featuresSpotlightModules || [
         {
             num: '1',
             title: 'Flotten-Cockpit',
             desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.',
             image: IMAGES.luxuryCockpitTablet,
+            imageAlt: 'Flotten-Cockpit Übersicht auf Tablet',
         },
         {
             num: '2',
             title: 'Digitaler Vertrag',
             desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.',
             image: IMAGES.heroMotorhomeHandover,
+            imageAlt: 'Schlüsselübergabe und digitaler Vertrag',
         },
         {
             num: '3',
             title: 'Online-Buchungswidget',
             desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.',
             image: IMAGES.camperDigitalCockpit,
+            imageAlt: 'Online-Buchungskalender auf Website',
         },
     ];
     return (<section id="funktionen" className="py-14 sm:py-20 lg:py-28 bg-white text-[#242E05] border-b border-[#A09048]/25 relative overflow-hidden">
@@ -82,19 +85,16 @@ export const Features = () => {
                 <div className="tech-tag mb-4">
                   <span className="tech-tagn">✦</span>
                   <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                    HAUPTFUNKTIONEN & SYSTEM
+                    {content.featuresTag || 'HAUPTFUNKTIONEN & SYSTEM'}
                   </span>
                 </div>
 
                 <h2 className="font-spartan text-[24px] sm:text-4xl lg:text-[32px] xl:text-[44px] font-black uppercase text-[#384808] leading-[1.06] sm:leading-[1.03] tracking-tight mb-5 sm:mb-6">
-                  DIE KOMPLETTLÖSUNG FÜR{' '}
-                  <span className="text-[#889028]">
-                    VERMIETER IM BUND<span className="text-[#A09048]">.</span>
-                  </span>
+                  {content.featuresHeadline || 'DIE KOMPLETTLÖSUNG FÜR VERMIETER IM BUND.'}
                 </h2>
 
                 <p className="text-sm sm:text-base text-[#585828] font-normal leading-relaxed font-body mb-6 sm:mb-8 max-w-md">
-                  Anfragen, Buchungen, rechtssichere Verträge und Fahrzeugübergaben greifen nahtlos ineinander – speziell entwickelt für Wohnmobil- und Caravan-Vermieter im CVB.
+                  {content.featuresIntro || 'Anfragen, Buchungen, rechtssichere Verträge und Fahrzeugübergaben greifen nahtlos ineinander – speziell entwickelt für Wohnmobil- und Caravan-Vermieter im CVB.'}
                 </p>
               </div>
             </ScrollReveal>
@@ -102,7 +102,7 @@ export const Features = () => {
             <ScrollReveal delay={0.12}>
               <div>
                 <button type="button" onClick={scrollToForm} className="inline-flex items-center justify-center gap-3.5 w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#242E05] hover:bg-[#384808] text-white font-spartan font-extrabold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer group">
-                  <span>CVB-Office anfragen</span>
+                  <span>{content.featuresCta || 'CVB-Office anfragen'}</span>
                   <span className="w-7 h-7 rounded-full bg-[#A09048] text-white flex items-center justify-center font-black group-hover:rotate-45 transition-transform duration-300 shadow-xs">
                     <ArrowUpRight size={14} strokeWidth={3}/>
                   </span>
@@ -115,7 +115,7 @@ export const Features = () => {
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-5">
             {spotlightModules.map((item, idx) => (<motion.div key={item.num} initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.55, delay: idx * 0.1, ease: 'easeOut' }} whileHover={{ y: -6 }} onClick={scrollToForm} className={`relative min-h-[250px] sm:min-h-[300px] md:min-h-[380px] lg:min-h-[410px] rounded-[22px] sm:rounded-[26px] overflow-hidden shadow-lg hover:shadow-2xl border border-[#A09048]/25 cursor-pointer group flex flex-col justify-between bg-[#172002] ${idx === 2 ? 'sm:col-span-2 md:col-span-1' : ''}`}>
                 {/* Full-Bleed Photo */}
-                <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer"/>
+                <img src={item.image} alt={item.imageAlt || item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer"/>
 
                 {/* Bottom Gradient Scrim */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0D1201] via-[#0D1201]/75 to-black/15"/>
@@ -148,16 +148,12 @@ export const Features = () => {
                 <div className="tech-tag mb-4">
                   <span className="tech-tagn">✦</span>
                   <span className="font-spartan font-bold text-xs uppercase tracking-wider text-[#384808]">
-                    WEITERE SYSTEMLEISTUNGEN
+                    {content.featuresCarouselTag || 'WEITERE SYSTEMLEISTUNGEN'}
                   </span>
                 </div>
 
                 <h2 className="font-spartan text-[23px] sm:text-5xl lg:text-6xl font-black uppercase text-[#384808] leading-[1.05] sm:leading-[1.02] tracking-tight max-w-3xl">
-                  ALLE SYSTEMFUNKTIONEN <br className="hidden sm:block"/>
-                  IM{' '}
-                  <span className="text-[#889028]">
-                    ÜBERBLICK<span className="text-[#A09048]">.</span>
-                  </span>
+                  {content.featuresCarouselHeadline || 'ALLE SYSTEMFUNKTIONEN IM ÜBERBLICK.'}
                 </h2>
               </div>
 
