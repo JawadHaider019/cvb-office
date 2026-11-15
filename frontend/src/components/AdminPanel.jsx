@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 
 // Live Homepage Section Components
+import ImageUploadField from './ImageUploadField';
 import { Header } from './Header';
 import { Hero } from './Hero';
 import { ProblemSolution } from './ProblemSolution';
@@ -1217,6 +1218,22 @@ export const AdminPanel = () => {
                         </div>
                       </div>
 
+                      {/* Header Logo Upload */}
+                      <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
+                        <span className="font-spartan font-black text-sm uppercase text-[#242E05] block pb-2 border-b border-[#A09048]/20">
+                          Header Logo &amp; Markenbild
+                        </span>
+                        <ImageUploadField
+                          label="Offizielles CVB-Logo"
+                          helperText="Transparentes PNG oder SVG (z.B. cvb_office_logo.png)"
+                          value={contentDraft.headerLogo || '/images/cvb_office_logo.png'}
+                          onChange={(newImg) => setContentDraft({ ...contentDraft, headerLogo: newImg })}
+                          altValue={contentDraft.headerLogoAlt || 'CVB-Office Logo'}
+                          onAltChange={(newAlt) => setContentDraft({ ...contentDraft, headerLogoAlt: newAlt })}
+                          altPlaceholder="CVB-Office Logo"
+                        />
+                      </div>
+
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
                         <span className="font-spartan font-black text-sm uppercase text-[#242E05] block pb-2 border-b border-[#A09048]/20">
                           Navbar Buttons &amp; Verlinkungen
@@ -1315,44 +1332,20 @@ export const AdminPanel = () => {
                         </div>
                       </div>
 
-                      {/* Hero Image & Alt Text with Thumbnail Preview */}
+                      {/* Hero Image & Alt Text with ImageUploadField */}
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
                         <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
-                          Hero Hintergrundbild &amp; SEO Alt-Text
+                          Hero Hauptbild &amp; SEO Alt-Text
                         </span>
-                        <div className="flex items-center gap-4">
-                          <div className="w-20 h-20 rounded-xl bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center shadow-xs">
-                            {contentDraft.heroImage ? (
-                              <img src={contentDraft.heroImage} alt={contentDraft.heroImageAlt || 'Vorschau'} className="w-full h-full object-cover" />
-                            ) : (
-                              <ImageIcon size={24} className="text-stone-400" />
-                            )}
-                          </div>
-                          <div className="flex-1 space-y-2">
-                            <div>
-                              <label className="block font-spartan font-bold text-[11px] uppercase tracking-wider text-[#242E05] mb-1">
-                                Bildpfad (URL oder /images/...)
-                              </label>
-                              <input
-                                type="text"
-                                value={contentDraft.heroImage || ''}
-                                onChange={(e) => setContentDraft({ ...contentDraft, heroImage: e.target.value })}
-                                className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-mono bg-white"
-                              />
-                            </div>
-                            <div>
-                              <label className="block font-spartan font-bold text-[11px] uppercase tracking-wider text-[#242E05] mb-1">
-                                SEO Alt-Text (Barrierefreiheit &amp; Google)
-                              </label>
-                              <input
-                                type="text"
-                                value={contentDraft.heroImageAlt || ''}
-                                onChange={(e) => setContentDraft({ ...contentDraft, heroImageAlt: e.target.value })}
-                                className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs bg-white"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                        <ImageUploadField
+                          label="Hero Hintergrundbild"
+                          helperText="Empfohlen: Hochwertiges Foto (z.B. 1920×1080 px oder PNG/JPG/WebP)"
+                          value={contentDraft.heroImage || ''}
+                          onChange={(newImg) => setContentDraft({ ...contentDraft, heroImage: newImg })}
+                          altValue={contentDraft.heroImageAlt || ''}
+                          onAltChange={(newAlt) => setContentDraft({ ...contentDraft, heroImageAlt: newAlt })}
+                          altPlaceholder="z.B. Luxus Wohnmobil Übergabe in den Alpen"
+                        />
                       </div>
 
                       {/* 3 Check Badges */}
@@ -1760,47 +1753,31 @@ export const AdminPanel = () => {
                               }}
                               className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-xs text-[#585828] bg-white"
                             />
-                            <div className="flex items-center gap-3">
-                              <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
-                                {mod.image ? (
-                                  <img src={mod.image} alt={mod.imageAlt || mod.title} className="w-full h-full object-cover" />
-                                ) : (
-                                  <ImageIcon size={18} className="text-stone-400" />
-                                )}
-                              </div>
-                              <div className="flex-1 space-y-1.5">
-                                <input
-                                  type="text"
-                                  value={mod.image || ''}
-                                  onChange={(e) => {
-                                    const list = [...(contentDraft.featuresSpotlightModules || [
-                                      { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
-                                      { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
-                                      { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
-                                    ])];
-                                    list[mIdx] = { ...list[mIdx], image: e.target.value };
-                                    setContentDraft({ ...contentDraft, featuresSpotlightModules: list });
-                                  }}
-                                  placeholder="Bildpfad (/images/...)"
-                                  className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
-                                />
-                                <input
-                                  type="text"
-                                  value={mod.imageAlt || ''}
-                                  onChange={(e) => {
-                                    const list = [...(contentDraft.featuresSpotlightModules || [
-                                      { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
-                                      { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
-                                      { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
-                                    ])];
-                                    list[mIdx] = { ...list[mIdx], imageAlt: e.target.value };
-                                    setContentDraft({ ...contentDraft, featuresSpotlightModules: list });
-                                  }}
-                                  placeholder="Bild Alt-Text"
-                                  className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
-                                />
-                              </div>
-                            </div>
+                            <ImageUploadField
+                              label={`Modul ${mIdx + 1} Bild`}
+                              helperText="Drag & Drop oder Datei auswählen"
+                              value={mod.image || ''}
+                              onChange={(newImg) => {
+                                const list = [...(contentDraft.featuresSpotlightModules || [
+                                  { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
+                                  { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
+                                  { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
+                                ])];
+                                list[mIdx] = { ...list[mIdx], image: newImg };
+                                setContentDraft({ ...contentDraft, featuresSpotlightModules: list });
+                              }}
+                              altValue={mod.imageAlt || ''}
+                              onAltChange={(newAlt) => {
+                                const list = [...(contentDraft.featuresSpotlightModules || [
+                                  { num: '1', title: 'Flotten-Cockpit', desc: 'Alle Buchungen, Termine und Fahrzeugzustände in Echtzeit an einem zentralen Ort.', image: '/images/luxury_cockpit_tablet.jpg', imageAlt: 'Flotten-Cockpit Übersicht' },
+                                  { num: '2', title: 'Digitaler Vertrag', desc: 'Geprüfte Mietverträge papierlos direkt digital unterschreiben & rechtssicher archivieren.', image: '/images/hero_motorhome_handover.jpg', imageAlt: 'Schlüsselübergabe' },
+                                  { num: '3', title: 'Online-Buchungswidget', desc: 'Live-Verfügbarkeiten & provisionsfreie Direktanfragen auf Deiner eigenen Domain.', image: '/images/camper_digital_cockpit.jpg', imageAlt: 'Buchungskalender' },
+                                ])];
+                                list[mIdx] = { ...list[mIdx], imageAlt: newAlt };
+                                setContentDraft({ ...contentDraft, featuresSpotlightModules: list });
+                              }}
+                              altPlaceholder={`Alt-Text für Modul ${mIdx + 1}`}
+                            />
                           </div>
                         ))}
                       </div>
@@ -1944,31 +1921,15 @@ export const AdminPanel = () => {
                         </div>
 
                         {/* Image & Alt */}
-                        <div className="flex items-center gap-3 p-3 bg-[#F9F8F3] rounded-xl border border-stone-200">
-                          <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
-                            {contentDraft.blockAImage ? (
-                              <img src={contentDraft.blockAImage} alt={contentDraft.blockAImageAlt || 'A'} className="w-full h-full object-cover" />
-                            ) : (
-                              <ImageIcon size={18} className="text-stone-400" />
-                            )}
-                          </div>
-                          <div className="flex-1 space-y-1.5">
-                            <input
-                              type="text"
-                              value={contentDraft.blockAImage || ''}
-                              onChange={(e) => setContentDraft({ ...contentDraft, blockAImage: e.target.value })}
-                              placeholder="Bildpfad A (/images/...)"
-                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
-                            />
-                            <input
-                              type="text"
-                              value={contentDraft.blockAImageAlt || ''}
-                              onChange={(e) => setContentDraft({ ...contentDraft, blockAImageAlt: e.target.value })}
-                              placeholder="Alt-Text A"
-                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
-                            />
-                          </div>
-                        </div>
+                        <ImageUploadField
+                          label="Baustein A Hauptbild"
+                          helperText="Visualisierung Mieter-Cockpit / Smartphone-App"
+                          value={contentDraft.blockAImage || ''}
+                          onChange={(newImg) => setContentDraft({ ...contentDraft, blockAImage: newImg })}
+                          altValue={contentDraft.blockAImageAlt || ''}
+                          onAltChange={(newAlt) => setContentDraft({ ...contentDraft, blockAImageAlt: newAlt })}
+                          altPlaceholder="z.B. Mieter-App Videoübergabe"
+                        />
 
                         {/* 3 Sub-Features */}
                         <div className="space-y-2 pt-2">
@@ -2048,31 +2009,15 @@ export const AdminPanel = () => {
                         </div>
 
                         {/* Image & Alt */}
-                        <div className="flex items-center gap-3 p-3 bg-[#F9F8F3] rounded-xl border border-stone-200">
-                          <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
-                            {contentDraft.blockBImage ? (
-                              <img src={contentDraft.blockBImage} alt={contentDraft.blockBImageAlt || 'B'} className="w-full h-full object-cover" />
-                            ) : (
-                              <ImageIcon size={18} className="text-stone-400" />
-                            )}
-                          </div>
-                          <div className="flex-1 space-y-1.5">
-                            <input
-                              type="text"
-                              value={contentDraft.blockBImage || ''}
-                              onChange={(e) => setContentDraft({ ...contentDraft, blockBImage: e.target.value })}
-                              placeholder="Bildpfad B (/images/...)"
-                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
-                            />
-                            <input
-                              type="text"
-                              value={contentDraft.blockBImageAlt || ''}
-                              onChange={(e) => setContentDraft({ ...contentDraft, blockBImageAlt: e.target.value })}
-                              placeholder="Alt-Text B"
-                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
-                            />
-                          </div>
-                        </div>
+                        <ImageUploadField
+                          label="Baustein B Hauptbild"
+                          helperText="Visualisierung Vermieter-Office / Flottenansicht"
+                          value={contentDraft.blockBImage || ''}
+                          onChange={(newImg) => setContentDraft({ ...contentDraft, blockBImage: newImg })}
+                          altValue={contentDraft.blockBImageAlt || ''}
+                          onAltChange={(newAlt) => setContentDraft({ ...contentDraft, blockBImageAlt: newAlt })}
+                          altPlaceholder="z.B. Vermieter Software Dashboard"
+                        />
 
                         {/* 3 Sub-Features */}
                         <div className="space-y-2 pt-2">
@@ -2770,33 +2715,17 @@ export const AdminPanel = () => {
                       {/* Logo & Alt Text */}
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
                         <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
-                          Formular Logo &amp; Bild
+                          Formular Logo &amp; Bildmarke
                         </span>
-                        <div className="flex items-center gap-3">
-                          <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
-                            {contentDraft.formLogo ? (
-                              <img src={contentDraft.formLogo} alt={contentDraft.formLogoAlt || 'Logo'} className="w-full h-full object-contain p-1" />
-                            ) : (
-                              <ImageIcon size={18} className="text-stone-400" />
-                            )}
-                          </div>
-                          <div className="flex-1 space-y-1.5">
-                            <input
-                              type="text"
-                              value={contentDraft.formLogo || '/images/cvb_office_logo.png'}
-                              onChange={(e) => setContentDraft({ ...contentDraft, formLogo: e.target.value })}
-                              placeholder="Logo Pfad"
-                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
-                            />
-                            <input
-                              type="text"
-                              value={contentDraft.formLogoAlt || 'CVB-Office Logo'}
-                              onChange={(e) => setContentDraft({ ...contentDraft, formLogoAlt: e.target.value })}
-                              placeholder="Alt-Text"
-                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
-                            />
-                          </div>
-                        </div>
+                        <ImageUploadField
+                          label="Formular Firmenlogo"
+                          helperText="Transparentes Logo (z.B. cvb_office_logo.png)"
+                          value={contentDraft.formLogo || '/images/cvb_office_logo.png'}
+                          onChange={(newImg) => setContentDraft({ ...contentDraft, formLogo: newImg })}
+                          altValue={contentDraft.formLogoAlt || 'CVB-Office Logo'}
+                          onAltChange={(newAlt) => setContentDraft({ ...contentDraft, formLogoAlt: newAlt })}
+                          altPlaceholder="CVB-Office Logo"
+                        />
                       </div>
 
                       {/* 3 Trust Checklist Points */}
@@ -3106,33 +3035,17 @@ export const AdminPanel = () => {
                       {/* Logo & Alt */}
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
                         <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
-                          Footer Logo &amp; Bild
+                          Footer Logo &amp; Bildmarke
                         </span>
-                        <div className="flex items-center gap-3">
-                          <div className="w-14 h-14 rounded-lg bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
-                            {contentDraft.footerLogo ? (
-                              <img src={contentDraft.footerLogo} alt={contentDraft.footerLogoAlt || 'Logo'} className="w-full h-full object-contain p-1" />
-                            ) : (
-                              <ImageIcon size={18} className="text-stone-400" />
-                            )}
-                          </div>
-                          <div className="flex-1 space-y-1.5">
-                            <input
-                              type="text"
-                              value={contentDraft.footerLogo || '/images/cvb_office_logo.png'}
-                              onChange={(e) => setContentDraft({ ...contentDraft, footerLogo: e.target.value })}
-                              placeholder="Logo Pfad"
-                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs font-mono bg-white"
-                            />
-                            <input
-                              type="text"
-                              value={contentDraft.footerLogoAlt || 'CVB-Office Logo'}
-                              onChange={(e) => setContentDraft({ ...contentDraft, footerLogoAlt: e.target.value })}
-                              placeholder="Alt-Text"
-                              className="w-full px-2.5 py-1 rounded border border-stone-300 text-xs bg-white"
-                            />
-                          </div>
-                        </div>
+                        <ImageUploadField
+                          label="Footer Logo"
+                          helperText="Weißes oder kontrastreiches Logo für dunklen Hintergrund"
+                          value={contentDraft.footerLogo || '/images/cvb_office_logo.png'}
+                          onChange={(newImg) => setContentDraft({ ...contentDraft, footerLogo: newImg })}
+                          altValue={contentDraft.footerLogoAlt || 'CVB-Office Logo'}
+                          onAltChange={(newAlt) => setContentDraft({ ...contentDraft, footerLogoAlt: newAlt })}
+                          altPlaceholder="CVB-Office Logo"
+                        />
                       </div>
 
                       {/* Spalte 1: Beschreibung & Partner */}

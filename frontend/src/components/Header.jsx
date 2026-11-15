@@ -72,7 +72,7 @@ export const Header = () => {
             e.preventDefault();
             scrollToSection('top');
         }} className="flex items-center gap-2.5 sm:gap-3.5 lg:gap-2.5 xl:gap-3.5 group select-none shrink-0" aria-label="CVB-Office Startseite">
-            <img src="/images/cvb_office_logo.png" alt="CVB-Office Logo" className="w-8 sm:w-11 lg:w-9 xl:w-11 h-8 sm:h-11 lg:h-9 xl:h-11 object-contain drop-shadow-xs group-hover:scale-105 transition-transform shrink-0"/>
+            <img src={content?.headerLogo || "/images/cvb_office_logo.png"} alt={content?.headerLogoAlt || "CVB-Office Logo"} className="w-8 sm:w-11 lg:w-9 xl:w-11 h-8 sm:h-11 lg:h-9 xl:h-11 object-contain drop-shadow-xs group-hover:scale-105 transition-transform shrink-0"/>
             <div className="flex flex-col">
               <span className="font-spartan text-lg sm:text-2xl lg:text-xl xl:text-2xl font-black text-[#384808] tracking-tight leading-none">
                 CVB-OFFICE<span className="text-[#A09048]">.</span>
