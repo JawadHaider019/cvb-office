@@ -1049,78 +1049,25 @@ export const AdminPanel = () => {
          ========================================================================= */}
       {activeTab === 'content' && (
         <div className="w-full flex-1 flex flex-col relative animate-in fade-in duration-200">
-          {/* Sticky Sub-Navbar: Section Jump Navigation & Actions */}
-          <div className="sticky top-[69px] z-40 w-full bg-[#242E05] text-[#F4F2E6] border-b border-[#A09048]/30 px-4 sm:px-8 py-2.5 shadow-md flex items-center justify-between overflow-x-auto gap-4">
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="font-spartan font-black text-[11px] uppercase tracking-widest text-[#A09048] flex items-center gap-1.5">
-                <Layers size={14} />
-                <span>SEKTIONEN:</span>
-              </span>
-            </div>
-
-            {/* Jump links for each section */}
-            <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-none">
-              {homepageSections.map((sec) => (
-                <button
-                  key={sec.id}
-                  onClick={() => scrollToSection(sec.anchorId)}
-                  className="px-2.5 py-1 rounded-lg text-xs font-spartan font-bold uppercase tracking-wider text-stone-300 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap cursor-pointer"
-                >
-                  <span className="text-[#A09048] font-mono mr-1">{sec.num}</span>
-                  <span>{sec.label}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Quick Live Reload Action */}
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={handleReloadHomePage}
-                className="px-3.5 py-1.5 bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] rounded-xl text-xs font-spartan font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-sm"
-                title="Startseite im Browser neu laden"
-              >
-                <RefreshCw size={12} />
-                <span className="hidden sm:inline">Startseite neu laden</span>
-              </button>
-            </div>
-          </div>
-
           {/* Full Continuous Homepage View */}
-          <div className="w-full bg-white divide-y-4 divide-[#F4F2E6]">
+          <div className="w-full bg-white relative">
             {homepageSections.map((sec) => (
               <div
                 key={sec.id}
                 id={sec.anchorId}
                 className="relative group transition-all"
               >
-                {/* Floating Admin Section Control Pill Banner */}
-                <div className="bg-[#242E05] border-y border-[#A09048]/30 px-4 sm:px-8 py-3 flex items-center justify-between shadow-xs sticky top-[114px] z-30 backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#A09048] text-[#172002]">
-                      TEIL {sec.num}
-                    </span>
-                    <h3 className="font-spartan font-black text-sm sm:text-base uppercase tracking-wider text-white">
-                      {sec.label}
-                    </h3>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setEditingSection(sec.id)}
-                      className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-spartan font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors border border-white/20"
-                    >
-                      <FileEdit size={13} className="text-[#A09048]" />
-                      <span>Sektion bearbeiten</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleUpdateAndApply(sec.label)}
-                      className="px-4 py-1.5 bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] rounded-xl text-xs font-spartan font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
-                    >
-                      <Check size={14} />
-                      <span>Aktualisieren &amp; Anwenden</span>
-                    </button>
-                  </div>
+                {/* Floating Edit Button: Only edit button shows on each section top right */}
+                <div className="absolute top-4 right-4 sm:top-5 sm:right-8 z-30 pointer-events-auto">
+                  <button
+                    type="button"
+                    onClick={() => setEditingSection(sec.id)}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#242E05]/95 hover:bg-[#384808] text-white hover:text-[#F4F2E6] border border-[#A09048] shadow-2xl backdrop-blur-md font-spartan font-black text-[11px] sm:text-xs uppercase tracking-wider transition-all duration-200 hover:scale-105 cursor-pointer group/btn"
+                    title={`${sec.label} bearbeiten`}
+                  >
+                    <FileEdit size={13} className="text-[#A09048] group-hover/btn:rotate-12 transition-transform" />
+                    <span>Bearbeiten</span>
+                  </button>
                 </div>
 
                 {/* The Real Homepage Component Rendered With Live AppContext Binding */}
@@ -1135,23 +1082,37 @@ export const AdminPanel = () => {
           {editingSection && (
             <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
               <div className="w-full max-w-2xl bg-[#F4F2E6] h-full shadow-2xl flex flex-col border-l-2 border-[#A09048] animate-in slide-in-from-right duration-300">
-                {/* Drawer Header */}
+                {/* Drawer Header with Update and Close Actions */}
                 <div className="p-6 bg-[#242E05] text-white flex items-center justify-between border-b border-[#A09048]/30">
                   <div>
                     <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-1">
-                      SCHNELL-EDITOR
+                      SEKTION BEARBEITEN
                     </span>
                     <h3 className="font-spartan font-black text-xl uppercase tracking-tight text-white">
                       {homepageSections.find((s) => s.id === editingSection)?.title}
                     </h3>
                   </div>
 
-                  <button
-                    onClick={() => setEditingSection(null)}
-                    className="p-2 text-stone-400 hover:text-white rounded-xl transition-colors cursor-pointer"
-                  >
-                    <X size={20} />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const sec = homepageSections.find((s) => s.id === editingSection);
+                        handleUpdateAndApply(sec ? sec.label : 'Sektion');
+                      }}
+                      className="px-3.5 py-1.5 bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] rounded-xl text-xs font-spartan font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
+                      title="Änderungen jetzt anwenden"
+                    >
+                      <Check size={13} strokeWidth={3} />
+                      <span>Aktualisieren</span>
+                    </button>
+                    <button
+                      onClick={() => setEditingSection(null)}
+                      className="p-2 text-stone-400 hover:text-white rounded-xl transition-colors cursor-pointer"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Drawer Form Body */}
@@ -3315,9 +3276,9 @@ export const AdminPanel = () => {
                       const sec = homepageSections.find((s) => s.id === editingSection);
                       handleUpdateAndApply(sec ? sec.label : 'Sektion');
                     }}
-                    className="tech-cta-primary h-11 text-xs px-5 cursor-pointer"
+                    className="tech-cta-primary h-11 text-xs px-6 cursor-pointer"
                   >
-                    <span>ÄNDERUNGEN ANWENDEN</span>
+                    <span>AKTUALISIEREN &amp; ANWENDEN</span>
                     <span className="tech-ci w-7 h-7">
                       <Save size={14} />
                     </span>
