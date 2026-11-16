@@ -20,8 +20,9 @@ import { AdminPanel } from './components/AdminPanel';
 import { NotFoundPage } from './components/NotFoundPage';
 import { FloatingConversionBar } from './components/FloatingConversionBar';
 import { CustomCursor } from './components/CustomCursor';
+import { ArrowLeft } from 'lucide-react';
 const MainLayout = () => {
-    const { currentView, setCurrentView } = useApp();
+    const { currentView, setCurrentView, isAdminLoggedIn } = useApp();
     const [legalModal, setLegalModal] = useState({
         isOpen: false,
         type: 'impressum',
@@ -79,6 +80,18 @@ const MainLayout = () => {
 
       {/* Floating Conversion Bar (CRO for Vermieter) */}
       <FloatingConversionBar />
+
+      {/* Back to Admin Center Floating Pill when logged-in admin previews homepage */}
+      {isAdminLoggedIn && (
+        <button
+          type="button"
+          onClick={() => setCurrentView('admin')}
+          className="fixed bottom-5 left-5 z-50 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#242E05] hover:bg-[#384808] text-white border-2 border-[#A09048] shadow-2xl font-spartan font-black text-xs uppercase tracking-wider transition-all hover:scale-105 cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#A09048]" />
+          <span>ZURÜCK ZUM ADMIN-CENTER</span>
+        </button>
+      )}
 
       {/* Legal Modals for Impressum & Datenschutz */}
       <LegalModal isOpen={legalModal.isOpen} type={legalModal.type} onClose={() => setLegalModal({ ...legalModal, isOpen: false })}/>

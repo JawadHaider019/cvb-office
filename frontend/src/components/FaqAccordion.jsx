@@ -4,6 +4,33 @@ import { useApp } from '../context/AppContext';
 import { LayoutGrid, Layers, CreditCard, Globe, ShieldCheck, Plus, ArrowRight, ArrowUpRight, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
+export const FAQ_CATEGORIES = [
+    { id: 'software', label: 'Software & Einstieg' },
+    { id: 'pricing', label: 'Preise & Tarife' },
+    { id: 'features', label: 'Funktionen & Widget' },
+    { id: 'legal', label: 'Recht & Sicherheit' },
+];
+
+const VALID_FAQ_CATEGORY_IDS = ['software', 'pricing', 'features', 'legal'];
+
+/** Resolve FAQ category preferring an explicit valid admin assignment over keyword fallback. */
+export const inferFaqCategory = (faq) => {
+    if (faq?.category && VALID_FAQ_CATEGORY_IDS.includes(faq.category)) {
+        return faq.category;
+    }
+    const q = (faq?.question || '').toLowerCase();
+    if (q.includes('preis') || q.includes('kosten') || q.includes('bezahlt') || q.includes('testen') || q.includes('gebühr') || q.includes('mitglied')) {
+        return 'pricing';
+    }
+    if (q.includes('website') || q.includes('widget') || q.includes('video') || q.includes('standort') || q.includes('einweisung')) {
+        return 'features';
+    }
+    if (q.includes('dsgvo') || q.includes('vertrag') || q.includes('recht') || q.includes('laufzeit') || q.includes('sicher')) {
+        return 'legal';
+    }
+    return 'software';
+};
+
 export const FaqAccordion = () => {
     const { faqs, generalSettings, content } = useApp();
     const visibleFaqs = faqs.filter((f) => f.visible);
@@ -23,26 +50,10 @@ export const FaqAccordion = () => {
     };
     // Map each FAQ item into a structured category
     const categorizedFaqs = useMemo(() => {
-        return visibleFaqs.map((faq) => {
-            const q = faq.question.toLowerCase();
-            let categoryId = 'software';
-            if (q.includes('preis') || q.includes('kosten') || q.includes('bezahlt') || q.includes('testen') || q.includes('gebühr') || q.includes('mitglied')) {
-                categoryId = 'pricing';
-            }
-            else if (q.includes('website') || q.includes('widget') || q.includes('video') || q.includes('standort') || q.includes('einweisung')) {
-                categoryId = 'features';
-            }
-            else if (q.includes('dsgvo') || q.includes('vertrag') || q.includes('recht') || q.includes('laufzeit') || q.includes('sicher')) {
-                categoryId = 'legal';
-            }
-            else {
-                categoryId = 'software';
-            }
-            return {
-                ...faq,
-                categoryId,
-            };
-        });
+        return visibleFaqs.map((faq) => ({
+            ...faq,
+            categoryId: inferFaqCategory(faq),
+        }));
     }, [visibleFaqs]);
     // Filter based on active tab
     const displayCategories = useMemo(() => {

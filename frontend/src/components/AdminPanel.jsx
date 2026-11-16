@@ -1,6 +1,6 @@
 'use client';
-import React, { useState, useEffect, useMemo } from 'react';
-import { useApp } from '../context/AppContext';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useApp, parseRequestContact } from '../context/AppContext';
 import {
   LayoutDashboard,
   Inbox,
@@ -44,6 +44,12 @@ import {
   Building2,
   Compass,
   MessageSquareQuote,
+  Download,
+  Phone,
+  Mail,
+  Copy,
+  Undo2,
+  Lock,
 } from 'lucide-react';
 
 // Live Homepage Section Components
@@ -58,7 +64,7 @@ import { Benefits } from './Benefits';
 import { Audience } from './Audience';
 import { PriceTrialBox } from './PriceTrialBox';
 import { SignUpForm } from './SignUpForm';
-import { FaqAccordion } from './FaqAccordion';
+import { FaqAccordion, FAQ_CATEGORIES, inferFaqCategory } from './FaqAccordion';
 import { AboutCvb } from './AboutCvb';
 import { Footer } from './Footer';
 
@@ -66,12 +72,14 @@ export const AdminPanel = () => {
   const {
     isAdminLoggedIn,
     loginAdmin,
+    changeAdminPassword,
     logoutAdmin,
     setCurrentView,
     requests,
     updateRequestStatus,
     updateRequestNote,
     deleteRequest,
+    exportRequestsCsv,
     content,
     updateContent,
     priceSettings,
@@ -79,13 +87,11 @@ export const AdminPanel = () => {
     generalSettings,
     updateGeneralSettings,
     features,
-    updateFeature,
-    toggleFeatureVisibility,
+    setAllFeatures,
     steps,
-    updateStep,
+    setAllSteps,
     faqs,
-    updateFaq,
-    toggleFaqVisibility,
+    setAllFaqs,
     resetAllToDefaults,
   } = useApp();
 
@@ -98,6 +104,7 @@ export const AdminPanel = () => {
   // Login form state
   const [loginEmail, setLoginEmail] = useState('detlef@caravan-vermieter-bund.de');
   const [loginPassword, setLoginPassword] = useState('cvb-office-2026');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [showForgotNotice, setShowForgotNotice] = useState(false);
 
@@ -107,39 +114,72 @@ export const AdminPanel = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [tempNote, setTempNote] = useState('');
 
-  // Save feedback state
-  const [saveSuccessMsg, setSaveSuccessMsg] = useState(null);
-  const [showReloadDialog, setShowReloadDialog] = useState(false);
+  // Admin password change state
+  const [newAdminPassword, setNewAdminPassword] = useState('');
+  const [confirmAdminPassword, setConfirmAdminPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [pwFeedback, setPwFeedback] = useState(null);
 
-  // Local form drafts for editing
+  // Save feedback state & backup state
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState(null);
+  const [hasBackup, setHasBackup] = useState(false);
+  const [quickJumpSection, setQuickJumpSection] = useState('section-header');
+
+  // Local form drafts for consistent Cancel / Save across every drawer
   const [contentDraft, setContentDraft] = useState(content);
   const [priceDraft, setPriceDraft] = useState(priceSettings);
   const [settingsDraft, setSettingsDraft] = useState(generalSettings);
+  const [featuresDraft, setFeaturesDraft] = useState(features);
+  const [stepsDraft, setStepsDraft] = useState(steps);
+  const [faqsDraft, setFaqsDraft] = useState(faqs);
 
-  // Sync drafts whenever drawer opens
+  // Check backup availability on mount
+  useEffect(() => {
+    try {
+      setHasBackup(Boolean(localStorage.getItem('cvb_office_content_backup_v1')));
+    } catch {}
+  }, []);
+
+  // Keep settingsDraft synced with hydrated generalSettings even when opening Tab 4 directly
+  useEffect(() => {
+    setSettingsDraft(generalSettings);
+  }, [generalSettings]);
+
+  // Sync all drawer drafts whenever drawer opens
   useEffect(() => {
     if (editingSection) {
       setContentDraft(content);
       setPriceDraft(priceSettings);
       setSettingsDraft(generalSettings);
+      setFeaturesDraft(features);
+      setStepsDraft(steps);
+      setFaqsDraft(faqs);
     }
-  }, [editingSection, content, priceSettings, generalSettings]);
+  }, [editingSection, content, priceSettings, generalSettings, features, steps, faqs]);
 
   // Mobile navigation drawer toggle
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const showSaveNotice = (msg = 'Änderungen erfolgreich gespeichert.') => {
+  const showSaveNotice = useCallback((msg = 'Änderungen erfolgreich gespeichert.') => {
     setSaveSuccessMsg(msg);
-    setTimeout(() => setSaveSuccessMsg(null), 3500);
-  };
+  }, []);
 
-  // Aggregated lead calculations
+  useEffect(() => {
+    if (!saveSuccessMsg) return;
+    const timer = setTimeout(() => setSaveSuccessMsg(null), 4500);
+    return () => clearTimeout(timer);
+  }, [saveSuccessMsg]);
+
+  // Aggregated lead calculations (searches email, notes, ID, contact_name, phone)
   const filteredRequests = useMemo(() => {
     return requests.filter((r) => {
       const q = searchEmail.toLowerCase().trim();
+      const { contactName, phone } = parseRequestContact(r);
       const matchesSearch =
         !q ||
         r.email.toLowerCase().includes(q) ||
+        contactName.toLowerCase().includes(q) ||
+        phone.toLowerCase().includes(q) ||
         (r.notes && r.notes.toLowerCase().includes(q)) ||
         (r.id && r.id.toLowerCase().includes(q));
       const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
@@ -155,30 +195,123 @@ export const AdminPanel = () => {
     return requests.reduce((sum, r) => sum + (Number(r.vehicle_count) || 1), 0);
   }, [requests]);
 
-  // Handler to update a section and offer home reload
+  const openRequestDetails = (req, switchToRequestsTab = false) => {
+    setSelectedRequest(req);
+    setTempNote(parseRequestContact(req).cleanNotes);
+    if (switchToRequestsTab) {
+      setActiveTab('requests');
+    }
+  };
+
+  // Helper to preserve legacy embedded contact fields when updating notes
+  const saveLeadNote = (req, noteText) => {
+    const trimmedNote = (noteText || '').trim();
+    const { contactName, phone } = parseRequestContact(req);
+    let finalNote = trimmedNote;
+    if (!req.contact_name && !req.phone && (contactName || phone)) {
+      const legacyPrefix = [
+        contactName ? `Ansprechpartner: ${contactName}` : '',
+        phone ? `Telefon: ${phone}` : '',
+      ]
+        .filter(Boolean)
+        .join(' | ');
+      finalNote = [legacyPrefix, trimmedNote].filter(Boolean).join(' | ');
+    }
+    updateRequestNote(req.id, finalNote);
+    return finalNote;
+  };
+
+  // Detect unsaved drawer modifications
+  const hasUnsavedChanges = useCallback(() => {
+    if (!editingSection) return false;
+    return (
+      JSON.stringify(contentDraft) !== JSON.stringify(content) ||
+      JSON.stringify(priceDraft) !== JSON.stringify(priceSettings) ||
+      JSON.stringify(settingsDraft) !== JSON.stringify(generalSettings) ||
+      JSON.stringify(featuresDraft) !== JSON.stringify(features) ||
+      JSON.stringify(stepsDraft) !== JSON.stringify(steps) ||
+      JSON.stringify(faqsDraft) !== JSON.stringify(faqs)
+    );
+  }, [
+    editingSection,
+    contentDraft,
+    content,
+    priceDraft,
+    priceSettings,
+    settingsDraft,
+    generalSettings,
+    featuresDraft,
+    features,
+    stepsDraft,
+    steps,
+    faqsDraft,
+    faqs,
+  ]);
+
+  const handleCloseDrawer = useCallback(() => {
+    if (hasUnsavedChanges()) {
+      const confirmed = window.confirm('Du hast ungespeicherte Änderungen. Möchtest Du das Fenster wirklich schließen?');
+      if (!confirmed) return;
+    }
+    setEditingSection(null);
+  }, [hasUnsavedChanges]);
+
+  // Close drawer with Escape key (with unsaved changes prompt)
+  useEffect(() => {
+    if (!editingSection) return;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleCloseDrawer();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [editingSection, handleCloseDrawer]);
+
+  // Handler to update a section atomically and store an Undo snapshot
   const handleUpdateAndApply = (sectionName) => {
     try {
-      localStorage.setItem('cvb_office_content_backup_v1', JSON.stringify(content));
+      const snapshot = { content, priceSettings, generalSettings, features, steps, faqs };
+      localStorage.setItem('cvb_office_content_backup_v1', JSON.stringify(snapshot));
+      setHasBackup(true);
     } catch {}
     updateContent(contentDraft);
     updatePriceSettings(priceDraft);
     updateGeneralSettings(settingsDraft);
+    setAllFeatures(featuresDraft);
+    setAllSteps(stepsDraft);
+    setAllFaqs(faqsDraft);
     showSaveNotice(`${sectionName} erfolgreich aktualisiert und auf der Startseite angewendet!`);
     setEditingSection(null);
-    setShowReloadDialog(true);
   };
 
-  // Reload the public home page
-  const handleReloadHomePage = () => {
-    setShowReloadDialog(false);
-    window.location.href = '/';
+  // Restore snapshot from previous update
+  const handleUndoLastChange = () => {
+    try {
+      const raw = localStorage.getItem('cvb_office_content_backup_v1');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.content) {
+        updateContent(parsed.content);
+        if (parsed.priceSettings) updatePriceSettings(parsed.priceSettings);
+        if (parsed.generalSettings) updateGeneralSettings(parsed.generalSettings);
+        if (Array.isArray(parsed.features)) setAllFeatures(parsed.features);
+        if (Array.isArray(parsed.steps)) setAllSteps(parsed.steps);
+        if (Array.isArray(parsed.faqs)) setAllFaqs(parsed.faqs);
+      } else if (parsed && typeof parsed === 'object') {
+        updateContent(parsed);
+      }
+      showSaveNotice('Letzte Änderung wurde erfolgreich rückgängig gemacht.');
+    } catch {
+      showSaveNotice('Wiederherstellung fehlgeschlagen.');
+    }
   };
 
   // Smooth scroll to section in Content Management mode
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
-      const yOffset = -130;
+      const yOffset = -140;
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
@@ -275,13 +408,22 @@ export const AdminPanel = () => {
               <div className="relative">
                 <KeyRound className="absolute left-4 top-3.5 text-[#A09048]" size={18} />
                 <input
-                  type="password"
+                  type={showLoginPassword ? 'text' : 'password'}
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="Passwort eingeben..."
-                  className="w-full pl-11 pr-4 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-medium text-[#242E05] bg-white focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/15"
+                  className="w-full pl-11 pr-11 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-medium text-[#242E05] bg-white focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/15"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowLoginPassword((prev) => !prev)}
+                  className="absolute right-3.5 top-3 text-stone-400 hover:text-[#384808] p-0.5 rounded cursor-pointer"
+                  aria-label={showLoginPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
+                  title={showLoginPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
+                >
+                  {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
@@ -510,43 +652,30 @@ export const AdminPanel = () => {
         </div>
       )}
 
-      {/* Floating Save Toast Notification */}
+      {/* Floating Save Toast Notification with 1-Click Live Preview Link */}
       {saveSuccessMsg && (
-        <div className="fixed top-20 right-6 sm:right-10 z-50 bg-[#384808] text-white px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top duration-200 text-sm font-bold border-2 border-[#A09048]">
-          <CheckCircle size={20} className="text-[#A09048]" />
+        <div className="fixed top-20 right-6 sm:right-10 z-[80] bg-[#384808] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top duration-200 text-xs sm:text-sm font-bold border-2 border-[#A09048]">
+          <CheckCircle size={20} className="text-[#A09048] shrink-0" />
           <span>{saveSuccessMsg}</span>
-        </div>
-      )}
-
-      {/* Reload Confirmation Dialog */}
-      {showReloadDialog && (
-        <div className="fixed bottom-8 right-8 z-50 bg-[#242E05] text-white p-5 rounded-3xl shadow-2xl border-2 border-[#A09048] max-w-sm animate-in slide-in-from-bottom duration-300">
-          <div className="flex items-start gap-3 mb-3">
-            <CheckCircle size={22} className="text-[#A09048] shrink-0 mt-0.5" />
-            <div>
-              <h4 className="font-spartan font-black text-sm uppercase text-white">
-                Änderungen Live geschaltet
-              </h4>
-              <p className="text-xs text-stone-300 mt-1">
-                Möchtest Du die Startseite neu laden, um das Ergebnis sofort im Browser zu überprüfen?
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
-            <button
-              onClick={() => setShowReloadDialog(false)}
-              className="px-3.5 py-1.5 text-xs text-stone-300 hover:text-white cursor-pointer font-bold"
-            >
-              Im Admin bleiben
-            </button>
-            <button
-              onClick={handleReloadHomePage}
-              className="px-4 py-2 bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] rounded-xl text-xs font-spartan font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
-            >
-              <RefreshCw size={13} />
-              <span>Startseite neu laden</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setSaveSuccessMsg(null);
+              setCurrentView('public');
+            }}
+            className="ml-1 inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] font-spartan font-black text-[11px] uppercase tracking-wider shrink-0 cursor-pointer transition-colors"
+          >
+            <span>Live-Website öffnen</span>
+            <ArrowUpRight size={12} />
+          </button>
+          <button
+            type="button"
+            onClick={() => setSaveSuccessMsg(null)}
+            className="text-stone-300 hover:text-white p-0.5 cursor-pointer"
+            aria-label="Hinweis schließen"
+          >
+            <X size={15} />
+          </button>
         </div>
       )}
 
@@ -583,13 +712,20 @@ export const AdminPanel = () => {
             </div>
           </div>
 
-          {/* 4 Metric KPI Cards */}
+          {/* 4 Clickable Metric KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            <div className="bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group flex flex-col justify-between">
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter('neu');
+                setActiveTab('requests');
+              }}
+              className="text-left bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 hover:border-[#A09048] transition-all relative overflow-hidden group flex flex-col justify-between cursor-pointer"
+            >
               <span className="absolute -bottom-3 -right-2 font-spartan font-black text-7xl text-[#384808]/10 group-hover:text-[#A09048]/25 transition-colors select-none pointer-events-none">
                 01
               </span>
-              <div>
+              <div className="w-full">
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">
                     NEUE ANFRAGEN
@@ -602,17 +738,27 @@ export const AdminPanel = () => {
                   {newRequestsCount}
                 </div>
               </div>
-              <div className="text-xs text-amber-800 font-bold mt-4 flex items-center gap-1.5 pt-3 border-t border-stone-100">
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                <span>Müssen noch kontaktiert werden</span>
+              <div className="w-full text-xs text-amber-800 font-bold mt-4 flex items-center justify-between gap-1.5 pt-3 border-t border-stone-100">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span>Müssen noch kontaktiert werden</span>
+                </span>
+                <ChevronRight size={14} className="text-amber-700 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-            </div>
+            </button>
 
-            <div className="bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group flex flex-col justify-between">
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter('in_bearbeitung');
+                setActiveTab('requests');
+              }}
+              className="text-left bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 hover:border-[#A09048] transition-all relative overflow-hidden group flex flex-col justify-between cursor-pointer"
+            >
               <span className="absolute -bottom-3 -right-2 font-spartan font-black text-7xl text-[#384808]/10 group-hover:text-[#A09048]/25 transition-colors select-none pointer-events-none">
                 02
               </span>
-              <div>
+              <div className="w-full">
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">
                     IN EINRICHTUNG
@@ -625,17 +771,27 @@ export const AdminPanel = () => {
                   {inProgressCount}
                 </div>
               </div>
-              <div className="text-xs text-blue-800 font-bold mt-4 flex items-center gap-1.5 pt-3 border-t border-stone-100">
-                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                <span>Smarlps Zugang wird eingerichtet</span>
+              <div className="w-full text-xs text-blue-800 font-bold mt-4 flex items-center justify-between gap-1.5 pt-3 border-t border-stone-100">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span>Smarlps Zugang wird eingerichtet</span>
+                </span>
+                <ChevronRight size={14} className="text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-            </div>
+            </button>
 
-            <div className="bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group flex flex-col justify-between">
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter('erledigt');
+                setActiveTab('requests');
+              }}
+              className="text-left bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 hover:border-[#A09048] transition-all relative overflow-hidden group flex flex-col justify-between cursor-pointer"
+            >
               <span className="absolute -bottom-3 -right-2 font-spartan font-black text-7xl text-[#384808]/10 group-hover:text-[#A09048]/25 transition-colors select-none pointer-events-none">
                 03
               </span>
-              <div>
+              <div className="w-full">
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">
                     ABGESCHLOSSEN
@@ -648,17 +804,27 @@ export const AdminPanel = () => {
                   {doneCount}
                 </div>
               </div>
-              <div className="text-xs text-emerald-800 font-bold mt-4 flex items-center gap-1.5 pt-3 border-t border-stone-100">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span>Zugang übermittelt &amp; aktiv</span>
+              <div className="w-full text-xs text-emerald-800 font-bold mt-4 flex items-center justify-between gap-1.5 pt-3 border-t border-stone-100">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>Zugang übermittelt &amp; aktiv</span>
+                </span>
+                <ChevronRight size={14} className="text-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-            </div>
+            </button>
 
-            <div className="bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group flex flex-col justify-between">
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter('all');
+                setActiveTab('requests');
+              }}
+              className="text-left bg-white p-7 rounded-[28px] border border-[#A09048]/30 shadow-[0_12px_35px_-15px_rgba(56,72,8,0.08)] hover:shadow-xl hover:-translate-y-1 hover:border-[#A09048] transition-all relative overflow-hidden group flex flex-col justify-between cursor-pointer"
+            >
               <span className="absolute -bottom-3 -right-2 font-spartan font-black text-7xl text-[#384808]/10 group-hover:text-[#A09048]/25 transition-colors select-none pointer-events-none">
                 04
               </span>
-              <div>
+              <div className="w-full">
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#585828]">
                     GESAMTFLOTTE
@@ -671,13 +837,12 @@ export const AdminPanel = () => {
                   {totalVehiclesCount} <span className="text-base font-bold text-[#585828]">Camper</span>
                 </div>
               </div>
-              <div className="text-xs text-[#585828] font-bold mt-4 pt-3 border-t border-stone-100">
-                Über alle {requests.length} Vermieter erfasst
+              <div className="w-full text-xs text-[#585828] font-bold mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                <span>Über alle {requests.length} Vermieter erfasst</span>
+                <ChevronRight size={14} className="text-[#384808] opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-            </div>
+            </button>
           </div>
-
-
 
           {/* Recent Requests Bento Table */}
           <div className="bg-white rounded-[32px] p-7 sm:p-9 border border-[#A09048]/30 shadow-xs">
@@ -691,13 +856,26 @@ export const AdminPanel = () => {
                 </h3>
               </div>
 
-              <button
-                onClick={() => setActiveTab('requests')}
-                className="tech-cta-ghost h-10 text-xs px-4 cursor-pointer"
-              >
-                <span>Alle {requests.length} Anfragen im CRM verwalten</span>
-                <ChevronRight size={14} />
-              </button>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={exportRequestsCsv}
+                  className="inline-flex items-center gap-2 px-4 h-10 rounded-full bg-[#F4F2E6] hover:bg-[#e8e4ce] border border-[#A09048]/35 text-[#384808] font-spartan font-black text-xs uppercase tracking-wider cursor-pointer transition-colors"
+                >
+                  <Download size={14} />
+                  <span>Excel / CSV Export</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setStatusFilter('all');
+                    setActiveTab('requests');
+                  }}
+                  className="tech-cta-ghost h-10 text-xs px-4 cursor-pointer"
+                >
+                  <span>Alle {requests.length} Anfragen im CRM verwalten</span>
+                  <ChevronRight size={14} />
+                </button>
+              </div>
             </div>
 
             <div className="overflow-x-auto rounded-2xl border border-[#A09048]/25">
@@ -705,72 +883,74 @@ export const AdminPanel = () => {
                 <thead className="bg-[#F4F2E6] border-b border-[#A09048]/25 text-[#384808] font-spartan font-black uppercase text-[11px] tracking-wider">
                   <tr>
                     <th className="px-5 py-4">Datum</th>
-                    <th className="px-5 py-4">Vermieter / E-Mail</th>
+                    <th className="px-5 py-4">Vermieter / Kontakt</th>
                     <th className="px-5 py-4 text-center">Fahrzeuge</th>
                     <th className="px-5 py-4">Status</th>
                     <th className="px-5 py-4 text-right">Aktion</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100 bg-white">
-                  {requests.slice(0, 5).map((req) => (
-                    <tr
-                      key={req.id}
-                      onClick={() => {
-                        setSelectedRequest(req);
-                        setTempNote(req.notes || '');
-                        setActiveTab('requests');
-                      }}
-                      className="hover:bg-[#F9F8F3] transition-colors cursor-pointer"
-                    >
-                      <td className="px-5 py-4 text-stone-500 whitespace-nowrap tabular-nums">
-                        {req.created_at}
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="font-bold text-[#242E05] block">{req.email}</span>
-                        {req.notes && (
-                          <span className="text-[11px] text-stone-400 block truncate max-w-xs mt-0.5">
-                            Notiz: {req.notes}
+                  {requests.slice(0, 5).map((req) => {
+                    const { contactName, phone, cleanNotes } = parseRequestContact(req);
+                    return (
+                      <tr
+                        key={req.id}
+                        onClick={() => openRequestDetails(req, true)}
+                        className="hover:bg-[#F9F8F3] transition-colors cursor-pointer"
+                      >
+                        <td className="px-5 py-4 text-stone-500 whitespace-nowrap tabular-nums">
+                          {req.created_at}
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="font-bold text-[#242E05] block">{req.email}</span>
+                          {(contactName || phone) && (
+                            <span className="text-[11px] text-[#384808] font-medium block mt-0.5">
+                              {[contactName, phone].filter(Boolean).join(' · ')}
+                            </span>
+                          )}
+                          {cleanNotes && (
+                            <span className="text-[11px] text-stone-400 block truncate max-w-xs mt-0.5">
+                              Notiz: {cleanNotes}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 text-center">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#F4F2E6] border border-[#A09048]/30 font-spartan font-black text-xs text-[#384808] tabular-nums">
+                            <Car size={13} className="text-[#A09048]" />
+                            <span>{req.vehicle_count}</span>
                           </span>
-                        )}
-                      </td>
-                      <td className="px-5 py-4 text-center">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#F4F2E6] border border-[#A09048]/30 font-spartan font-black text-xs text-[#384808] tabular-nums">
-                          <Car size={13} className="text-[#A09048]" />
-                          <span>{req.vehicle_count}</span>
-                        </span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span
-                          className={`inline-block px-3 py-1 rounded-full text-xs font-spartan font-bold uppercase tracking-wider ${
-                            req.status === 'neu'
-                              ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                        </td>
+                        <td className="px-5 py-4">
+                          <span
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-spartan font-bold uppercase tracking-wider ${
+                              req.status === 'neu'
+                                ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                                : req.status === 'in_bearbeitung'
+                                ? 'bg-blue-100 text-blue-900 border border-blue-300'
+                                : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                            }`}
+                          >
+                            {req.status === 'neu'
+                              ? 'Neu'
                               : req.status === 'in_bearbeitung'
-                              ? 'bg-blue-100 text-blue-900 border border-blue-300'
-                              : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                          }`}
-                        >
-                          {req.status === 'neu'
-                            ? 'Neu'
-                            : req.status === 'in_bearbeitung'
-                            ? 'In Bearbeitung'
-                            : 'Erledigt'}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedRequest(req);
-                            setTempNote(req.notes || '');
-                            setActiveTab('requests');
-                          }}
-                          className="px-3.5 py-1.5 text-xs font-spartan font-bold uppercase tracking-wider text-[#384808] hover:bg-[#F4F2E6] rounded-xl border border-[#A09048]/30 transition-colors"
-                        >
-                          Öffnen
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                              ? 'In Bearbeitung'
+                              : 'Erledigt'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openRequestDetails(req, true);
+                            }}
+                            className="px-3.5 py-1.5 text-xs font-spartan font-bold uppercase tracking-wider text-[#384808] hover:bg-[#F4F2E6] rounded-xl border border-[#A09048]/30 transition-colors cursor-pointer"
+                          >
+                            Öffnen
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -794,7 +974,15 @@ export const AdminPanel = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={exportRequestsCsv}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#384808] hover:bg-[#242E05] text-white font-spartan font-black text-xs uppercase tracking-wider cursor-pointer transition-colors shadow-xs"
+                >
+                  <Download size={14} className="text-[#A09048]" />
+                  <span>Excel / CSV Export</span>
+                </button>
                 <span className="px-4 py-2 bg-[#F4F2E6] border border-[#A09048]/30 rounded-xl font-spartan font-black text-xs uppercase text-[#384808]">
                   {requests.length} Anfragen im System
                 </span>
@@ -807,7 +995,7 @@ export const AdminPanel = () => {
                 <Search className="absolute left-4 top-3.5 text-[#A09048]" size={18} />
                 <input
                   type="text"
-                  placeholder="Nach E-Mail, Notiz oder ID suchen..."
+                  placeholder="Nach E-Mail, Name, Telefon, Notiz oder ID suchen..."
                   value={searchEmail}
                   onChange={(e) => setSearchEmail(e.target.value)}
                   className="w-full pl-11 pr-10 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-medium text-[#242E05] focus:outline-none focus:border-[#384808] focus:ring-2 focus:ring-[#384808]/15 bg-white"
@@ -815,7 +1003,7 @@ export const AdminPanel = () => {
                 {searchEmail && (
                   <button
                     onClick={() => setSearchEmail('')}
-                    className="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-600"
+                    className="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-600 cursor-pointer"
                   >
                     <X size={16} />
                   </button>
@@ -850,7 +1038,7 @@ export const AdminPanel = () => {
                 <thead className="bg-[#F4F2E6] border-b border-[#A09048]/25 text-[#384808] font-spartan font-black uppercase text-[11px] tracking-wider">
                   <tr>
                     <th className="px-5 py-4">Datum</th>
-                    <th className="px-5 py-4">Vermieter / E-Mail</th>
+                    <th className="px-5 py-4">Vermieter / Kontakt</th>
                     <th className="px-5 py-4 text-center">Flotte</th>
                     <th className="px-5 py-4">Status</th>
                     <th className="px-5 py-4">Preiseinwilligung</th>
@@ -865,66 +1053,81 @@ export const AdminPanel = () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredRequests.map((req) => (
-                      <tr
-                        key={req.id}
-                        onClick={() => {
-                          setSelectedRequest(req);
-                          setTempNote(req.notes || '');
-                        }}
-                        className="hover:bg-[#F9F8F3] transition-colors cursor-pointer"
-                      >
-                        <td className="px-5 py-4 text-stone-500 whitespace-nowrap tabular-nums">
-                          {req.created_at}
-                        </td>
-                        <td className="px-5 py-4">
-                          <span className="font-bold text-[#242E05] block">{req.email}</span>
-                          {req.notes && (
-                            <span className="text-[11px] text-stone-400 block truncate max-w-sm mt-0.5">
-                              Notiz: {req.notes}
+                    filteredRequests.map((req) => {
+                      const { contactName, phone, cleanNotes } = parseRequestContact(req);
+                      return (
+                        <tr
+                          key={req.id}
+                          onClick={() => openRequestDetails(req)}
+                          className="hover:bg-[#F9F8F3] transition-colors cursor-pointer"
+                        >
+                          <td className="px-5 py-4 text-stone-500 whitespace-nowrap tabular-nums">
+                            {req.created_at}
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="font-bold text-[#242E05] block">{req.email}</span>
+                            {(contactName || phone) && (
+                              <div className="flex flex-wrap items-center gap-2 mt-1">
+                                {contactName && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F4F2E6] text-[#384808] text-[11px] font-bold">
+                                    <User size={11} className="text-[#889028]" />
+                                    {contactName}
+                                  </span>
+                                )}
+                                {phone && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-stone-100 text-[#585828] text-[11px] font-mono">
+                                    <Phone size={11} className="text-[#889028]" />
+                                    {phone}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            {cleanNotes && (
+                              <span className="text-[11px] text-stone-400 block truncate max-w-sm mt-1">
+                                Notiz: {cleanNotes}
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-5 py-4 text-center">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#F4F2E6] border border-[#A09048]/30 font-spartan font-black text-xs text-[#384808] tabular-nums">
+                              <Car size={13} className="text-[#A09048]" />
+                              <span>{req.vehicle_count}</span>
                             </span>
-                          )}
-                        </td>
-                        <td className="px-5 py-4 text-center">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#F4F2E6] border border-[#A09048]/30 font-spartan font-black text-xs text-[#384808] tabular-nums">
-                            <Car size={13} className="text-[#A09048]" />
-                            <span>{req.vehicle_count}</span>
-                          </span>
-                        </td>
-                        <td className="px-5 py-4">
-                          <span
-                            className={`inline-block px-3 py-1 rounded-full text-xs font-spartan font-bold uppercase tracking-wider ${
-                              req.status === 'neu'
-                                ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                          </td>
+                          <td className="px-5 py-4">
+                            <span
+                              className={`inline-block px-3 py-1 rounded-full text-xs font-spartan font-bold uppercase tracking-wider ${
+                                req.status === 'neu'
+                                  ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                                  : req.status === 'in_bearbeitung'
+                                  ? 'bg-blue-100 text-blue-900 border border-blue-300'
+                                  : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                              }`}
+                            >
+                              {req.status === 'neu'
+                                ? 'Neu'
                                 : req.status === 'in_bearbeitung'
-                                ? 'bg-blue-100 text-blue-900 border border-blue-300'
-                                : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                            }`}
-                          >
-                            {req.status === 'neu'
-                              ? 'Neu'
-                              : req.status === 'in_bearbeitung'
-                              ? 'In Bearbeitung'
-                              : 'Erledigt'}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4 text-xs text-stone-500 max-w-xs truncate">
-                          {req.price_consent_text}
-                        </td>
-                        <td className="px-5 py-4 text-right">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedRequest(req);
-                              setTempNote(req.notes || '');
-                            }}
-                            className="px-3.5 py-1.5 text-xs font-spartan font-bold uppercase tracking-wider text-[#384808] hover:bg-[#F4F2E6] rounded-xl border border-[#A09048]/30 transition-colors"
-                          >
-                            Details
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                                ? 'In Bearbeitung'
+                                : 'Erledigt'}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4 text-xs text-stone-500 max-w-xs truncate">
+                            {req.price_consent_text}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openRequestDetails(req);
+                              }}
+                              className="px-3.5 py-1.5 text-xs font-spartan font-bold uppercase tracking-wider text-[#384808] hover:bg-[#F4F2E6] rounded-xl border border-[#A09048]/30 transition-colors cursor-pointer"
+                            >
+                              Details
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
@@ -932,128 +1135,190 @@ export const AdminPanel = () => {
           </div>
 
           {/* Request Detail Modal */}
-          {selectedRequest && (
-            <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-              <div className="bg-[#F4F2E6] rounded-[32px] p-6 sm:p-9 max-w-xl w-full border-2 border-[#A09048] shadow-2xl space-y-6 animate-in zoom-in-95 duration-200">
-                <div className="flex items-start justify-between border-b border-[#A09048]/25 pb-4">
-                  <div>
-                    <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-1">
-                      ANFRAGE-DETAILS
-                    </span>
-                    <h3 className="font-spartan font-black text-xl uppercase tracking-tight text-[#242E05]">
-                      {selectedRequest.email}
-                    </h3>
-                    <span className="text-xs text-stone-500">
-                      Eingegangen am {selectedRequest.created_at} (ID: {selectedRequest.id})
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => setSelectedRequest(null)}
-                    className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg cursor-pointer"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-white rounded-2xl border border-[#A09048]/30">
-                      <span className="text-[11px] font-bold text-[#585828] uppercase tracking-wider block">
-                        Flottengröße
+          {selectedRequest && (() => {
+            const selectedContact = parseRequestContact(selectedRequest);
+            const closeAndAutoSave = () => {
+              if ((tempNote || '').trim() !== selectedContact.cleanNotes.trim()) {
+                saveLeadNote(selectedRequest, tempNote);
+                showSaveNotice('Notiz gespeichert & Detailansicht geschlossen.');
+              }
+              setSelectedRequest(null);
+            };
+            return (
+              <div className="fixed inset-0 bg-black/60 z-[70] flex items-center justify-center p-4 backdrop-blur-xs">
+                <div className="bg-[#F4F2E6] rounded-[32px] p-6 sm:p-9 max-w-xl w-full max-h-[92vh] overflow-y-auto border-2 border-[#A09048] shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+                  <div className="flex items-start justify-between border-b border-[#A09048]/25 pb-4">
+                    <div className="min-w-0 pr-3">
+                      <span className="font-spartan font-black text-xs uppercase tracking-wider text-[#A09048] block mb-1">
+                        ANFRAGE-DETAILS
                       </span>
-                      <span className="font-spartan font-black text-2xl text-[#242E05] mt-1 block">
-                        {selectedRequest.vehicle_count} Wohnmobile
+                      <h3 className="font-spartan font-black text-lg sm:text-xl uppercase tracking-tight text-[#242E05] break-all">
+                        {selectedRequest.email}
+                      </h3>
+                      <span className="text-xs text-stone-500 block mt-0.5">
+                        Eingegangen am {selectedRequest.created_at} (ID: {selectedRequest.id})
                       </span>
+
+                      {/* 1-Click Contact Actions */}
+                      <div className="flex flex-wrap items-center gap-2 mt-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard?.writeText(selectedRequest.email);
+                            showSaveNotice('E-Mail-Adresse in Zwischenablage kopiert.');
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-stone-50 border border-[#A09048]/35 text-[11px] font-spartan font-bold uppercase text-[#242E05] cursor-pointer transition-colors"
+                        >
+                          <Copy size={12} className="text-[#889028]" />
+                          <span>E-Mail kopieren</span>
+                        </button>
+                        <a
+                          href={`mailto:${selectedRequest.email}?subject=${encodeURIComponent('Ihre Anfrage zu CVB-Office')}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#384808] hover:bg-[#242E05] text-white text-[11px] font-spartan font-bold uppercase transition-colors"
+                        >
+                          <Mail size={12} className="text-[#A09048]" />
+                          <span>E-Mail senden</span>
+                        </a>
+                        {selectedContact.phone && (
+                          <a
+                            href={`tel:${selectedContact.phone.replace(/\s+/g, '')}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] text-[11px] font-spartan font-black uppercase transition-colors"
+                          >
+                            <Phone size={12} />
+                            <span>Anrufen</span>
+                          </a>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="p-4 bg-white rounded-2xl border border-[#A09048]/30">
-                      <span className="text-[11px] font-bold text-[#585828] uppercase tracking-wider block">
-                        Preismodell
-                      </span>
-                      <span className="font-spartan font-black text-lg text-[#384808] mt-1 block">
-                        {priceSettings.monthlyNet.toFixed(2)} € / Fzg.
-                      </span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                      Bearbeitungsstatus
-                    </label>
-                    <select
-                      value={selectedRequest.status}
-                      onChange={(e) => {
-                        const newStatus = e.target.value;
-                        updateRequestStatus(selectedRequest.id, newStatus);
-                        setSelectedRequest({ ...selectedRequest, status: newStatus });
-                        showSaveNotice('Bearbeitungsstatus aktualisiert.');
-                      }}
-                      className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-bold bg-white text-[#242E05] focus:outline-none focus:ring-2 focus:ring-[#384808]/20"
+                    <button
+                      onClick={closeAndAutoSave}
+                      className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg cursor-pointer shrink-0"
                     >
-                      <option value="neu">Neu (Erfordert Kontaktaufnahme)</option>
-                      <option value="in_bearbeitung">In Bearbeitung (Smarlps Zugang wird eingerichtet)</option>
-                      <option value="erledigt">Erledigt (Zugangsdaten an Kunden übermittelt)</option>
-                    </select>
+                      <X size={20} />
+                    </button>
                   </div>
 
-                  <div>
-                    <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#585828] mb-1.5">
-                      Bestätigte Preiseinwilligung (BGB Nachweis):
-                    </label>
-                    <div className="p-4 bg-white rounded-2xl border border-[#A09048]/30 text-xs text-[#585828] leading-relaxed italic">
-                      „{selectedRequest.price_consent_text}“
+                  <div className="space-y-4">
+                    {/* Dedicated Customer Contact Info + Fleet Metrics */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div className="p-4 bg-white rounded-2xl border border-[#A09048]/30">
+                        <span className="text-[11px] font-bold text-[#585828] uppercase tracking-wider block">
+                          Ansprechpartner
+                        </span>
+                        <span className="font-spartan font-black text-base text-[#242E05] mt-1 block">
+                          {selectedContact.contactName || 'Nicht angegeben'}
+                        </span>
+                      </div>
+
+                      <div className="p-4 bg-white rounded-2xl border border-[#A09048]/30">
+                        <span className="text-[11px] font-bold text-[#585828] uppercase tracking-wider block">
+                          Telefonnummer
+                        </span>
+                        <span className="font-mono font-bold text-sm text-[#384808] mt-1 block">
+                          {selectedContact.phone || 'Nicht angegeben'}
+                        </span>
+                      </div>
+
+                      <div className="p-4 bg-white rounded-2xl border border-[#A09048]/30">
+                        <span className="text-[11px] font-bold text-[#585828] uppercase tracking-wider block">
+                          Flottengröße
+                        </span>
+                        <span className="font-spartan font-black text-2xl text-[#242E05] mt-1 block">
+                          {selectedRequest.vehicle_count} Wohnmobile
+                        </span>
+                      </div>
+
+                      <div className="p-4 bg-white rounded-2xl border border-[#A09048]/30">
+                        <span className="text-[11px] font-bold text-[#585828] uppercase tracking-wider block">
+                          Preismodell
+                        </span>
+                        <span className="font-spartan font-black text-lg text-[#384808] mt-1 block">
+                          {(selectedRequest.price_monthly_net_at_signup || priceSettings.monthlyNet).toFixed(2)} € / Monat netto
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
+                        Bearbeitungsstatus
+                      </label>
+                      <select
+                        value={selectedRequest.status}
+                        onChange={(e) => {
+                          const newStatus = e.target.value;
+                          updateRequestStatus(selectedRequest.id, newStatus);
+                          setSelectedRequest({ ...selectedRequest, status: newStatus });
+                          showSaveNotice('Bearbeitungsstatus aktualisiert.');
+                        }}
+                        className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-sm font-bold bg-white text-[#242E05] focus:outline-none focus:ring-2 focus:ring-[#384808]/20"
+                      >
+                        <option value="neu">Neu (Erfordert Kontaktaufnahme)</option>
+                        <option value="in_bearbeitung">In Bearbeitung (Smarlps Zugang wird eingerichtet)</option>
+                        <option value="erledigt">Erledigt (Zugangsdaten an Kunden übermittelt)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#585828] mb-1.5">
+                        Bestätigte Preiseinwilligung (BGB Nachweis):
+                      </label>
+                      <div className="p-4 bg-white rounded-2xl border border-[#A09048]/30 text-xs text-[#585828] leading-relaxed italic">
+                        „{selectedRequest.price_consent_text}“
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
+                        Interne Notiz (nur für Dich als Administrator)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={tempNote}
+                        onChange={(e) => setTempNote(e.target.value)}
+                        placeholder="z. B. Am 10.11. telefoniert. Möchte 5 Wohnmobile für 2026 einbinden..."
+                        className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-xs sm:text-sm text-[#242E05] bg-white focus:outline-none focus:ring-2 focus:ring-[#384808]/20"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const finalNote = saveLeadNote(selectedRequest, tempNote);
+                          setSelectedRequest({ ...selectedRequest, notes: finalNote });
+                          showSaveNotice('Interne Notiz erfolgreich gespeichert.');
+                        }}
+                        className="mt-2 px-4 py-2 bg-[#384808] hover:bg-[#242E05] text-white text-xs font-spartan font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer"
+                      >
+                        Notiz speichern
+                      </button>
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block font-spartan font-bold text-xs uppercase tracking-wider text-[#242E05] mb-1.5">
-                      Interne Notiz (nur für Dich als Administrator)
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={tempNote}
-                      onChange={(e) => setTempNote(e.target.value)}
-                      placeholder="z. B. Am 10.11. telefoniert. Möchte 5 Wohnmobile für 2026 einbinden..."
-                      className="w-full px-4 py-3 rounded-2xl border border-[#A09048]/35 text-xs sm:text-sm text-[#242E05] bg-white focus:outline-none focus:ring-2 focus:ring-[#384808]/20"
-                    />
+                  <div className="flex justify-between items-center pt-5 border-t border-[#A09048]/25">
                     <button
                       onClick={() => {
-                        updateRequestNote(selectedRequest.id, tempNote);
-                        showSaveNotice('Interne Notiz erfolgreich gespeichert.');
+                        if (window.confirm('Diese Anfrage wirklich unwiderruflich löschen?')) {
+                          deleteRequest(selectedRequest.id);
+                          setSelectedRequest(null);
+                          showSaveNotice('Anfrage gelöscht.');
+                        }
                       }}
-                      className="mt-2 px-4 py-2 bg-[#384808] hover:bg-[#242E05] text-white text-xs font-spartan font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer"
+                      className="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                     >
-                      Notiz speichern
+                      <Trash2 size={15} />
+                      <span>Anfrage löschen</span>
+                    </button>
+
+                    <button
+                      onClick={closeAndAutoSave}
+                      className="px-5 py-2.5 bg-[#242E05] hover:bg-[#384808] text-white rounded-2xl text-xs font-spartan font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-sm"
+                    >
+                      Speichern &amp; Schließen
                     </button>
                   </div>
                 </div>
-
-                <div className="flex justify-between items-center pt-5 border-t border-[#A09048]/25">
-                  <button
-                    onClick={() => {
-                      if (window.confirm('Diese Anfrage wirklich unwiderruflich löschen?')) {
-                        deleteRequest(selectedRequest.id);
-                        setSelectedRequest(null);
-                        showSaveNotice('Anfrage gelöscht.');
-                      }
-                    }}
-                    className="text-red-600 hover:text-red-800 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Trash2 size={15} />
-                    <span>Anfrage löschen</span>
-                  </button>
-
-                  <button
-                    onClick={() => setSelectedRequest(null)}
-                    className="px-5 py-2.5 bg-white hover:bg-stone-100 text-[#384808] border border-[#A09048]/30 rounded-2xl text-xs font-spartan font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                  >
-                    Schließen
-                  </button>
-                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </main>
       )}
 
@@ -1062,6 +1327,54 @@ export const AdminPanel = () => {
          ========================================================================= */}
       {activeTab === 'content' && (
         <div className="w-full flex-1 flex flex-col relative animate-in fade-in duration-200">
+          {/* Compact Quick-Jump & Undo Toolbar */}
+          <div className="sticky top-[68px] sm:top-[72px] z-40 w-full bg-[#242E05] text-white px-4 sm:px-8 py-2.5 border-b border-[#A09048]/35 shadow-md flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="font-spartan font-black text-[11px] uppercase tracking-wider text-[#A09048] hidden sm:inline">
+                SCHNELLZUGRIFF:
+              </span>
+              <select
+                value={quickJumpSection}
+                onChange={(e) => {
+                  const targetId = e.target.value;
+                  setQuickJumpSection(targetId);
+                  const sec = homepageSections.find((s) => s.id === targetId);
+                  if (sec) scrollToSection(sec.anchorId);
+                }}
+                aria-label="Sektion schnell auswählen"
+                className="px-3 py-1.5 rounded-xl bg-[#172002] border border-[#A09048]/45 text-xs font-bold text-[#F4F2E6] focus:outline-none focus:border-[#A09048] cursor-pointer max-w-[240px] sm:max-w-xs"
+              >
+                {homepageSections.map((sec) => (
+                  <option key={sec.id} value={sec.id}>
+                    {sec.title}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => setEditingSection(quickJumpSection)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#A09048] hover:bg-[#8D7F3E] text-[#172002] font-spartan font-black text-xs uppercase tracking-wider transition-colors cursor-pointer"
+              >
+                <FileEdit size={12} />
+                <span>Direkt bearbeiten</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {hasBackup && (
+                <button
+                  type="button"
+                  onClick={handleUndoLastChange}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-[#F4F2E6] font-spartan font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                  title="Letzte Änderung rückgängig machen"
+                >
+                  <Undo2 size={13} className="text-[#A09048]" />
+                  <span>Letzte Änderung rückgängig</span>
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Full Continuous Homepage View */}
           <div className="w-full bg-white relative">
             {homepageSections.map((sec) => (
@@ -1070,8 +1383,14 @@ export const AdminPanel = () => {
                 id={sec.anchorId}
                 className="relative group transition-all"
               >
-                {/* Floating Edit Button: Only edit button shows on each section top right */}
-                <div className="absolute top-4 right-4 sm:top-5 sm:right-8 z-30 pointer-events-auto">
+                {/* Floating Edit Button: Always clickable above section preview */}
+                <div
+                  className={`absolute pointer-events-auto ${
+                    sec.id === 'section-header'
+                      ? 'top-2 right-4 sm:top-2.5 sm:right-8 z-[60]'
+                      : 'top-4 right-4 sm:top-5 sm:right-8 z-40'
+                  }`}
+                >
                   <button
                     type="button"
                     onClick={() => setEditingSection(sec.id)}
@@ -1085,8 +1404,8 @@ export const AdminPanel = () => {
                   </button>
                 </div>
 
-                {/* The Real Homepage Component Rendered With Live AppContext Binding */}
-                <div className="relative">
+                {/* The Real Homepage Component Rendered With Isolated Stacking Context */}
+                <div className={`relative z-0 ${sec.id === 'section-header' ? '[&>header]:!static [&>header]:!z-10 [&>div]:!z-10' : ''}`}>
                   {sec.component}
                 </div>
               </div>
@@ -1095,7 +1414,12 @@ export const AdminPanel = () => {
 
           {/* Slide-out Edit Drawer For The Selected Section */}
           {editingSection && (
-            <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
+            <div
+              onClick={(e) => {
+                if (e.target === e.currentTarget) handleCloseDrawer();
+              }}
+              className="fixed inset-0 z-[70] flex justify-end bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+            >
               <div className="w-full max-w-2xl bg-[#F4F2E6] h-full shadow-2xl flex flex-col border-l-2 border-[#A09048] animate-in slide-in-from-right duration-300">
                 {/* Drawer Header with Update and Close Actions */}
                 <div className="p-6 bg-[#242E05] text-white flex items-center justify-between border-b border-[#A09048]/30">
@@ -1133,7 +1457,7 @@ export const AdminPanel = () => {
                       <span>Aktualisieren</span>
                     </button>
                     <button
-                      onClick={() => setEditingSection(null)}
+                      onClick={handleCloseDrawer}
                       className="p-2 text-stone-400 hover:text-white rounded-xl transition-colors cursor-pointer"
                     >
                       <X size={20} />
@@ -1809,9 +2133,30 @@ export const AdminPanel = () => {
 
                       {/* Carousel Features */}
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-4">
-                        <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
-                          Karussell Systemkarten ({features.length} Karten)
-                        </span>
+                        <div className="flex items-center justify-between pb-2 border-b border-[#A09048]/20">
+                          <span className="font-spartan font-black text-xs uppercase text-[#384808]">
+                            Karussell Systemkarten ({featuresDraft.length} Karten)
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFeaturesDraft((prev) => [
+                                ...prev,
+                                {
+                                  id: `f_${Date.now()}`,
+                                  title: 'Neue Funktion',
+                                  text: 'Beschreibung dieser Systemfunktion hier eingeben.',
+                                  icon: 'Sparkles',
+                                  visible: true,
+                                  sort_order: prev.length + 1,
+                                },
+                              ]);
+                            }}
+                            className="text-xs font-spartan font-bold uppercase text-[#384808] hover:text-[#A09048] flex items-center gap-1 cursor-pointer"
+                          >
+                            + Karte hinzufügen
+                          </button>
+                        </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                           <div>
                             <label className="block text-[11px] font-bold text-[#242E05] mb-1">Karussell Tag</label>
@@ -1834,28 +2179,54 @@ export const AdminPanel = () => {
                         </div>
 
                         <div className="space-y-3">
-                          {features.map((feat) => (
+                          {featuresDraft.map((feat, fIdx) => (
                             <div key={feat.id} className="p-3 bg-[#F9F8F3] rounded-xl border border-stone-200 space-y-2">
-                              <div className="flex items-center justify-between">
+                              <div className="flex items-center justify-between gap-1.5">
                                 <input
                                   type="text"
                                   value={feat.title}
-                                  onChange={(e) => updateFeature(feat.id, { title: e.target.value })}
-                                  className="w-full px-2.5 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-300 rounded mr-2 bg-white"
+                                  onChange={(e) => {
+                                    const next = [...featuresDraft];
+                                    next[fIdx] = { ...next[fIdx], title: e.target.value };
+                                    setFeaturesDraft(next);
+                                  }}
+                                  className="w-full px-2.5 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-300 rounded bg-white"
                                 />
                                 <button
                                   type="button"
-                                  onClick={() => toggleFeatureVisibility(feat.id)}
+                                  onClick={() => {
+                                    const next = [...featuresDraft];
+                                    next[fIdx] = { ...next[fIdx], visible: !next[fIdx].visible };
+                                    setFeaturesDraft(next);
+                                  }}
                                   className="p-1 text-stone-400 hover:text-[#384808] cursor-pointer"
                                   title={feat.visible ? 'Ausblenden' : 'Einblenden'}
                                 >
                                   {feat.visible ? <Eye size={16} /> : <EyeOff size={16} />}
                                 </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (featuresDraft.length <= 1) {
+                                      alert('Mindestens eine Systemkarte muss erhalten bleiben.');
+                                      return;
+                                    }
+                                    setFeaturesDraft(featuresDraft.filter((item) => item.id !== feat.id));
+                                  }}
+                                  className="p-1 text-stone-400 hover:text-red-600 cursor-pointer"
+                                  title="Karte löschen"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
                               </div>
                               <textarea
                                 rows={2}
                                 value={feat.text}
-                                onChange={(e) => updateFeature(feat.id, { text: e.target.value })}
+                                onChange={(e) => {
+                                  const next = [...featuresDraft];
+                                  next[fIdx] = { ...next[fIdx], text: e.target.value };
+                                  setFeaturesDraft(next);
+                                }}
                                 className="w-full px-2.5 py-1 text-xs text-[#585828] border border-stone-300 rounded bg-white"
                               />
                             </div>
@@ -2120,7 +2491,7 @@ export const AdminPanel = () => {
                         <span className="font-spartan font-black text-xs uppercase text-[#384808] block pb-2 border-b border-[#A09048]/20">
                           Die 4 Prozess-Schritte
                         </span>
-                        {steps.map((st) => (
+                        {stepsDraft.map((st, sIdx) => (
                           <div key={st.id} className="p-4 bg-[#F9F8F3] rounded-2xl border border-stone-200 space-y-2">
                             <div className="flex items-center gap-2">
                               <span className="w-6 h-6 rounded-full bg-[#384808] text-white font-spartan font-black text-xs flex items-center justify-center shrink-0">
@@ -2129,14 +2500,22 @@ export const AdminPanel = () => {
                               <input
                                 type="text"
                                 value={st.title}
-                                onChange={(e) => updateStep(st.id, { title: e.target.value })}
+                                onChange={(e) => {
+                                  const next = [...stepsDraft];
+                                  next[sIdx] = { ...next[sIdx], title: e.target.value };
+                                  setStepsDraft(next);
+                                }}
                                 className="w-full px-3 py-1 text-xs font-spartan font-bold text-[#242E05] border border-stone-300 rounded-lg bg-white"
                               />
                             </div>
                             <textarea
                               rows={2}
                               value={st.text}
-                              onChange={(e) => updateStep(st.id, { text: e.target.value })}
+                              onChange={(e) => {
+                                const next = [...stepsDraft];
+                                next[sIdx] = { ...next[sIdx], text: e.target.value };
+                                setStepsDraft(next);
+                              }}
                               className="w-full px-3 py-1.5 text-xs text-[#585828] border border-stone-300 rounded-lg bg-white"
                             />
                           </div>
@@ -2854,32 +3233,59 @@ export const AdminPanel = () => {
                       <div className="p-5 bg-white rounded-2xl border border-[#A09048]/30 space-y-3">
                         <div className="flex items-center justify-between pb-2 border-b border-[#A09048]/20">
                           <span className="font-spartan font-black text-xs uppercase text-[#242E05]">
-                            FAQ Fragen anpassen ({faqs.length} Fragen):
+                            FAQ Fragen anpassen ({faqsDraft.length} Fragen):
                           </span>
                           <button
                             type="button"
                             onClick={() => {
                               const newId = `faq_${Date.now()}`;
-                              addFaq({
-                                id: newId,
-                                question: 'Neue Frage hier eingeben?',
-                                answer: 'Antwort auf die Frage hier eingeben.',
-                                visible: true,
-                              });
+                              setFaqsDraft((prev) => [
+                                ...prev,
+                                {
+                                  id: newId,
+                                  question: 'Neue Frage hier eingeben?',
+                                  answer: 'Antwort auf die Frage hier eingeben.',
+                                  category: 'software',
+                                  visible: true,
+                                  sort_order: prev.length + 1,
+                                },
+                              ]);
                             }}
                             className="text-xs font-spartan font-bold uppercase text-[#384808] hover:text-[#A09048] flex items-center gap-1 cursor-pointer"
                           >
                             + Neue FAQ hinzufügen
                           </button>
                         </div>
-                        {faqs.map((f, i) => (
-                          <div key={f.id} className="p-4 bg-[#F9F8F3] rounded-2xl border border-stone-200 space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="font-mono text-xs font-bold text-[#A09048]">Frage {i + 1}</span>
+                        {faqsDraft.map((f, i) => (
+                          <div key={f.id} className="p-4 bg-[#F9F8F3] rounded-2xl border border-stone-200 space-y-2.5">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="flex items-center gap-2.5">
+                                <span className="font-mono text-xs font-bold text-[#A09048]">Frage {i + 1}</span>
+                                <select
+                                  value={inferFaqCategory(f)}
+                                  onChange={(e) => {
+                                    const next = [...faqsDraft];
+                                    next[i] = { ...next[i], category: e.target.value };
+                                    setFaqsDraft(next);
+                                  }}
+                                  aria-label={`Kategorie für Frage ${i + 1}`}
+                                  className="px-2.5 py-1 rounded-lg border border-stone-300 text-[11px] font-bold text-[#384808] bg-white focus:outline-none focus:border-[#384808]"
+                                >
+                                  {FAQ_CATEGORIES.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>
+                                      {cat.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
                               <div className="flex items-center gap-2">
                                 <button
                                   type="button"
-                                  onClick={() => toggleFaqVisibility(f.id)}
+                                  onClick={() => {
+                                    const next = [...faqsDraft];
+                                    next[i] = { ...next[i], visible: !next[i].visible };
+                                    setFaqsDraft(next);
+                                  }}
                                   className="p-1 text-stone-400 hover:text-[#384808] cursor-pointer"
                                   title={f.visible ? 'Ausblenden' : 'Einblenden'}
                                 >
@@ -2887,7 +3293,13 @@ export const AdminPanel = () => {
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={() => deleteFaq(f.id)}
+                                  onClick={() => {
+                                    if (faqsDraft.length <= 1) {
+                                      alert('Mindestens eine FAQ muss erhalten bleiben.');
+                                      return;
+                                    }
+                                    setFaqsDraft(faqsDraft.filter((item) => item.id !== f.id));
+                                  }}
                                   className="p-1 text-stone-400 hover:text-red-600 cursor-pointer"
                                   title="Frage löschen"
                                 >
@@ -2898,13 +3310,21 @@ export const AdminPanel = () => {
                             <input
                               type="text"
                               value={f.question}
-                              onChange={(e) => updateFaq(f.id, { question: e.target.value })}
+                              onChange={(e) => {
+                                const next = [...faqsDraft];
+                                next[i] = { ...next[i], question: e.target.value };
+                                setFaqsDraft(next);
+                              }}
                               className="w-full px-3 py-1.5 text-xs font-spartan font-bold text-[#242E05] border border-stone-300 rounded-lg bg-white"
                             />
                             <textarea
                               rows={2}
                               value={f.answer}
-                              onChange={(e) => updateFaq(f.id, { answer: e.target.value })}
+                              onChange={(e) => {
+                                const next = [...faqsDraft];
+                                next[i] = { ...next[i], answer: e.target.value };
+                                setFaqsDraft(next);
+                              }}
                               className="w-full px-3 py-1.5 text-xs text-[#585828] border border-stone-300 rounded-lg bg-white"
                             />
                           </div>
@@ -3196,7 +3616,8 @@ export const AdminPanel = () => {
                 {/* Drawer Footer Actions */}
                 <div className="p-6 bg-white border-t border-[#A09048]/30 flex items-center justify-between">
                   <button
-                    onClick={() => setEditingSection(null)}
+                    type="button"
+                    onClick={handleCloseDrawer}
                     className="px-5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-bold cursor-pointer"
                   >
                     Abbrechen
@@ -3254,14 +3675,99 @@ export const AdminPanel = () => {
               </div>
             </div>
 
-            <div className="space-y-3 pt-2">
-              <button
-                onClick={() => showSaveNotice('Ein neuer Passwort-Link wurde an detlef@caravan-vermieter-bund.de gesendet.')}
-                className="tech-cta-ghost w-full justify-center h-12 text-xs"
-              >
-                Neues Passwort per E-Mail anfordern
-              </button>
+            {/* Change Admin Password Form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setPwFeedback(null);
+                if (newAdminPassword.trim().length < 4) {
+                  setPwFeedback({ type: 'error', text: 'Das neue Passwort muss mindestens 4 Zeichen lang sein.' });
+                  return;
+                }
+                if (newAdminPassword !== confirmAdminPassword) {
+                  setPwFeedback({ type: 'error', text: 'Die beiden Passwörter stimmen nicht überein.' });
+                  return;
+                }
+                const res = changeAdminPassword(newAdminPassword);
+                if (res.success) {
+                  setNewAdminPassword('');
+                  setConfirmAdminPassword('');
+                  setPwFeedback({ type: 'success', text: 'Passwort gespeichert und sofort aktiv.' });
+                  showSaveNotice('Administrator-Passwort wurde erfolgreich geändert.');
+                } else {
+                  setPwFeedback({ type: 'error', text: res.error || 'Passwort konnte nicht geändert werden.' });
+                }
+              }}
+              className="p-6 rounded-2xl bg-[#F9F8F3] border border-[#A09048]/30 space-y-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Lock size={16} className="text-[#384808]" />
+                  <h3 className="font-spartan font-black text-sm uppercase tracking-wider text-[#242E05]">
+                    Zugangspasswort ändern
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword((prev) => !prev)}
+                  className="text-xs font-bold text-[#585828] hover:text-[#242E05] inline-flex items-center gap-1 cursor-pointer"
+                >
+                  {showNewPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  <span>{showNewPassword ? 'Verbergen' : 'Anzeigen'}</span>
+                </button>
+              </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-spartan font-bold text-[11px] uppercase tracking-wider text-[#384808] mb-1">
+                    Neues Passwort
+                  </label>
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={newAdminPassword}
+                    onChange={(e) => setNewAdminPassword(e.target.value)}
+                    placeholder="Mind. 4 Zeichen..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#A09048]/35 text-xs sm:text-sm bg-white text-[#242E05] focus:outline-none focus:border-[#384808]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-spartan font-bold text-[11px] uppercase tracking-wider text-[#384808] mb-1">
+                    Passwort bestätigen
+                  </label>
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={confirmAdminPassword}
+                    onChange={(e) => setConfirmAdminPassword(e.target.value)}
+                    placeholder="Passwort wiederholen..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#A09048]/35 text-xs sm:text-sm bg-white text-[#242E05] focus:outline-none focus:border-[#384808]"
+                  />
+                </div>
+              </div>
+
+              {pwFeedback && (
+                <div
+                  className={`text-xs font-semibold px-3.5 py-2 rounded-xl border ${
+                    pwFeedback.type === 'error'
+                      ? 'bg-red-50 text-red-700 border-red-200'
+                      : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  }`}
+                >
+                  {pwFeedback.text}
+                </div>
+              )}
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-[#384808] hover:bg-[#242E05] text-white font-spartan font-black text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer transition-colors"
+                >
+                  <KeyRound size={14} className="text-[#A09048]" />
+                  <span>Passwort aktualisieren</span>
+                </button>
+              </div>
+            </form>
+
+            <div className="space-y-3 pt-2">
               <button
                 onClick={logoutAdmin}
                 className="w-full py-3.5 px-4 rounded-full bg-red-50 text-red-700 hover:bg-red-100 text-xs font-spartan font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer border border-red-200"
